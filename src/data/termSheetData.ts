@@ -1,5 +1,5 @@
 // Term Sheet Workflow & Waiver Management
-// Tracks term sheet issuance, Castlelake validation, and covenant waiver requests
+// Tracks term sheet issuance, Capital Partner validation, and covenant waiver requests
 
 export type TermSheetStatus = "draft" | "internal_review" | "cp_validation" | "issued" | "negotiation" | "signed" | "expired" | "rejected";
 
@@ -72,7 +72,7 @@ export const sampleTermSheets: Record<string, TermSheet> = {
     exclusivityEnd: "2025-06-30",
     castlelakeValidation: {
       submitted: true, submittedDate: "2025-04-25",
-      approved: true, approvedBy: "Sarah Chen (Castlelake)", approvedDate: "2025-04-28",
+      approved: true, approvedBy: "K. Walsh (Capital Partner)", approvedDate: "2025-04-28",
       conditions: ["Require minimum 40% pre-sales before 3rd drawdown"],
       memoAttached: true, modelAttached: true,
     },
@@ -83,18 +83,18 @@ export const sampleTermSheets: Record<string, TermSheet> = {
       securityPackage: ["First-ranking mortgage", "Share pledge (SPV)", "Share pledge (sponsor)", "Account pledge", "Personal guarantee UBO", "Direct agreement contractor"],
     },
     versions: [
-      { version: 1, date: "2025-04-15", status: "draft", updatedBy: "Javier Catón" },
-      { version: 2, date: "2025-04-22", status: "internal_review", updatedBy: "Javier Catón", changes: "Adjusted LTV covenant from 60% to 65%" },
-      { version: 3, date: "2025-04-28", status: "signed", updatedBy: "Javier Catón", changes: "Final terms after Castlelake validation" },
+      { version: 1, date: "2025-04-15", status: "draft", updatedBy: "M. Rivera" },
+      { version: 2, date: "2025-04-22", status: "internal_review", updatedBy: "M. Rivera", changes: "Adjusted LTV covenant from 60% to 65%" },
+      { version: 3, date: "2025-04-28", status: "signed", updatedBy: "M. Rivera", changes: "Final terms after Capital Partner validation" },
     ],
     auditTrail: [
-      { action: "Term Sheet Drafted", user: "Javier Catón", date: "2025-04-15" },
-      { action: "Internal Review Completed", user: "Fernando Martínez", date: "2025-04-22" },
-      { action: "Submitted to Castlelake", user: "Javier Catón", date: "2025-04-25", detail: "Memo and preliminary model attached" },
-      { action: "Castlelake Approved", user: "Sarah Chen", date: "2025-04-28", detail: "Approved with condition on pre-sales" },
-      { action: "Term Sheet Issued to Borrower", user: "Javier Catón", date: "2025-04-28" },
+      { action: "Term Sheet Drafted", user: "M. Rivera", date: "2025-04-15" },
+      { action: "Internal Review Completed", user: "P. Serrano", date: "2025-04-22" },
+      { action: "Submitted to Capital Partner", user: "M. Rivera", date: "2025-04-25", detail: "Memo and preliminary model attached" },
+      { action: "Capital Partner Approved", user: "K. Walsh", date: "2025-04-28", detail: "Approved with condition on pre-sales" },
+      { action: "Term Sheet Issued to Borrower", user: "M. Rivera", date: "2025-04-28" },
       { action: "Exclusivity Agreement Signed", user: "Borrower", date: "2025-05-02" },
-      { action: "Term Sheet Signed", user: "Luminara Promociones SL", date: "2025-05-15" },
+      { action: "Term Sheet Signed", user: "Solaris Promociones SL", date: "2025-05-15" },
     ],
   },
   "deal-002": {
@@ -116,13 +116,13 @@ export const sampleTermSheets: Record<string, TermSheet> = {
       securityPackage: ["First-ranking mortgage", "Share pledge (SPV)", "Account pledge", "Corporate guarantee"],
     },
     versions: [
-      { version: 1, date: "2026-03-10", status: "draft", updatedBy: "Federico Busacca" },
-      { version: 2, date: "2026-03-18", status: "cp_validation", updatedBy: "Federico Busacca", changes: "Adjusted tenor from 28 to 30 months" },
+      { version: 1, date: "2026-03-10", status: "draft", updatedBy: "A. Delgado" },
+      { version: 2, date: "2026-03-18", status: "cp_validation", updatedBy: "A. Delgado", changes: "Adjusted tenor from 28 to 30 months" },
     ],
     auditTrail: [
-      { action: "Term Sheet Drafted", user: "Federico Busacca", date: "2026-03-10" },
-      { action: "Internal Review Completed", user: "Reyes Dorado", date: "2026-03-18" },
-      { action: "Submitted to Castlelake", user: "Juan L. Torres Otero", date: "2026-03-20", detail: "Memo attached, model pending" },
+      { action: "Term Sheet Drafted", user: "A. Delgado", date: "2026-03-10" },
+      { action: "Internal Review Completed", user: "L. Campos", date: "2026-03-18" },
+      { action: "Submitted to Capital Partner", user: "R. Medina", date: "2026-03-20", detail: "Memo attached, model pending" },
     ],
   },
   "deal-003": {
@@ -134,7 +134,7 @@ export const sampleTermSheets: Record<string, TermSheet> = {
     exclusivityEnd: "2026-04-30",
     castlelakeValidation: {
       submitted: true, submittedDate: "2026-03-05",
-      approved: true, approvedBy: "Sarah Chen (Castlelake)", approvedDate: "2026-03-07",
+      approved: true, approvedBy: "K. Walsh (Capital Partner)", approvedDate: "2026-03-07",
       conditions: [],
       memoAttached: true, modelAttached: true,
     },
@@ -145,13 +145,13 @@ export const sampleTermSheets: Record<string, TermSheet> = {
       securityPackage: ["First-ranking mortgage", "Share pledge (SPV)", "Account pledge", "Personal guarantee"],
     },
     versions: [
-      { version: 1, date: "2026-03-01", status: "draft", updatedBy: "Javier Catón" },
-      { version: 2, date: "2026-03-08", status: "signed", updatedBy: "Javier Catón" },
+      { version: 1, date: "2026-03-01", status: "draft", updatedBy: "M. Rivera" },
+      { version: 2, date: "2026-03-08", status: "signed", updatedBy: "M. Rivera" },
     ],
     auditTrail: [
-      { action: "Term Sheet Drafted", user: "Javier Catón", date: "2026-03-01" },
-      { action: "Submitted to Castlelake", user: "Javier Catón", date: "2026-03-05" },
-      { action: "Castlelake Approved", user: "Sarah Chen", date: "2026-03-07" },
+      { action: "Term Sheet Drafted", user: "M. Rivera", date: "2026-03-01" },
+      { action: "Submitted to Capital Partner", user: "M. Rivera", date: "2026-03-05" },
+      { action: "Capital Partner Approved", user: "K. Walsh", date: "2026-03-07" },
       { action: "Term Sheet Issued & Signed", user: "Borrower", date: "2026-03-15" },
     ],
   },
@@ -167,12 +167,12 @@ export const sampleEnhancedWaivers: Record<string, EnhancedWaiver[]> = {
       proposedFee: 25000, feeType: "flat",
       status: "cp_review",
       validityPeriod: "6 months",
-      internalApproval: { approved: true, approvedBy: "Fernando Martínez", date: "2026-03-30" },
+      internalApproval: { approved: true, approvedBy: "P. Serrano", date: "2026-03-30" },
       cpApproval: undefined,
       auditTrail: [
-        { action: "Waiver Requested", user: "Federico Busacca", date: "2026-03-28", detail: "Borrower requested temporary LTV waiver pending updated appraisal" },
-        { action: "Internal Review", user: "Fernando Martínez", date: "2026-03-30", detail: "Approved internally — fee of €25,000 proposed" },
-        { action: "Submitted to Castlelake", user: "Juan L. Torres Otero", date: "2026-04-01", detail: "Awaiting Castlelake approval" },
+        { action: "Waiver Requested", user: "A. Delgado", date: "2026-03-28", detail: "Borrower requested temporary LTV waiver pending updated appraisal" },
+        { action: "Internal Review", user: "P. Serrano", date: "2026-03-30", detail: "Approved internally — fee of €25,000 proposed" },
+        { action: "Submitted to Capital Partner", user: "R. Medina", date: "2026-04-01", detail: "Awaiting Capital Partner approval" },
       ],
     },
   ],
@@ -181,7 +181,7 @@ export const sampleEnhancedWaivers: Record<string, EnhancedWaiver[]> = {
 export const termSheetStatusLabels: Record<TermSheetStatus, string> = {
   draft: "Draft",
   internal_review: "Internal Review",
-  cp_validation: "Castlelake Validation",
+  cp_validation: "Capital Partner Validation",
   issued: "Issued",
   negotiation: "Negotiation",
   signed: "Signed",
