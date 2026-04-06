@@ -23,6 +23,8 @@ interface DealDetailProps {
 }
 
 export default function DealDetail({ deal }: DealDetailProps) {
+  const lifecycle = sampleLifecycles[deal.id];
+  
   return (
     <div className="space-y-6">
       {/* Header */}
