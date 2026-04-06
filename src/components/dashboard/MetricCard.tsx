@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface MetricCardProps {
   label: string;
@@ -13,12 +12,9 @@ interface MetricCardProps {
 
 export default function MetricCard({ label, value, subValue, icon: Icon, highlight }: MetricCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
       className={cn(
-        "rounded-xl border border-border bg-card p-5 shadow-card transition-all hover:shadow-elevated",
+        "rounded-xl border border-border bg-card p-5 shadow-card transition-all hover:shadow-elevated animate-fade-in",
         highlight && "border-primary/30 shadow-gold"
       )}
     >
@@ -38,6 +34,6 @@ export default function MetricCard({ label, value, subValue, icon: Icon, highlig
           <Icon className={cn("h-5 w-5", highlight ? "text-primary" : "text-muted-foreground")} />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
