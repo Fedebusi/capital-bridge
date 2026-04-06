@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Overview" },
+  { to: "/investor", icon: Landmark, label: "Investor Portal" },
   { to: "/map", icon: MapPin, label: "Map" },
   { to: "/lifecycle", icon: Route, label: "Lifecycle" },
   { to: "/pipeline", icon: FolderOpen, label: "Pipeline" },

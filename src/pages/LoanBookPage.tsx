@@ -1,57 +1,176 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import DealCard from "@/components/dashboard/DealCard";
-import { sampleDeals, formatMillions, formatCurrency } from "@/data/sampleDeals";
+import { sampleDeals, formatMillions, formatCurrency, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
+import { cn } from "@/lib/utils";
+import { Search, ArrowUpDown, TrendingUp, Wallet, ShieldCheck, Building2 } from "lucide-react";
+
+const filterStages: { label: string; value: DealStage | "all" }[] = [
+  { label: "All", value: "all" },
+  { label: "Active", value: "active" },
+  { label: "Repaid", value: "repaid" },
+  { label: "Documentation", value: "documentation" },
+  { label: "IC Approval", value: "ic_approval" },
+  { label: "Due Diligence", value: "due_diligence" },
+  { label: "Screening", value: "screening" },
+];
 
 export default function LoanBookPage() {
-  const activeDeals = sampleDeals.filter(d => d.stage === "active" || d.stage === "repaid");
+  const [activeFilter, setActiveFilter] = useState<DealStage | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"loanAmount" | "ltv" | "totalRate" | "maturity">("loanAmount");
+
+  const filtered = sampleDeals
+    .filter(d => activeFilter === "all" ? d.stage !== "rejected" : d.stage === activeFilter)
+    .filter(d => searchQuery === "" || d.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || d.borrower.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === "loanAmount") return b.loanAmount - a.loanAmount;
+      if (sortBy === "ltv") return b.ltv - a.ltv;
+      if (sortBy === "totalRate") return b.totalRate - a.totalRate;
+      return a.expectedMaturity.localeCompare(b.expectedMaturity);
+    });
+
+  const totalExposure = filtered.reduce((s, d) => s + d.totalExposure, 0);
+  const totalFacilities = filtered.reduce((s, d) => s + d.loanAmount, 0);
+  const avgLTV = filtered.length > 0 ? filtered.reduce((s, d) => s + d.ltv, 0) / filtered.length : 0;
+  const avgRate = filtered.length > 0 ? filtered.reduce((s, d) => s + d.totalRate, 0) / filtered.length : 0;
 
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Loan Book</h1>
-          <p className="text-sm text-muted-foreground mt-1">Active and historical loan positions</p>
+        {/* Header */}
+        <header className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-extrabold text-primary">Loan Book</h1>
+            <p className="text-slate-500 text-sm mt-1">Active and historical loan positions</p>
+          </div>
+          <button className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+            Export to Excel
+          </button>
+        </header>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-4 gap-4">
+          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+            <Wallet className="h-4 w-4 text-slate-400 mb-2" />
+            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Total Facilities</p>
+            <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalFacilities)}</p>
+          </div>
+          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+            <Building2 className="h-4 w-4 text-slate-400 mb-2" />
+            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Total Exposure</p>
+            <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalExposure)}</p>
+          </div>
+          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+            <ShieldCheck className="h-4 w-4 text-slate-400 mb-2" />
+            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Avg LTV</p>
+            <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgLTV)}</p>
+          </div>
+          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+            <TrendingUp className="h-4 w-4 text-slate-400 mb-2" />
+            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Avg Rate</p>
+            <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgRate)}</p>
+          </div>
         </div>
 
-        {/* Loan Table */}
-        <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
+        {/* Filters */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            {filterStages.map(f => {
+              const count = f.value === "all"
+                ? sampleDeals.filter(d => d.stage !== "rejected").length
+                : sampleDeals.filter(d => d.stage === f.value).length;
+              return (
+                <button
+                  key={f.value}
+                  onClick={() => setActiveFilter(f.value)}
+                  className={cn(
+                    "px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide transition-all",
+                    activeFilter === f.value
+                      ? "bg-primary text-white shadow-sm"
+                      : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                  )}
+                >
+                  {f.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <input
+              className="bg-white border border-slate-200 rounded py-1.5 pl-9 pr-4 text-xs w-56 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-primary"
+              placeholder="Search deals..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Project</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Borrower</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Facility</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Disbursed</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">PIK Accrued</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Total Exposure</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Rate</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">LTV</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Construction</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Maturity</th>
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <tr>
+                  <th className="px-6 py-3">Project</th>
+                  <th className="px-6 py-3">Stage</th>
+                  <th className="px-6 py-3 cursor-pointer hover:text-slate-600" onClick={() => setSortBy("loanAmount")}>
+                    <span className="flex items-center gap-1">Facility <ArrowUpDown className="h-3 w-3" /></span>
+                  </th>
+                  <th className="px-6 py-3">Disbursed</th>
+                  <th className="px-6 py-3">PIK Accrued</th>
+                  <th className="px-6 py-3 cursor-pointer hover:text-slate-600" onClick={() => setSortBy("totalRate")}>
+                    <span className="flex items-center gap-1">Rate <ArrowUpDown className="h-3 w-3" /></span>
+                  </th>
+                  <th className="px-6 py-3 cursor-pointer hover:text-slate-600" onClick={() => setSortBy("ltv")}>
+                    <span className="flex items-center gap-1">LTV <ArrowUpDown className="h-3 w-3" /></span>
+                  </th>
+                  <th className="px-6 py-3">Construction</th>
+                  <th className="px-6 py-3 cursor-pointer hover:text-slate-600" onClick={() => setSortBy("maturity")}>
+                    <span className="flex items-center gap-1">Maturity <ArrowUpDown className="h-3 w-3" /></span>
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                {activeDeals.map(d => (
-                  <tr key={d.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <a href={`/deals/${d.id}`} className="font-medium text-foreground hover:text-primary transition-colors">
-                        {d.projectName}
-                      </a>
+              <tbody className="text-xs divide-y divide-slate-100">
+                {filtered.map(d => (
+                  <tr key={d.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <Link to={`/deals/${d.id}`} className="group">
+                        <div className="font-bold text-primary group-hover:text-slate-600 transition-colors">{d.projectName}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{d.borrower} · {d.location}</div>
+                      </Link>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{d.borrower}</td>
-                    <td className="px-4 py-3 text-right text-foreground">{formatCurrency(d.loanAmount)}</td>
-                    <td className="px-4 py-3 text-right text-foreground">{formatCurrency(d.disbursedAmount)}</td>
-                    <td className="px-4 py-3 text-right text-primary">{formatCurrency(d.accruedPIK)}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-foreground">{formatCurrency(d.totalExposure)}</td>
-                    <td className="px-4 py-3 text-center text-foreground">{d.totalRate}%</td>
-                    <td className="px-4 py-3 text-center text-foreground">{d.ltv.toFixed(1)}%</td>
-                    <td className="px-4 py-3 text-center text-foreground">{d.constructionProgress}%</td>
-                    <td className="px-4 py-3 text-center text-muted-foreground">{d.expectedMaturity}</td>
+                    <td className="px-6 py-4">
+                      <span className={cn("px-2 py-0.5 rounded text-[9px] font-bold uppercase", stageColors[d.stage])}>
+                        {stageLabels[d.stage]}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold text-primary">{formatMillions(d.loanAmount)}</td>
+                    <td className="px-6 py-4 text-slate-600">{formatMillions(d.disbursedAmount)}</td>
+                    <td className="px-6 py-4 text-emerald-600 font-bold">{formatMillions(d.accruedPIK)}</td>
+                    <td className="px-6 py-4 font-bold text-primary">{formatPercent(d.totalRate)}</td>
+                    <td className="px-6 py-4">
+                      <span className={cn("font-bold", d.ltv > 65 ? "text-amber-500" : "text-primary")}>
+                        {formatPercent(d.ltv)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary rounded-full" style={{ width: `${d.constructionProgress}%` }} />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-400">{d.constructionProgress}%</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500">{d.expectedMaturity}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            Showing {filtered.length} of {sampleDeals.length} deals
           </div>
         </div>
       </div>

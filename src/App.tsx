@@ -16,6 +16,7 @@ import PIKEnginePage from "./pages/PIKEnginePage.tsx";
 import ConstructionMonitoringPage from "./pages/ConstructionMonitoringPage.tsx";
 import LifecyclePage from "./pages/LifecyclePage.tsx";
 import MapPage from "./pages/MapPage.tsx";
+import InvestorPortalPage from "./pages/InvestorPortalPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/construction" element={<ConstructionMonitoringPage />} />
           <Route path="/lifecycle" element={<LifecyclePage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/investor" element={<InvestorPortalPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
