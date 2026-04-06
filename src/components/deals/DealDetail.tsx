@@ -51,18 +51,16 @@ export default function DealDetail({ deal }: DealDetailProps) {
           { label: "GDV", value: formatMillions(deal.gdv) },
           { label: "Pre-Sales", value: formatPercent(deal.preSalesPercent) },
         ].map((m, i) => (
-          <motion.div
+          <div
             key={m.label}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="rounded-lg border border-border bg-card p-3"
+            className="rounded-lg border border-border bg-card p-3 animate-fade-in"
+            style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
           >
             <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{m.label}</p>
             <p className={cn("font-display text-lg font-bold mt-0.5", m.warn ? "text-warning" : "text-foreground")}>
               {m.value}
             </p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
