@@ -34,8 +34,8 @@ export default function BorrowerDetailPage() {
               </span>
               <span className="text-xs text-muted-foreground">Since {borrower.ratingDate}</span>
             </div>
-            <h1 className="font-display text-2xl font-bold text-foreground">{borrower.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{borrower.group} • {borrower.headquarters} • Est. {borrower.yearEstablished}</p>
+            <h1 className="text-2xl font-extrabold text-primary">{borrower.name}</h1>
+            <p className="text-slate-500 text-sm mt-1">{borrower.group} • {borrower.headquarters} • Est. {borrower.yearEstablished}</p>
           </div>
         </div>
 

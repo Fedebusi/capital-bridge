@@ -6,8 +6,8 @@ export default function ScreeningPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Deal Screening</h1>
-          <p className="text-sm text-muted-foreground mt-1">Quick assessment of new lending opportunities against fund investment criteria</p>
+          <h1 className="text-2xl font-extrabold text-primary">Deal Screening</h1>
+          <p className="text-slate-500 text-sm mt-1">Quick assessment of new lending opportunities against fund investment criteria</p>
         </div>
         <ScreeningTool />
       </div>

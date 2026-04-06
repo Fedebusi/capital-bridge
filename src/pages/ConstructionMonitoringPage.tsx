@@ -19,8 +19,8 @@ export default function ConstructionMonitoringPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Construction Monitoring</h1>
-          <p className="text-sm text-muted-foreground mt-1">Site visits, certifications, monitoring reports, and retention tracking</p>
+          <h1 className="text-2xl font-extrabold text-primary">Construction Monitoring</h1>
+          <p className="text-slate-500 text-sm mt-1">Site visits, certifications, monitoring reports, and retention tracking</p>
         </div>
 
         {dealsWithMonitoring.map(deal => (

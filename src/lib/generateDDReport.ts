@@ -77,7 +77,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
     },
   });
 
-  y = (doc as any).lastAutoTable.finalY + 10;
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
   // ===== OVERALL STATUS =====
   const total = items.length;
@@ -167,7 +167,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
         3: { cellWidth: 22 },
         4: { cellWidth: contentW - 50 - 22 - 30 - 22 },
       },
-      didParseCell: (data: any) => {
+      didParseCell: (data: { column: { index: number }; section: string; row: { index: number }; cell: { styles: { textColor: number[]; fontStyle: string } } }) => {
         if (data.column.index === 1 && data.section === "body") {
           const status = catItems[data.row.index]?.status;
           if (status && STATUS_COLORS[status]) {
@@ -178,7 +178,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
       },
     });
 
-    y = (doc as any).lastAutoTable.finalY + 8;
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 8;
 
     // Documents sub-section
     const docsItems = catItems.filter(i => i.documents && i.documents.length > 0);

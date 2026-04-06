@@ -30,8 +30,8 @@ export default function PIKEnginePage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">PIK Engine & Interest Accrual</h1>
-          <p className="text-sm text-muted-foreground mt-1">Monthly interest calculation, PIK capitalization, and exposure projection across active deals</p>
+          <h1 className="text-2xl font-extrabold text-primary">PIK Engine & Interest Accrual</h1>
+          <p className="text-slate-500 text-sm mt-1">Monthly interest calculation, PIK capitalization, and exposure projection across active deals</p>
         </div>
 
         {/* Portfolio Summary */}

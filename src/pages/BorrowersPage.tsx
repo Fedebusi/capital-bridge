@@ -10,8 +10,8 @@ export default function BorrowersPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Borrower Base</h1>
-          <p className="text-sm text-muted-foreground mt-1">Complete registry of borrowers, sponsors, and counterparties</p>
+          <h1 className="text-2xl font-extrabold text-primary">Borrower Base</h1>
+          <p className="text-slate-500 text-sm mt-1">Complete registry of borrowers, sponsors, and counterparties</p>
         </div>
 
         {/* Summary Cards */}

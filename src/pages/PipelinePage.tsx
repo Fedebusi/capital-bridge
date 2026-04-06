@@ -15,8 +15,8 @@ export default function PipelinePage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Deal Pipeline</h1>
-          <p className="text-sm text-muted-foreground mt-1">Track all deals from screening to repayment</p>
+          <h1 className="text-2xl font-extrabold text-primary">Deal Pipeline</h1>
+          <p className="text-slate-500 text-sm mt-1">Track all deals from screening to repayment</p>
         </div>
 
         {/* Stage Filters */}
@@ -25,7 +25,7 @@ export default function PipelinePage() {
             onClick={() => setFilter("all")}
             className={cn(
               "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-              filter === "all" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+              filter === "all" ? "bg-primary text-white shadow-sm" : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
             )}
           >
             All ({sampleDeals.length})
@@ -38,7 +38,7 @@ export default function PipelinePage() {
                 onClick={() => setFilter(stage)}
                 className={cn(
                   "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                  filter === stage ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+                  filter === stage ? "bg-primary text-white shadow-sm" : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
                 )}
               >
                 {stageLabels[stage]} ({count})

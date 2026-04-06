@@ -16,8 +16,8 @@ export default function DueDiligencePage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Due Diligence</h1>
-          <p className="text-sm text-muted-foreground mt-1">Track due diligence progress across all active deals</p>
+          <h1 className="text-2xl font-extrabold text-primary">Due Diligence</h1>
+          <p className="text-slate-500 text-sm mt-1">Track due diligence progress across all active deals</p>
         </div>
 
         {dealsWithDD.map(deal => {

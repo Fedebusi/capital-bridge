@@ -13,8 +13,8 @@ export default function LifecyclePage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Deal Lifecycle</h1>
-          <p className="text-sm text-muted-foreground mt-1">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
+          <h1 className="text-2xl font-extrabold text-primary">Deal Lifecycle</h1>
+          <p className="text-slate-500 text-sm mt-1">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
         </div>
 
         {/* Legend */}
