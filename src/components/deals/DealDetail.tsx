@@ -89,8 +89,9 @@ export default function DealDetail({ deal }: DealDetailProps) {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="lifecycle" className="space-y-4">
         <TabsList className="bg-muted border border-border flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="drawdowns">Drawdowns</TabsTrigger>
           <TabsTrigger value="covenants">Covenants</TabsTrigger>
