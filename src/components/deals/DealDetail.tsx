@@ -250,6 +250,10 @@ export default function DealDetail({ deal }: DealDetailProps) {
         <TabsContent value="dd"><DueDiligencePanel dealId={deal.id} /></TabsContent>
         <TabsContent value="approvals"><ApprovalsPanel dealId={deal.id} /></TabsContent>
         <TabsContent value="legal"><LegalSecurityPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="termsheet"><TermSheetWaiverPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="pik"><PIKSchedulePanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="monitoring"><ConstructionMonitoringPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="waterfall"><WaterfallPanel dealId={deal.id} /></TabsContent>
 
         <TabsContent value="financials">
           <div className="grid lg:grid-cols-2 gap-4">
