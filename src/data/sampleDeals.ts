@@ -50,6 +50,7 @@ export interface Deal {
   sponsor: string;
   location: string;
   city: string;
+  coordinates: [number, number];
   stage: DealStage;
   assetType: string;
   description: string;
@@ -121,6 +122,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Grupo Valverde Inversiones",
     location: "Marbella, Málaga",
     city: "Marbella",
+    coordinates: [36.5099, -4.8861],
     stage: "active",
     assetType: "Residential - Build to Sell",
     description: "38-unit luxury residential complex with panoramic sea views, infinity pool, private gardens, and underground parking. Located in Marbella's Golden Mile area, targeting high-net-worth international buyers.",
@@ -186,6 +188,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Altamira Capital Partners",
     location: "Canillejas, Madrid",
     city: "Madrid",
+    coordinates: [40.4500, -3.6100],
     stage: "due_diligence",
     assetType: "Residential - Build to Sell",
     description: "72-unit residential development in eastern Madrid, close to IFEMA convention center and Barajas airport. Mix of 1, 2, and 3 bedroom apartments targeting young professionals and families. Strong transport links.",
@@ -239,6 +242,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Mediterráneo Desarrollos",
     location: "Ruzafa, Valencia",
     city: "Valencia",
+    coordinates: [39.4620, -0.3740],
     stage: "ic_approval",
     assetType: "Residential - Build to Sell",
     description: "24-unit boutique residential project in Valencia's trendy Ruzafa district. Contemporary design with rooftop terraces. Targeting both local buyers and digital nomads relocating to Valencia.",
@@ -295,6 +299,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Tramontana Group",
     location: "Gràcia, Barcelona",
     city: "Barcelona",
+    coordinates: [41.4036, 2.1744],
     stage: "screening",
     assetType: "Residential - Refurbishment & Sale",
     description: "Complete renovation of a 1920s modernist building into 16 high-end loft-style apartments. Protected façade, interior courtyard to be restored. Prime location in Barcelona's Gràcia neighborhood.",
@@ -349,6 +354,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Sierra Bermeja Desarrollos",
     location: "Benahavís, Málaga",
     city: "Benahavís",
+    coordinates: [36.5228, -5.0455],
     stage: "repaid",
     assetType: "Residential - Build to Sell",
     description: "10 luxury detached villas in the Benahavís hills with golf course and mountain views. Fully sold 4 months before completion. Excellent fund performance.",
@@ -408,6 +414,7 @@ export const sampleDeals: Deal[] = [
     sponsor: "Balear Real Estate",
     location: "Portixol, Palma de Mallorca",
     city: "Palma",
+    coordinates: [39.5630, 2.6502],
     stage: "documentation",
     assetType: "Residential - Build to Sell",
     description: "Two boutique residential buildings with 48 apartments total. Seafront location in Palma's Portixol district, premium positioning with sea and old town views. IC approved — final documentation in progress.",
