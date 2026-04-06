@@ -52,6 +52,19 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </div>
       </div>
 
+      {/* Lifecycle Progress Bar */}
+      {lifecycle && (
+        <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <Route className="h-3 w-3" /> Loan Lifecycle — Phase {getCurrentPhaseNumber(lifecycle)}/12
+            </p>
+            <span className="text-xs font-semibold text-accent">{getLifecycleProgress(lifecycle)}% complete</span>
+          </div>
+          <LifecycleProgressBar lifecycle={lifecycle} />
+        </div>
+      )}
+
       {/* Key Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {[
