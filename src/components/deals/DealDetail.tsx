@@ -1,13 +1,15 @@
 import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stageColors } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { 
-  ArrowLeft, MapPin, Building, Calendar, TrendingUp, AlertTriangle,
+  ArrowLeft, Building, TrendingUp, AlertTriangle,
   CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import DueDiligencePanel from "./DueDiligencePanel";
+import ApprovalsPanel from "./ApprovalsPanel";
+import LegalSecurityPanel from "./LegalSecurityPanel";
 
 interface DealDetailProps {
   deal: Deal;
@@ -36,7 +38,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <p className="text-sm text-muted-foreground mt-1">{deal.borrower} • {deal.sponsor}</p>
         </div>
         <div className="text-right">
-          <p className="font-display text-3xl font-bold text-gradient-gold">{formatMillions(deal.loanAmount)}</p>
+          <p className="font-display text-3xl font-bold text-accent">{formatMillions(deal.loanAmount)}</p>
           <p className="text-xs text-muted-foreground">Total Facility</p>
         </div>
       </div>
@@ -66,75 +68,49 @@ export default function DealDetail({ deal }: DealDetailProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="bg-muted border border-border">
+        <TabsList className="bg-muted border border-border flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="drawdowns">Drawdowns</TabsTrigger>
           <TabsTrigger value="covenants">Covenants</TabsTrigger>
           <TabsTrigger value="sales">Unit Sales</TabsTrigger>
+          <TabsTrigger value="dd">Due Diligence</TabsTrigger>
+          <TabsTrigger value="approvals">Approvals</TabsTrigger>
+          <TabsTrigger value="legal">Legal & Security</TabsTrigger>
           <TabsTrigger value="financials">Financial Summary</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid lg:grid-cols-2 gap-4">
-            {/* Project Details */}
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Building className="h-4 w-4 text-primary" /> Project Details
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Asset Type" value={deal.assetType} />
-                <Row label="Location" value={deal.location} />
-                <Row label="Total Units" value={`${deal.totalUnits}`} />
-                <Row label="Total Area" value={`${deal.totalArea.toLocaleString()} sqm`} />
-                <Row label="Description" value={deal.description} />
-              </div>
-            </div>
-
-            {/* Loan Structure */}
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-primary" /> Loan Structure
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Cash Interest" value={`${deal.interestRate}%`} />
-                <Row label="PIK Spread" value={`${deal.pikSpread}%`} />
-                <Row label="All-in Rate" value={`${deal.totalRate}%`} />
-                <Row label="Origination Fee" value={`${deal.originationFee}%`} />
-                <Row label="Exit Fee" value={`${deal.exitFee}%`} />
-                <Row label="Maturity" value={deal.expectedMaturity} />
-                <Row label="Amortization" value="Bullet at maturity" />
-                <Row label="Interest" value="PIK — monthly accrual, capitalized" />
-              </div>
-            </div>
-
-            {/* Construction Progress */}
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" /> Construction & Budget
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Construction Progress" value={`${deal.constructionProgress}%`} />
-                <div>
-                  <Progress value={deal.constructionProgress} className="h-2 mt-1" />
-                </div>
-                <Row label="Construction Budget" value={formatCurrency(deal.constructionBudget)} />
-                <Row label="Spent to Date" value={formatCurrency(deal.constructionSpent)} />
-                <Row label="Budget Utilization" value={deal.constructionBudget > 0 ? formatPercent((deal.constructionSpent / deal.constructionBudget) * 100) : "N/A"} />
-                <Row label="Land Cost" value={formatCurrency(deal.landCost)} />
-              </div>
-            </div>
-
-            {/* Developer */}
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Shield className="h-4 w-4 text-primary" /> Developer Profile
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Sponsor" value={deal.sponsor} />
-                <Row label="Experience" value={deal.developerExperience} />
-                <Row label="Completed Projects" value={`${deal.developerTrackRecord}`} />
-              </div>
-            </div>
+            <Card title="Project Details" icon={Building}>
+              <Row label="Asset Type" value={deal.assetType} />
+              <Row label="Location" value={deal.location} />
+              <Row label="Total Units" value={`${deal.totalUnits}`} />
+              <Row label="Total Area" value={`${deal.totalArea.toLocaleString()} sqm`} />
+              <Row label="Description" value={deal.description} />
+            </Card>
+            <Card title="Loan Structure" icon={DollarSign}>
+              <Row label="Cash Interest" value={`${deal.interestRate}%`} />
+              <Row label="PIK Spread" value={`${deal.pikSpread}%`} />
+              <Row label="All-in Rate" value={`${deal.totalRate}%`} />
+              <Row label="Origination Fee" value={`${deal.originationFee}%`} />
+              <Row label="Exit Fee" value={`${deal.exitFee}%`} />
+              <Row label="Maturity" value={deal.expectedMaturity} />
+              <Row label="Amortization" value="Bullet at maturity" />
+              <Row label="Interest" value="PIK — monthly accrual, capitalized" />
+            </Card>
+            <Card title="Construction & Budget" icon={TrendingUp}>
+              <Row label="Construction Progress" value={`${deal.constructionProgress}%`} />
+              <div><Progress value={deal.constructionProgress} className="h-2 mt-1" /></div>
+              <Row label="Construction Budget" value={formatCurrency(deal.constructionBudget)} />
+              <Row label="Spent to Date" value={formatCurrency(deal.constructionSpent)} />
+              <Row label="Budget Utilization" value={deal.constructionBudget > 0 ? formatPercent((deal.constructionSpent / deal.constructionBudget) * 100) : "N/A"} />
+              <Row label="Land Cost" value={formatCurrency(deal.landCost)} />
+            </Card>
+            <Card title="Developer Profile" icon={Shield}>
+              <Row label="Sponsor" value={deal.sponsor} />
+              <Row label="Experience" value={deal.developerExperience} />
+              <Row label="Completed Projects" value={`${deal.developerTrackRecord}`} />
+            </Card>
           </div>
         </TabsContent>
 
@@ -142,9 +118,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
             <div className="p-5 border-b border-border">
               <h3 className="font-display text-sm font-semibold text-foreground">Drawdown Schedule</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Disbursed: {formatCurrency(deal.disbursedAmount)} / {formatCurrency(deal.loanAmount)}
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Disbursed: {formatCurrency(deal.disbursedAmount)} / {formatCurrency(deal.loanAmount)}</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -168,7 +142,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
                         <span className={cn(
                           "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium",
                           dd.status === "disbursed" ? "bg-success/10 text-success" :
-                          dd.status === "approved" ? "bg-primary/10 text-primary" :
+                          dd.status === "approved" ? "bg-accent/10 text-accent" :
                           dd.status === "requested" ? "bg-warning/10 text-warning" :
                           "bg-muted text-muted-foreground"
                         )}>
@@ -208,18 +182,14 @@ export default function DealDetail({ deal }: DealDetailProps) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={cn(
-                      "text-sm font-semibold",
-                      c.status === "compliant" ? "text-success" :
-                      c.status === "watch" ? "text-warning" : "text-destructive"
+                    <p className={cn("text-sm font-semibold",
+                      c.status === "compliant" ? "text-success" : c.status === "watch" ? "text-warning" : "text-destructive"
                     )}>{c.currentValue}</p>
                     <p className="text-xs uppercase text-muted-foreground">{c.status}</p>
                   </div>
                 </div>
               ))}
-              {deal.covenants.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-8">No covenants configured for this deal</p>
-              )}
+              {deal.covenants.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No covenants configured</p>}
             </div>
           </div>
         </TabsContent>
@@ -228,9 +198,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
             <div className="p-5 border-b border-border">
               <h3 className="font-display text-sm font-semibold text-foreground">Unit Sales Tracker</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Pre-sales: {deal.preSalesPercent}% • {deal.unitSales.filter(u => u.status === "sold" || u.status === "contracted").length} contracted/sold
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Pre-sales: {deal.preSalesPercent}%</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -238,7 +206,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
                   <tr className="border-b border-border bg-muted/50">
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Unit</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Type</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Area (sqm)</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Area</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">List Price</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Sale Price</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Release Price</th>
@@ -250,64 +218,62 @@ export default function DealDetail({ deal }: DealDetailProps) {
                     <tr key={u.unit} className="border-b border-border last:border-0">
                       <td className="px-4 py-3 font-medium text-foreground">{u.unit}</td>
                       <td className="px-4 py-3 text-muted-foreground">{u.type}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{u.area}</td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">{u.area} sqm</td>
                       <td className="px-4 py-3 text-right text-foreground">{formatCurrency(u.listPrice)}</td>
                       <td className="px-4 py-3 text-right text-foreground">{u.salePrice ? formatCurrency(u.salePrice) : "—"}</td>
                       <td className="px-4 py-3 text-right text-foreground">{u.releasePrice ? formatCurrency(u.releasePrice) : "—"}</td>
                       <td className="px-4 py-3 text-center">
-                        <span className={cn(
-                          "rounded-md px-2 py-0.5 text-xs font-medium",
+                        <span className={cn("rounded-md px-2 py-0.5 text-xs font-medium",
                           u.status === "sold" ? "bg-success/10 text-success" :
-                          u.status === "contracted" ? "bg-primary/10 text-primary" :
+                          u.status === "contracted" ? "bg-accent/10 text-accent" :
                           u.status === "reserved" ? "bg-warning/10 text-warning" :
                           "bg-muted text-muted-foreground"
-                        )}>
-                          {u.status.charAt(0).toUpperCase() + u.status.slice(1)}
-                        </span>
+                        )}>{u.status.charAt(0).toUpperCase() + u.status.slice(1)}</span>
                       </td>
                     </tr>
                   ))}
-                  {deal.unitSales.length === 0 && (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">No unit sales data available</td>
-                    </tr>
-                  )}
+                  {deal.unitSales.length === 0 && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">No unit sales data</td></tr>}
                 </tbody>
               </table>
             </div>
           </div>
         </TabsContent>
 
+        <TabsContent value="dd"><DueDiligencePanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="approvals"><ApprovalsPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="legal"><LegalSecurityPanel dealId={deal.id} /></TabsContent>
+
         <TabsContent value="financials">
           <div className="grid lg:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-primary" /> Current Exposure
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Committed Facility" value={formatCurrency(deal.loanAmount)} />
-                <Row label="Disbursed" value={formatCurrency(deal.disbursedAmount)} />
-                <Row label="Undrawn" value={formatCurrency(deal.loanAmount - deal.disbursedAmount)} />
-                <Row label="Accrued PIK Interest" value={formatCurrency(deal.accruedPIK)} />
-                <Row label="Total Exposure" value={formatCurrency(deal.totalExposure)} highlight />
-              </div>
-            </div>
-            <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" /> Key Dates
-              </h3>
-              <div className="space-y-3 text-sm">
-                <Row label="Date Received" value={deal.dateReceived} />
-                {deal.termSheetDate && <Row label="Term Sheet Issued" value={deal.termSheetDate} />}
-                {deal.icApprovalDate && <Row label="IC Approval" value={deal.icApprovalDate} />}
-                {deal.closingDate && <Row label="Closing Date" value={deal.closingDate} />}
-                {deal.firstDrawdownDate && <Row label="First Drawdown" value={deal.firstDrawdownDate} />}
-                <Row label="Expected Maturity" value={deal.expectedMaturity} />
-              </div>
-            </div>
+            <Card title="Current Exposure" icon={DollarSign}>
+              <Row label="Committed Facility" value={formatCurrency(deal.loanAmount)} />
+              <Row label="Disbursed" value={formatCurrency(deal.disbursedAmount)} />
+              <Row label="Undrawn" value={formatCurrency(deal.loanAmount - deal.disbursedAmount)} />
+              <Row label="Accrued PIK Interest" value={formatCurrency(deal.accruedPIK)} />
+              <Row label="Total Exposure" value={formatCurrency(deal.totalExposure)} highlight />
+            </Card>
+            <Card title="Key Dates" icon={FileText}>
+              <Row label="Date Received" value={deal.dateReceived} />
+              {deal.termSheetDate && <Row label="Term Sheet Issued" value={deal.termSheetDate} />}
+              {deal.icApprovalDate && <Row label="IC Approval" value={deal.icApprovalDate} />}
+              {deal.closingDate && <Row label="Closing Date" value={deal.closingDate} />}
+              {deal.firstDrawdownDate && <Row label="First Drawdown" value={deal.firstDrawdownDate} />}
+              <Row label="Expected Maturity" value={deal.expectedMaturity} />
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function Card({ title, icon: Icon, children }: { title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+      <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+        <Icon className="h-4 w-4 text-accent" /> {title}
+      </h3>
+      <div className="space-y-3 text-sm">{children}</div>
     </div>
   );
 }
@@ -316,7 +282,7 @@ function Row({ label, value, highlight }: { label: string; value: string; highli
   return (
     <div className="flex justify-between items-start gap-4">
       <span className="text-muted-foreground shrink-0">{label}</span>
-      <span className={cn("text-right", highlight ? "font-semibold text-primary" : "text-foreground")}>{value}</span>
+      <span className={cn("text-right", highlight ? "font-semibold text-accent" : "text-foreground")}>{value}</span>
     </div>
   );
 }
