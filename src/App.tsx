@@ -14,6 +14,7 @@ import BorrowersPage from "./pages/BorrowersPage.tsx";
 import BorrowerDetailPage from "./pages/BorrowerDetailPage.tsx";
 import PIKEnginePage from "./pages/PIKEnginePage.tsx";
 import ConstructionMonitoringPage from "./pages/ConstructionMonitoringPage.tsx";
+import LifecyclePage from "./pages/LifecyclePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
