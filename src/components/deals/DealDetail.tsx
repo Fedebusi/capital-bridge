@@ -2,7 +2,7 @@ import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stage
 import { cn } from "@/lib/utils";
 import { 
   ArrowLeft, Building, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText
+  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,10 @@ import { Progress } from "@/components/ui/progress";
 import DueDiligencePanel from "./DueDiligencePanel";
 import ApprovalsPanel from "./ApprovalsPanel";
 import LegalSecurityPanel from "./LegalSecurityPanel";
+import PIKSchedulePanel from "./PIKSchedulePanel";
+import ConstructionMonitoringPanel from "./ConstructionMonitoringPanel";
+import WaterfallPanel from "./WaterfallPanel";
+import TermSheetWaiverPanel from "./TermSheetWaiverPanel";
 
 interface DealDetailProps {
   deal: Deal;
@@ -76,6 +80,10 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <TabsTrigger value="dd">Due Diligence</TabsTrigger>
           <TabsTrigger value="approvals">Approvals</TabsTrigger>
           <TabsTrigger value="legal">Legal & Security</TabsTrigger>
+          <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>
+          <TabsTrigger value="pik">PIK Schedule</TabsTrigger>
+          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
+          <TabsTrigger value="waterfall">Waterfall</TabsTrigger>
           <TabsTrigger value="financials">Financial Summary</TabsTrigger>
         </TabsList>
 
@@ -242,6 +250,10 @@ export default function DealDetail({ deal }: DealDetailProps) {
         <TabsContent value="dd"><DueDiligencePanel dealId={deal.id} /></TabsContent>
         <TabsContent value="approvals"><ApprovalsPanel dealId={deal.id} /></TabsContent>
         <TabsContent value="legal"><LegalSecurityPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="termsheet"><TermSheetWaiverPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="pik"><PIKSchedulePanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="monitoring"><ConstructionMonitoringPanel dealId={deal.id} /></TabsContent>
+        <TabsContent value="waterfall"><WaterfallPanel dealId={deal.id} /></TabsContent>
 
         <TabsContent value="financials">
           <div className="grid lg:grid-cols-2 gap-4">
