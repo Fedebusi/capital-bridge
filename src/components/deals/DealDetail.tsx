@@ -106,6 +106,16 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <TabsTrigger value="financials">Financial Summary</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="lifecycle">
+          {lifecycle ? (
+            <LifecycleTracker lifecycle={lifecycle} />
+          ) : (
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="text-sm text-muted-foreground">Lifecycle tracking not yet configured for this deal</p>
+            </div>
+          )}
+        </TabsContent>
+
         <TabsContent value="overview" className="space-y-4">
           <div className="grid lg:grid-cols-2 gap-4">
             <Card title="Project Details" icon={Building}>
