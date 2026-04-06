@@ -73,7 +73,7 @@ export interface RetentionSchedule {
 export const sampleSiteVisits: Record<string, SiteVisit[]> = {
   "deal-001": [
     {
-      id: "sv-001", date: "2026-03-15", inspector: "Ing. Carlos Vega",
+      id: "sv-001", date: "2026-03-15", inspector: "Ing. Y. Soto",
       constructionProgress: 72, planningProgress: 70, deviation: 2,
       weatherConditions: "Clear, 18°C", workersOnSite: 45,
       photos: [
@@ -91,7 +91,7 @@ export const sampleSiteVisits: Record<string, SiteVisit[]> = {
       notes: "Overall progress satisfactory. Minor elevator shaft delay will not affect critical path.",
     },
     {
-      id: "sv-002", date: "2026-02-12", inspector: "Ing. Carlos Vega",
+      id: "sv-002", date: "2026-02-12", inspector: "Ing. Y. Soto",
       constructionProgress: 65, planningProgress: 62, deviation: 3,
       weatherConditions: "Partly cloudy, 15°C", workersOnSite: 42,
       photos: [
@@ -107,7 +107,7 @@ export const sampleSiteVisits: Record<string, SiteVisit[]> = {
       recommendation: "proceed",
     },
     {
-      id: "sv-003", date: "2026-01-10", inspector: "Ing. Carlos Vega",
+      id: "sv-003", date: "2026-01-10", inspector: "Ing. Y. Soto",
       constructionProgress: 58, planningProgress: 55, deviation: 3,
       weatherConditions: "Rain, 12°C", workersOnSite: 38,
       photos: [
@@ -131,7 +131,7 @@ export const sampleCertifications: Record<string, ConstructionCertification[]> =
       submittedDate: "2025-10-05", certifiedAmount: 1850000,
       retentionPercent: 5, retentionAmount: 92500, netPayable: 1757500,
       cumulativeCertified: 1850000, cumulativeRetention: 92500,
-      status: "paid", approvedBy: "Ing. Carlos Vega", approvedDate: "2025-10-10",
+      status: "paid", approvedBy: "Ing. Y. Soto", approvedDate: "2025-10-10",
       linkedDrawdownId: "dd-001-1",
     },
     {
@@ -139,7 +139,7 @@ export const sampleCertifications: Record<string, ConstructionCertification[]> =
       submittedDate: "2025-12-02", certifiedAmount: 2640000,
       retentionPercent: 5, retentionAmount: 132000, netPayable: 2508000,
       cumulativeCertified: 4490000, cumulativeRetention: 224500,
-      status: "paid", approvedBy: "Ing. Carlos Vega", approvedDate: "2025-12-08",
+      status: "paid", approvedBy: "Ing. Y. Soto", approvedDate: "2025-12-08",
       linkedDrawdownId: "dd-001-2",
     },
     {
@@ -147,7 +147,7 @@ export const sampleCertifications: Record<string, ConstructionCertification[]> =
       submittedDate: "2026-03-05", certifiedAmount: 3150000,
       retentionPercent: 5, retentionAmount: 157500, netPayable: 2992500,
       cumulativeCertified: 7640000, cumulativeRetention: 382000,
-      status: "paid", approvedBy: "Ing. Carlos Vega", approvedDate: "2026-03-12",
+      status: "paid", approvedBy: "Ing. Y. Soto", approvedDate: "2026-03-12",
       linkedDrawdownId: "dd-001-3",
     },
     {
@@ -164,7 +164,7 @@ export const sampleCertifications: Record<string, ConstructionCertification[]> =
 export const sampleMonitoringReports: Record<string, MonitoringReport[]> = {
   "deal-001": [
     {
-      id: "mr-003", reportNumber: 3, date: "2026-03-20", preparedBy: "Ing. Carlos Vega",
+      id: "mr-003", reportNumber: 3, date: "2026-03-20", preparedBy: "Ing. Y. Soto",
       period: "Q1 2026", constructionProgress: 72, budgetUtilization: 68,
       scheduleStatus: "on_track", costStatus: "within_budget",
       qualityAssessment: "satisfactory",
@@ -182,7 +182,7 @@ export const sampleMonitoringReports: Record<string, MonitoringReport[]> = {
       drawdownAmount: 2560000,
     },
     {
-      id: "mr-002", reportNumber: 2, date: "2025-12-15", preparedBy: "Ing. Carlos Vega",
+      id: "mr-002", reportNumber: 2, date: "2025-12-15", preparedBy: "Ing. Y. Soto",
       period: "Q4 2025", constructionProgress: 55, budgetUtilization: 48,
       scheduleStatus: "on_track", costStatus: "within_budget",
       qualityAssessment: "satisfactory",

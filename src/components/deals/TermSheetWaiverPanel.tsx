@@ -30,7 +30,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
       {/* Term Sheet */}
       {ts && (
         <TabsContent value="termsheet" className="space-y-4">
-          {/* Status & Castlelake Validation */}
+          {/* Status & Capital Partner Validation */}
           <div className="grid lg:grid-cols-2 gap-4">
             <div className="rounded-xl border border-border bg-card p-5 shadow-card">
               <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -54,7 +54,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
               ts.castlelakeValidation?.submitted ? "border-amber-200" : "border-border"
             )}>
               <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Shield className="h-4 w-4 text-accent" /> Castlelake Validation
+                <Shield className="h-4 w-4 text-accent" /> Capital Partner Validation
               </h3>
               {ts.castlelakeValidation ? (
                 <div className="space-y-3 text-sm">
@@ -84,7 +84,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">Not yet submitted to Castlelake</p>
+                <p className="text-sm text-muted-foreground">Not yet submitted to Capital Partner</p>
               )}
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
                   <div className={cn("rounded-lg border p-3",
                     w.cpApproval?.approved ? "border-emerald-200" : "border-border"
                   )}>
-                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Castlelake Approval</p>
+                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Capital Partner Approval</p>
                     {w.cpApproval ? (
                       <div className="flex items-center gap-2">
                         {w.cpApproval.approved ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <XCircle className="h-4 w-4 text-destructive" />}
@@ -214,7 +214,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
                     ) : (
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-warning" />
-                        <span className="text-sm text-warning font-medium">Awaiting Castlelake decision</span>
+                        <span className="text-sm text-warning font-medium">Awaiting Capital Partner decision</span>
                       </div>
                     )}
                   </div>
