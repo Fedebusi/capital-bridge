@@ -12,6 +12,8 @@ import DueDiligencePage from "./pages/DueDiligencePage.tsx";
 import ApprovalsPage from "./pages/ApprovalsPage.tsx";
 import BorrowersPage from "./pages/BorrowersPage.tsx";
 import BorrowerDetailPage from "./pages/BorrowerDetailPage.tsx";
+import PIKEnginePage from "./pages/PIKEnginePage.tsx";
+import ConstructionMonitoringPage from "./pages/ConstructionMonitoringPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/approvals" element={<ApprovalsPage />} />
           <Route path="/borrowers" element={<BorrowersPage />} />
           <Route path="/borrowers/:id" element={<BorrowerDetailPage />} />
+          <Route path="/pik-engine" element={<PIKEnginePage />} />
+          <Route path="/construction" element={<ConstructionMonitoringPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
