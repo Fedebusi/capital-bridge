@@ -112,7 +112,7 @@ export const sampleDueDiligence: Record<string, DDItem[]> = {
     { id: "dd-f3", category: "financial", label: "Cash flow model stress test", status: "completed", assignee: "T. Aguirre", completedDate: "2025-05-08" },
     { id: "dd-e1", category: "environmental", label: "KYC / AML screening", status: "completed", assignee: "Compliance Team", completedDate: "2025-04-15" },
     { id: "dd-e2", category: "environmental", label: "Environmental impact assessment", status: "completed", assignee: "EcoVerde SL", completedDate: "2025-04-28" },
-    { id: "dd-a1", category: "appraisal", label: "Independent valuation (current)", status: "completed", assignee: "Apex Valuation", completedDate: "2025-05-12", documents: [{ name: "Valuation_CBRE.pdf", version: 1, uploadDate: "2025-05-12" }] },
+    { id: "dd-a1", category: "appraisal", label: "Independent valuation (current)", status: "completed", assignee: "Apex Valuation", completedDate: "2025-05-12", documents: [{ name: "Valuation_Report.pdf", version: 1, uploadDate: "2025-05-12" }] },
     { id: "dd-a2", category: "appraisal", label: "GDV assessment", status: "completed", assignee: "Apex Valuation", completedDate: "2025-05-12" },
   ],
   "deal-002": [

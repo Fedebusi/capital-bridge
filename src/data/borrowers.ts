@@ -141,7 +141,7 @@ export const sampleBorrowers: Borrower[] = [
       { name: "A. Quintero", role: "Finance Director", email: "c.iglesias@altamiracap.es", phone: "+34 915 XXX XXX" },
     ],
     corporateStructure: [
-      { name: "Altamira Capital Partners SL", type: "Sponsor", jurisdiction: "Spain", registrationNumber: "B-28XXXXXX", ownership: "60% F. Velázquez, 40% institutional" },
+      { name: "Altamira Capital Partners SL", type: "Sponsor", jurisdiction: "Spain", registrationNumber: "B-28XXXXXX", ownership: "60% H. Paredes, 40% institutional" },
       { name: "Norte Residencial SL", type: "SPV", jurisdiction: "Spain", registrationNumber: "B-28XXXXXX", ownership: "100% Altamira Capital" },
       { name: "H. Paredes Ruiz", type: "UBO", jurisdiction: "Spain", ownership: "60% beneficial ownership" },
     ],
