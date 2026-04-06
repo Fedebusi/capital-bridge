@@ -80,6 +80,10 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <TabsTrigger value="dd">Due Diligence</TabsTrigger>
           <TabsTrigger value="approvals">Approvals</TabsTrigger>
           <TabsTrigger value="legal">Legal & Security</TabsTrigger>
+          <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>
+          <TabsTrigger value="pik">PIK Schedule</TabsTrigger>
+          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
+          <TabsTrigger value="waterfall">Waterfall</TabsTrigger>
           <TabsTrigger value="financials">Financial Summary</TabsTrigger>
         </TabsList>
 
