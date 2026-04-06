@@ -1,8 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Icon, DivIcon } from "leaflet";
-import { Link } from "react-router-dom";
-import { sampleDeals, formatMillions, stageLabels, stageColors } from "@/data/sampleDeals";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import L from "leaflet";
+import { sampleDeals, formatMillions, stageLabels } from "@/data/sampleDeals";
 import "leaflet/dist/leaflet.css";
 
 const stageMarkerColors: Record<string, string> = {
@@ -15,25 +14,107 @@ const stageMarkerColors: Record<string, string> = {
   rejected: "#ef4444",
 };
 
-function createMarkerIcon(stage: string) {
-  const color = stageMarkerColors[stage] || "#19212E";
-  return new DivIcon({
-    className: "",
-    html: `<div style="
-      width: 28px; height: 28px;
-      background: ${color};
-      border: 3px solid white;
-      border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    "></div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -16],
-  });
-}
-
 export default function PortfolioMap() {
-  const dealsWithCoords = sampleDeals.filter(d => d.coordinates);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    const map = L.map(mapRef.current, {
+      center: [39.5, -2.0],
+      zoom: 6,
+      scrollWheelZoom: false,
+      attributionControl: false,
+    });
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png").addTo(map);
+
+    const dealsWithCoords = sampleDeals.filter(d => d.coordinates);
+
+    dealsWithCoords.forEach(deal => {
+      const color = stageMarkerColors[deal.stage] || "#19212E";
+
+      const icon = L.divIcon({
+        className: "",
+        html: `<div style="
+          width: 28px; height: 28px;
+          background: ${color};
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        "></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -16],
+      });
+
+      const marker = L.marker(deal.coordinates, { icon }).addTo(map);
+
+      const popupContent = document.createElement("div");
+      popupContent.style.fontFamily = "Inter, sans-serif";
+      popupContent.style.minWidth = "200px";
+      popupContent.innerHTML = `
+        <div style="margin-bottom: 4px;">
+          <span style="
+            display: inline-block;
+            padding: 2px 6px;
+            background: ${color}22;
+            color: ${color};
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          ">${stageLabels[deal.stage]}</span>
+        </div>
+        <p style="font-weight: 700; font-size: 14px; color: #19212E; margin: 4px 0 2px;">${deal.projectName}</p>
+        <p style="font-size: 11px; color: #64748b;">${deal.location}</p>
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+          <div>
+            <span style="color: #94a3b8;">Facility</span>
+            <p style="font-weight: 700; color: #19212E; margin: 2px 0 0;">${formatMillions(deal.loanAmount)}</p>
+          </div>
+          <div>
+            <span style="color: #94a3b8;">LTV</span>
+            <p style="font-weight: 700; color: #19212E; margin: 2px 0 0;">${deal.ltv.toFixed(1)}%</p>
+          </div>
+        </div>
+        <button id="view-deal-${deal.id}" style="
+          display: block;
+          width: 100%;
+          margin-top: 8px;
+          padding: 6px;
+          background: #19212E;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          cursor: pointer;
+        ">View Deal</button>
+      `;
+
+      marker.bindPopup(popupContent);
+
+      marker.on("popupopen", () => {
+        const btn = document.getElementById(`view-deal-${deal.id}`);
+        if (btn) {
+          btn.addEventListener("click", () => navigate(`/deals/${deal.id}`));
+        }
+      });
+    });
+
+    mapInstanceRef.current = map;
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+  }, [navigate]);
 
   return (
     <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
@@ -52,55 +133,7 @@ export default function PortfolioMap() {
           ))}
         </div>
       </div>
-      <div className="h-[380px]">
-        <MapContainer
-          center={[39.5, -2.0]}
-          zoom={6}
-          scrollWheelZoom={false}
-          style={{ height: "100%", width: "100%" }}
-          attributionControl={false}
-        >
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-          {dealsWithCoords.map(deal => (
-            <Marker
-              key={deal.id}
-              position={deal.coordinates}
-              icon={createMarkerIcon(deal.stage)}
-            >
-              <Popup>
-                <div className="font-body min-w-[200px]">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={cn(
-                      "inline-flex items-center rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide",
-                      stageColors[deal.stage]
-                    )}>
-                      {stageLabels[deal.stage]}
-                    </span>
-                  </div>
-                  <p className="font-bold text-sm text-slate-900 mt-1">{deal.projectName}</p>
-                  <p className="text-[11px] text-slate-500">{deal.location}</p>
-                  <div className="mt-2 pt-2 border-t border-slate-100 grid grid-cols-2 gap-2 text-[11px]">
-                    <div>
-                      <span className="text-slate-400">Facility</span>
-                      <p className="font-bold text-slate-900">{formatMillions(deal.loanAmount)}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">LTV</span>
-                      <p className="font-bold text-slate-900">{deal.ltv.toFixed(1)}%</p>
-                    </div>
-                  </div>
-                  <Link
-                    to={`/deals/${deal.id}`}
-                    className="block mt-2 text-center bg-slate-900 text-white rounded py-1 text-[10px] font-bold uppercase tracking-wide hover:bg-slate-800 transition-colors"
-                  >
-                    View Deal
-                  </Link>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
+      <div ref={mapRef} className="h-[380px]" />
     </div>
   );
 }
