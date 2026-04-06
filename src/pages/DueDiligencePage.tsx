@@ -5,6 +5,8 @@ import { sampleDueDiligence } from "@/data/dealModules";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
+import { generateDDReport } from "@/lib/generateDDReport";
+import { FileDown } from "lucide-react";
 
 export default function DueDiligencePage() {
   const dealsWithDD = sampleDeals.filter(d => sampleDueDiligence[d.id]);
