@@ -12,6 +12,7 @@ import {
   X,
   ClipboardCheck,
   Vote,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
