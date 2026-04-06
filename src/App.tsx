@@ -37,6 +37,7 @@ const App = () => (
           <Route path="/borrowers/:id" element={<BorrowerDetailPage />} />
           <Route path="/pik-engine" element={<PIKEnginePage />} />
           <Route path="/construction" element={<ConstructionMonitoringPage />} />
+          <Route path="/lifecycle" element={<LifecyclePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

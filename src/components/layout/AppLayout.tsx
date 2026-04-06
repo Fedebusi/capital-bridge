@@ -15,11 +15,13 @@ import {
   Users,
   TrendingUp,
   HardHat,
+  Route,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/lifecycle", icon: Route, label: "Lifecycle" },
   { to: "/pipeline", icon: FolderOpen, label: "Pipeline" },
   { to: "/screening", icon: Search, label: "Deal Screening" },
   { to: "/deals", icon: FileText, label: "Loan Book" },
