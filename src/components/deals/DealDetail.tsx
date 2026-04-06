@@ -2,7 +2,7 @@ import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stage
 import { cn } from "@/lib/utils";
 import { 
   ArrowLeft, Building, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText
+  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,10 @@ import { Progress } from "@/components/ui/progress";
 import DueDiligencePanel from "./DueDiligencePanel";
 import ApprovalsPanel from "./ApprovalsPanel";
 import LegalSecurityPanel from "./LegalSecurityPanel";
+import PIKSchedulePanel from "./PIKSchedulePanel";
+import ConstructionMonitoringPanel from "./ConstructionMonitoringPanel";
+import WaterfallPanel from "./WaterfallPanel";
+import TermSheetWaiverPanel from "./TermSheetWaiverPanel";
 
 interface DealDetailProps {
   deal: Deal;
