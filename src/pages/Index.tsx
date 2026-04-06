@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
+import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { sampleDeals, getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
 import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info } from "lucide-react";
 
@@ -64,6 +65,7 @@ export default function DashboardPage() {
             <p className="text-slate-500 text-sm mt-1">Strategic Institutional Debt Aggregation & Allocation</p>
           </div>
           <div className="flex space-x-2">
+            <QuickScreenDialog />
             <button className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
               Export Report
             </button>
