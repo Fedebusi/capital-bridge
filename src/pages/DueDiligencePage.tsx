@@ -5,6 +5,8 @@ import { sampleDueDiligence } from "@/data/dealModules";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
+import { generateDDReport } from "@/lib/generateDDReport";
+import { FileDown } from "lucide-react";
 
 export default function DueDiligencePage() {
   const dealsWithDD = sampleDeals.filter(d => sampleDueDiligence[d.id]);
@@ -39,6 +41,13 @@ export default function DueDiligencePage() {
                 <div className="flex items-center gap-4">
                   {flagged > 0 && <span className="text-xs text-destructive font-medium">{flagged} flagged</span>}
                   <span className="text-xs text-muted-foreground">{completed}/{items.length} ({pct}%)</span>
+                  <button
+                    onClick={() => generateDDReport(deal, items)}
+                    className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    <FileDown className="h-3.5 w-3.5" />
+                    PDF Report
+                  </button>
                 </div>
               </div>
               <div className="p-4">
