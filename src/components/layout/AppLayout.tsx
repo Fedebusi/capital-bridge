@@ -21,6 +21,7 @@ const navItems = [
   { to: "/pipeline", icon: FolderOpen, label: "Pipeline" },
   { to: "/screening", icon: Search, label: "Deal Screening" },
   { to: "/deals", icon: FileText, label: "Loan Book" },
+  { to: "/borrowers", icon: Users, label: "Borrower Base" },
   { to: "/due-diligence", icon: ClipboardCheck, label: "Due Diligence" },
   { to: "/approvals", icon: Vote, label: "Approvals" },
 ];

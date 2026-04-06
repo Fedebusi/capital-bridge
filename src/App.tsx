@@ -10,6 +10,8 @@ import LoanBookPage from "./pages/LoanBookPage.tsx";
 import DealDetailPage from "./pages/DealDetailPage.tsx";
 import DueDiligencePage from "./pages/DueDiligencePage.tsx";
 import ApprovalsPage from "./pages/ApprovalsPage.tsx";
+import BorrowersPage from "./pages/BorrowersPage.tsx";
+import BorrowerDetailPage from "./pages/BorrowerDetailPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/deals/:id" element={<DealDetailPage />} />
           <Route path="/due-diligence" element={<DueDiligencePage />} />
           <Route path="/approvals" element={<ApprovalsPage />} />
+          <Route path="/borrowers" element={<BorrowersPage />} />
+          <Route path="/borrowers/:id" element={<BorrowerDetailPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
