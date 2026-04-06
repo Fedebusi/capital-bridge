@@ -1,8 +1,7 @@
 import { Deal, stageLabels, stageColors, formatMillions, formatPercent } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
-import { MapPin, Building, Calendar, TrendingUp, AlertTriangle } from "lucide-react";
+import { MapPin, Building, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 interface DealCardProps {
   deal: Deal;
@@ -13,10 +12,9 @@ export default function DealCard({ deal, index = 0 }: DealCardProps) {
   const hasCovenantIssue = deal.covenants.some(c => c.status !== "compliant");
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.05 }}
+    <div
+      className="animate-fade-in"
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
     >
       <Link
         to={`/deals/${deal.id}`}
@@ -84,6 +82,6 @@ export default function DealCard({ deal, index = 0 }: DealCardProps) {
           </div>
         )}
       </Link>
-    </motion.div>
+    </div>
   );
 }
