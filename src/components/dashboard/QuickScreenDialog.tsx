@@ -23,6 +23,16 @@ const criteria = {
   acceptedTypes: ["Residential - Build to Sell", "Residential - Refurbishment & Sale"],
 };
 
+function formatThousands(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+  return Number(digits).toLocaleString("it-IT");
+}
+
+function parseRawNumber(formatted: string): string {
+  return formatted.replace(/\./g, "").replace(/,/g, "");
+}
+
 export default function QuickScreenDialog() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -34,6 +44,13 @@ export default function QuickScreenDialog() {
     totalCost: "",
     preSales: "",
   });
+
+  const handleCurrencyChange = (field: "loanAmount" | "gdv" | "totalCost") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setForm(p => ({ ...p, [field]: raw }));
+  };
+
+  const displayCurrency = (value: string) => value ? formatThousands(value) : "";
 
   const handleScreen = () => {
     const loan = parseFloat(form.loanAmount) || 0;
@@ -94,15 +111,15 @@ export default function QuickScreenDialog() {
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground">Loan (€)</Label>
-                <Input type="number" value={form.loanAmount} onChange={e => setForm(p => ({ ...p, loanAmount: e.target.value }))} placeholder="12,000,000" className="mt-1" />
+                <Input type="text" inputMode="numeric" value={displayCurrency(form.loanAmount)} onChange={handleCurrencyChange("loanAmount")} placeholder="12.000.000" className="mt-1" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">GDV (€)</Label>
-                <Input type="number" value={form.gdv} onChange={e => setForm(p => ({ ...p, gdv: e.target.value }))} placeholder="30,000,000" className="mt-1" />
+                <Input type="text" inputMode="numeric" value={displayCurrency(form.gdv)} onChange={handleCurrencyChange("gdv")} placeholder="30.000.000" className="mt-1" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Total Cost (€)</Label>
-                <Input type="number" value={form.totalCost} onChange={e => setForm(p => ({ ...p, totalCost: e.target.value }))} placeholder="18,000,000" className="mt-1" />
+                <Input type="text" inputMode="numeric" value={displayCurrency(form.totalCost)} onChange={handleCurrencyChange("totalCost")} placeholder="18.000.000" className="mt-1" />
               </div>
             </div>
             <div>
