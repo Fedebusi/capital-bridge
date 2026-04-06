@@ -2,7 +2,7 @@ import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stage
 import { cn } from "@/lib/utils";
 import { 
   ArrowLeft, Building, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature
+  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature, Route
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,12 +14,17 @@ import PIKSchedulePanel from "./PIKSchedulePanel";
 import ConstructionMonitoringPanel from "./ConstructionMonitoringPanel";
 import WaterfallPanel from "./WaterfallPanel";
 import TermSheetWaiverPanel from "./TermSheetWaiverPanel";
+import LifecycleTracker from "./LifecycleTracker";
+import LifecycleProgressBar from "./LifecycleProgressBar";
+import { sampleLifecycles, getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
 
 interface DealDetailProps {
   deal: Deal;
 }
 
 export default function DealDetail({ deal }: DealDetailProps) {
+  const lifecycle = sampleLifecycles[deal.id];
+  
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -47,6 +52,19 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </div>
       </div>
 
+      {/* Lifecycle Progress Bar */}
+      {lifecycle && (
+        <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <Route className="h-3 w-3" /> Loan Lifecycle — Phase {getCurrentPhaseNumber(lifecycle)}/12
+            </p>
+            <span className="text-xs font-semibold text-accent">{getLifecycleProgress(lifecycle)}% complete</span>
+          </div>
+          <LifecycleProgressBar lifecycle={lifecycle} />
+        </div>
+      )}
+
       {/* Key Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {[
@@ -71,8 +89,9 @@ export default function DealDetail({ deal }: DealDetailProps) {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="lifecycle" className="space-y-4">
         <TabsList className="bg-muted border border-border flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="drawdowns">Drawdowns</TabsTrigger>
           <TabsTrigger value="covenants">Covenants</TabsTrigger>
@@ -86,6 +105,16 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <TabsTrigger value="waterfall">Waterfall</TabsTrigger>
           <TabsTrigger value="financials">Financial Summary</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="lifecycle">
+          {lifecycle ? (
+            <LifecycleTracker lifecycle={lifecycle} />
+          ) : (
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="text-sm text-muted-foreground">Lifecycle tracking not yet configured for this deal</p>
+            </div>
+          )}
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid lg:grid-cols-2 gap-4">
