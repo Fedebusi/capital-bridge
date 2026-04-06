@@ -104,13 +104,13 @@ export const stageLabels: Record<DealStage, string> = {
 };
 
 export const stageColors: Record<DealStage, string> = {
-  screening: "bg-blue-500/20 text-blue-400",
-  due_diligence: "bg-amber-500/20 text-amber-400",
-  ic_approval: "bg-purple-500/20 text-purple-400",
-  documentation: "bg-cyan-500/20 text-cyan-400",
-  active: "bg-emerald-500/20 text-emerald-400",
-  repaid: "bg-muted-foreground/20 text-muted-foreground",
-  rejected: "bg-destructive/20 text-destructive",
+  screening: "bg-blue-100 text-blue-700",
+  due_diligence: "bg-amber-100 text-amber-700",
+  ic_approval: "bg-purple-100 text-purple-700",
+  documentation: "bg-cyan-100 text-cyan-700",
+  active: "bg-emerald-100 text-emerald-700",
+  repaid: "bg-gray-100 text-gray-500",
+  rejected: "bg-red-100 text-red-600",
 };
 
 export const sampleDeals: Deal[] = [
