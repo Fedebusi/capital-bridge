@@ -152,36 +152,37 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top nav */}
-        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-xl flex justify-between items-center px-8 py-3 border-b border-slate-100">
-          <div className="flex items-center space-x-8">
-            <button onClick={() => setMobileOpen(true)} className="rounded p-2 text-slate-400 hover:text-primary lg:hidden">
-              <Menu className="h-5 w-5" />
-            </button>
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              <input
-                className="bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 w-72 placeholder:text-slate-400 outline-none transition-all"
-                placeholder="Search facilities, deals, borrowers..."
-                type="text"
-              />
+        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100">
+          <div className="mx-auto max-w-[1400px] px-8 py-2.5 flex justify-between items-center">
+            <div className="flex items-center space-x-6">
+              <button onClick={() => setMobileOpen(true)} className="rounded p-2 text-slate-400 hover:text-primary lg:hidden">
+                <Menu className="h-5 w-5" />
+              </button>
+              <div className="relative hidden sm:block">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  className="bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 w-72 placeholder:text-slate-400 outline-none transition-all"
+                  placeholder="Search facilities, deals, borrowers..."
+                  type="text"
+                />
+              </div>
+              <nav className="hidden md:flex space-x-1">
+                {[
+                  { to: "/dashboard", label: "Portfolio" },
+                  { to: "/borrowers", label: "Borrowers" },
+                  { to: "/approvals", label: "Compliance" },
+                ].map(tab => {
+                  const isActive = location.pathname === tab.to;
+                  return (
+                    <Link key={tab.to} to={tab.to} className={cn(
+                      "px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
+                      isActive ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 hover:text-primary"
+                    )}>{tab.label}</Link>
+                  );
+                })}
+              </nav>
             </div>
-            <nav className="hidden md:flex space-x-1">
-              {[
-                { to: "/", label: "Portfolio" },
-                { to: "/borrowers", label: "Borrowers" },
-                { to: "/approvals", label: "Compliance" },
-              ].map(tab => {
-                const isActive = location.pathname === tab.to;
-                return (
-                  <Link key={tab.to} to={tab.to} className={cn(
-                    "px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
-                    isActive ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 hover:text-primary"
-                  )}>{tab.label}</Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3">
             <Link
               to="/pipeline"
               className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-emerald-700 hidden sm:flex items-center gap-1.5 shadow-sm shadow-emerald-600/20"
@@ -201,6 +202,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <span className="text-[10px] font-bold text-white">AC</span>
               </div>
             </div>
+          </div>
           </div>
         </header>
 
