@@ -2,8 +2,17 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { sampleDeals, getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
-import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity } from "lucide-react";
+import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity, Clock, CheckCircle2, AlertTriangle, FileText, DollarSign, Gavel } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const timelineEvents = [
+  { date: "07 Apr", time: "09:30", icon: DollarSign, color: "bg-emerald-500", ring: "ring-emerald-500/20", title: "Drawdown #4 disbursed", subtitle: "Terrazas del Faro — €1.8M released to borrower", tag: "Funding" },
+  { date: "05 Apr", time: "14:15", icon: CheckCircle2, color: "bg-blue-500", ring: "ring-blue-500/20", title: "IC Committee approved", subtitle: "Mirador del Port — Unanimous approval (5/5 votes)", tag: "Approval" },
+  { date: "03 Apr", time: "11:00", icon: AlertTriangle, color: "bg-amber-500", ring: "ring-amber-500/20", title: "LTV covenant watch triggered", subtitle: "Arcos de Canillejas — LTV at 66.2% (limit: 65%)", tag: "Alert" },
+  { date: "01 Apr", time: "16:45", icon: FileText, color: "bg-violet-500", ring: "ring-violet-500/20", title: "DD report completed", subtitle: "Palau de Gràcia — All 18 items cleared, 0 flagged", tag: "Due Diligence" },
+  { date: "28 Mar", time: "10:00", icon: Gavel, color: "bg-rose-500", ring: "ring-rose-500/20", title: "Term sheet executed", subtitle: "Villa Marina Benahavís — €9.2M facility, 24-month tenor", tag: "Legal" },
+  { date: "25 Mar", time: "09:00", icon: DollarSign, color: "bg-emerald-500", ring: "ring-emerald-500/20", title: "Full repayment received", subtitle: "Costa Brava Residences — €6.4M principal + €890K PIK", tag: "Repayment" },
+];
 
 const recentActivity = [
   { entity: "Oakwood Tech Mezzanine", subtitle: "Series B Refinance", type: "Funding", amount: "€12,400,000", status: "completed" as const },
@@ -270,6 +279,55 @@ export default function DashboardPage() {
                 <p className="text-[10px] text-amber-700/70 mt-1 leading-relaxed">
                   Quarterly asset valuation audits are scheduled for next Monday. Ensure documentation is current.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Timeline */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-violet-50 flex items-center justify-center">
+                <Clock className="h-3.5 w-3.5 text-violet-600" />
+              </div>
+              <h2 className="text-sm font-bold text-primary">Event Timeline</h2>
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last 14 days</span>
+          </div>
+          <div className="p-6">
+            <div className="relative">
+              {/* Vertical line */}
+              <div className="absolute left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-slate-200 via-slate-200 to-transparent" />
+
+              <div className="space-y-1">
+                {timelineEvents.map((event, i) => (
+                  <div key={i} className="flex gap-4 group">
+                    {/* Dot */}
+                    <div className="relative shrink-0 pt-0.5">
+                      <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center ring-4 z-10 relative", event.color, event.ring)}>
+                        <event.icon className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
+                    {/* Content */}
+                    <div className="flex-1 pb-6 group-last:pb-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-bold text-slate-400">{event.date} · {event.time}</span>
+                        <span className={cn(
+                          "px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase",
+                          event.tag === "Funding" || event.tag === "Repayment" ? "bg-emerald-50 text-emerald-600" :
+                          event.tag === "Approval" ? "bg-blue-50 text-blue-600" :
+                          event.tag === "Alert" ? "bg-amber-50 text-amber-600" :
+                          event.tag === "Legal" ? "bg-rose-50 text-rose-600" :
+                          "bg-violet-50 text-violet-600"
+                        )}>
+                          {event.tag}
+                        </span>
+                      </div>
+                      <p className="text-[13px] font-bold text-primary">{event.title}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{event.subtitle}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
