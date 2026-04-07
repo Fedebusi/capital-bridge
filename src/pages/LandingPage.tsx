@@ -62,8 +62,8 @@ function Globe() {
           const isLand = checkLand(lat, lon + angle);
 
           ctx.fillStyle = isLand
-            ? `rgba(25, 33, 46, ${opacity * 2.5})`
-            : `rgba(25, 33, 46, ${opacity * 0.6})`;
+            ? `rgba(25, 33, 46, ${opacity * 4})`
+            : `rgba(25, 33, 46, ${opacity * 1.5})`;
 
           ctx.fillRect(px - dotSize / 2, py - dotSize / 2, dotSize, dotSize);
         }
@@ -142,7 +142,7 @@ export default function LandingPage() {
       {/* Hero */}
       <div className="relative min-h-screen flex items-center overflow-hidden">
         {/* Globe */}
-        <div className="absolute right-[-150px] top-1/2 -translate-y-1/2 opacity-30 pointer-events-none select-none">
+        <div className="absolute right-[-150px] top-1/2 -translate-y-1/2 opacity-50 pointer-events-none select-none">
           <Globe />
         </div>
 
