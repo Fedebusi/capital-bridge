@@ -2,44 +2,21 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { sampleDeals, getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
-import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info } from "lucide-react";
+import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const recentActivity = [
-  {
-    entity: "Oakwood Tech Mezzanine",
-    subtitle: "Series B Refinance",
-    type: "Funding",
-    amount: "€12,400,000",
-    status: "completed" as const,
-  },
-  {
-    entity: "Beacon Real Estate Port.",
-    subtitle: "Commercial Senior Debt",
-    type: "Repayment",
-    amount: "€4,850,000",
-    status: "completed" as const,
-  },
-  {
-    entity: "Solaris Grid Infrastructure",
-    subtitle: "Bridge Loan Facility",
-    type: "Funding",
-    amount: "€32,000,000",
-    status: "processing" as const,
-  },
-  {
-    entity: "Meridian Logistics Hub",
-    subtitle: "Warehouse Development",
-    type: "Drawdown",
-    amount: "€8,200,000",
-    status: "completed" as const,
-  },
+  { entity: "Oakwood Tech Mezzanine", subtitle: "Series B Refinance", type: "Funding", amount: "€12,400,000", status: "completed" as const },
+  { entity: "Beacon Real Estate Port.", subtitle: "Commercial Senior Debt", type: "Repayment", amount: "€4,850,000", status: "completed" as const },
+  { entity: "Solaris Grid Infrastructure", subtitle: "Bridge Loan Facility", type: "Funding", amount: "€32,000,000", status: "processing" as const },
+  { entity: "Meridian Logistics Hub", subtitle: "Warehouse Development", type: "Drawdown", amount: "€8,200,000", status: "completed" as const },
 ];
 
 const sectorAllocation = [
-  { name: "Residential Dev", pct: 42 },
-  { name: "Commercial", pct: 28 },
-  { name: "Infrastructure", pct: 18 },
-  { name: "Refurbishment", pct: 12 },
+  { name: "Residential Dev", pct: 42, color: "bg-emerald-500" },
+  { name: "Commercial", pct: 28, color: "bg-blue-500" },
+  { name: "Infrastructure", pct: 18, color: "bg-violet-500" },
+  { name: "Refurbishment", pct: 12, color: "bg-amber-500" },
 ];
 
 export default function DashboardPage() {
@@ -57,143 +34,163 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Page Header */}
-        <header className="flex justify-between items-start">
+        <header className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-extrabold text-primary">Portfolio Overview</h1>
-            <p className="text-slate-500 text-sm mt-1">Strategic Institutional Debt Aggregation & Allocation</p>
+            <p className="text-slate-400 text-sm mt-0.5">Strategic Institutional Debt Aggregation & Allocation</p>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-2">
             <QuickScreenDialog />
-            <button className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+            <button className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
               Export Report
             </button>
-            <Link
-              to="/pipeline"
-              className="bg-primary text-white px-4 py-2 rounded text-xs font-bold hover:bg-slate-800 transition-colors"
-            >
-              Deploy Capital
-            </Link>
           </div>
         </header>
 
-        {/* Hero Metrics */}
-        <section className="grid grid-cols-12 gap-6">
-          {/* NAV Card */}
-          <div className="col-span-12 lg:col-span-7 bg-slate-50 border border-slate-100 rounded-xl p-8 flex flex-col justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block">
-                Net Asset Value (NAV)
-              </span>
-              <h2 className="text-4xl font-extrabold text-primary tracking-tight">
-                {formatMillions(totalNAV)}
-              </h2>
-              <div className="flex items-center space-x-2 mt-2 text-emerald-600 font-bold text-xs">
-                <TrendingUp className="h-3.5 w-3.5" />
-                <span>+4.2% VS LAST QTR</span>
+        {/* Hero Section */}
+        <section className="grid grid-cols-12 gap-4">
+          {/* NAV Hero Card */}
+          <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-2xl p-7 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/4" />
+            <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-emerald-500/10 rounded-full translate-y-1/2" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Net Asset Value</span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-bold">LIVE</span>
+              </div>
+              <h2 className="text-4xl font-extrabold tracking-tight">{formatMillions(totalNAV)}</h2>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20">
+                  <ArrowUpRight className="h-3 w-3 text-emerald-400" />
+                  <span className="text-xs font-bold text-emerald-400">+4.2%</span>
+                </div>
+                <span className="text-[11px] text-white/40">vs last quarter</span>
               </div>
             </div>
-            <div className="flex space-x-12 mt-12 pt-6 border-t border-slate-200/50">
+            <div className="relative z-10 flex gap-10 mt-8 pt-5 border-t border-white/10">
               <div>
-                <span className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Available Dry Powder</span>
-                <p className="text-xl font-bold text-primary mt-1">{formatMillions(pipelineVolume)}</p>
+                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Dry Powder</span>
+                <p className="text-lg font-bold mt-0.5">{formatMillions(pipelineVolume)}</p>
               </div>
               <div>
-                <span className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Weighted Avg Life</span>
-                <p className="text-xl font-bold text-primary mt-1">4.2 Years</p>
+                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Avg Life</span>
+                <p className="text-lg font-bold mt-0.5">4.2 Yrs</p>
+              </div>
+              <div>
+                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Deals</span>
+                <p className="text-lg font-bold mt-0.5">{metrics.activeDeals + metrics.pipelineDeals}</p>
               </div>
             </div>
           </div>
 
           {/* Portfolio Diversity */}
-          <div className="col-span-12 lg:col-span-5 bg-white border border-slate-100 rounded-xl p-8 flex flex-col justify-center">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6">Portfolio Diversity</span>
-            <div className="space-y-6">
-              <div className="flex justify-between items-end">
+          <div className="col-span-12 lg:col-span-5 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Portfolio Diversity</span>
+              <div className="flex justify-between items-end mt-4">
                 <div>
                   <h3 className="text-4xl font-extrabold text-primary tracking-tight">{metrics.activeDeals}</h3>
-                  <p className="text-xs text-slate-500 font-medium">Active Credit Facilities</p>
+                  <p className="text-xs text-slate-400 font-medium mt-0.5">Active Facilities</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-bold text-primary">{formatPercent(avgRate)}</span>
-                  <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">Avg Interest Rate</p>
+                  <span className="text-2xl font-extrabold text-primary">{formatPercent(avgRate)}</span>
+                  <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">Avg Rate</p>
                 </div>
               </div>
-              {/* Stacked bar */}
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                <div className="bg-primary h-full" style={{ width: "65%" }} />
-                <div className="bg-slate-400 h-full" style={{ width: "25%" }} />
-                <div className="bg-slate-200 h-full" style={{ width: "10%" }} />
+            </div>
+            {/* Stacked bar */}
+            <div className="mt-6">
+              <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex gap-0.5">
+                <div className="bg-primary h-full rounded-full" style={{ width: "65%" }} />
+                <div className="bg-slate-400 h-full rounded-full" style={{ width: "25%" }} />
+                <div className="bg-slate-300 h-full rounded-full" style={{ width: "10%" }} />
               </div>
-              <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                <span className="text-slate-600">Senior Debt (65%)</span>
-                <span>Mezzanine (25%)</span>
+              <div className="flex justify-between mt-2.5 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                <span className="text-primary">Senior (65%)</span>
+                <span>Mezz (25%)</span>
                 <span>Bridge (10%)</span>
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Three small metric cards */}
-          <div className="col-span-12 md:col-span-4 bg-white border border-slate-100 rounded-lg p-6 hover:shadow-sm transition-shadow">
-            <Wallet className="h-5 w-5 text-primary mb-3" />
-            <h3 className="text-2xl font-extrabold text-primary">{formatMillions(metrics.totalDisbursed * 0.12)}</h3>
-            <p className="text-xs text-slate-500 font-medium">Quarterly Distributable Cash</p>
-          </div>
-          <div className="col-span-12 md:col-span-4 bg-white border border-slate-100 rounded-lg p-6 hover:shadow-sm transition-shadow">
-            <ShieldCheck className="h-5 w-5 text-primary mb-3" />
-            <h3 className="text-2xl font-extrabold text-primary">0.02%</h3>
-            <p className="text-xs text-slate-500 font-medium">Impaired Asset Ratio</p>
-          </div>
-          <div className="col-span-12 md:col-span-4 bg-white border border-slate-100 rounded-lg p-6 hover:shadow-sm transition-shadow">
-            <Rocket className="h-5 w-5 text-primary mb-3" />
-            <h3 className="text-2xl font-extrabold text-primary">12.1%</h3>
-            <p className="text-xs text-slate-500 font-medium">Annualized Fund IRR</p>
-          </div>
+        {/* Metric Cards */}
+        <section className="grid grid-cols-3 gap-4">
+          {[
+            { icon: Wallet, label: "Quarterly Cash", value: formatMillions(metrics.totalDisbursed * 0.12), change: "+8.2%", color: "bg-emerald-50 text-emerald-600", ringColor: "ring-emerald-500/20" },
+            { icon: ShieldCheck, label: "Impaired Ratio", value: "0.02%", change: "-0.01%", color: "bg-blue-50 text-blue-600", ringColor: "ring-blue-500/20" },
+            { icon: Rocket, label: "Fund IRR", value: "12.1%", change: "+1.4%", color: "bg-violet-50 text-violet-600", ringColor: "ring-violet-500/20" },
+          ].map((card) => (
+            <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+              <div className="flex items-start justify-between">
+                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center ring-4", card.color, card.ringColor)}>
+                  <card.icon className="h-5 w-5" />
+                </div>
+                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">
+                  <ArrowUpRight className="h-2.5 w-2.5" />
+                  {card.change}
+                </span>
+              </div>
+              <p className="text-2xl font-extrabold text-primary mt-3">{card.value}</p>
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5">{card.label}</p>
+            </div>
+          ))}
         </section>
 
         {/* Bottom Section */}
-        <section className="grid grid-cols-12 gap-8">
+        <section className="grid grid-cols-12 gap-4">
           {/* Activity Feed Table */}
-          <div className="col-span-12 lg:col-span-8 bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="text-sm font-bold text-primary uppercase tracking-wider">Recent Activity</h2>
-              <Link to="/deals" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors">
-                View All Transactions
+          <div className="col-span-12 lg:col-span-8 bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-lg bg-primary/5 flex items-center justify-center">
+                  <Activity className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <h2 className="text-sm font-bold text-primary">Recent Activity</h2>
+              </div>
+              <Link to="/deals" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1">
+                View All <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <thead className="bg-slate-50/80 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   <tr>
-                    <th className="px-6 py-3">Entity / Transaction</th>
-                    <th className="px-6 py-3">Type</th>
-                    <th className="px-6 py-3">Amount</th>
-                    <th className="px-6 py-3 text-right">Status</th>
+                    <th className="px-6 py-2.5">Entity / Transaction</th>
+                    <th className="px-6 py-2.5">Type</th>
+                    <th className="px-6 py-2.5">Amount</th>
+                    <th className="px-6 py-2.5 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="text-xs divide-y divide-slate-100">
+                <tbody className="text-xs divide-y divide-slate-50">
                   {recentActivity.map((item, i) => (
-                    <tr key={i} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="font-bold text-primary">{item.entity}</div>
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-3.5">
+                        <div className="font-bold text-primary text-[13px]">{item.entity}</div>
                         <div className="text-[10px] text-slate-400 mt-0.5">{item.subtitle}</div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold uppercase">
+                      <td className="px-6 py-3.5">
+                        <span className={cn(
+                          "px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase",
+                          item.type === "Funding" ? "bg-blue-50 text-blue-600" :
+                          item.type === "Repayment" ? "bg-emerald-50 text-emerald-600" :
+                          "bg-amber-50 text-amber-600"
+                        )}>
                           {item.type}
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-bold text-primary">{item.amount}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-3.5 font-bold text-primary">{item.amount}</td>
+                      <td className="px-6 py-3.5 text-right">
                         {item.status === "completed" ? (
-                          <span className="inline-flex items-center text-emerald-600 font-bold text-[10px]">
-                            <span className="h-1.5 w-1.5 bg-emerald-600 rounded-full mr-1.5" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px]">
+                            <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full" />
                             COMPLETED
                           </span>
                         ) : (
-                          <span className="inline-flex items-center text-blue-600 font-bold text-[10px]">
-                            <span className="h-1.5 w-1.5 bg-blue-600 rounded-full mr-1.5 animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 font-bold text-[10px]">
+                            <span className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse" />
                             PROCESSING
                           </span>
                         )}
@@ -206,61 +203,74 @@ export default function DashboardPage() {
           </div>
 
           {/* Right column */}
-          <div className="col-span-12 lg:col-span-4 flex flex-col space-y-6">
+          <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
             {/* Sector Allocation */}
-            <div className="bg-white border border-slate-100 rounded-xl p-6 shadow-sm">
-              <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-6">Sector Allocation</h3>
-              <div className="space-y-4">
-                {sectorAllocation.map((sector) => (
-                  <div key={sector.name}>
-                    <div className="flex justify-between text-[10px] font-bold mb-1.5 uppercase">
-                      <span className="text-slate-600">{sector.name}</span>
-                      <span className="text-primary">{sector.pct}%</span>
-                    </div>
-                    <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary transition-all" style={{ width: `${sector.pct}%` }} />
-                    </div>
+            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+              <h3 className="text-sm font-bold text-primary mb-5">Sector Allocation</h3>
+              {/* Mini donut visualization */}
+              <div className="flex items-center gap-5 mb-5">
+                <div className="relative h-20 w-20 shrink-0">
+                  <svg viewBox="0 0 36 36" className="h-20 w-20 -rotate-90">
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="#f1f5f9" strokeWidth="4" />
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" strokeWidth="4" strokeDasharray="37.07 87.96" strokeDashoffset="0" className="transition-all" />
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="#3b82f6" strokeWidth="4" strokeDasharray="24.64 87.96" strokeDashoffset="-37.07" />
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="#8b5cf6" strokeWidth="4" strokeDasharray="15.83 87.96" strokeDashoffset="-61.71" />
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="#f59e0b" strokeWidth="4" strokeDasharray="10.56 87.96" strokeDashoffset="-77.54" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[11px] font-extrabold text-primary">100%</span>
                   </div>
-                ))}
+                </div>
+                <div className="space-y-2 flex-1">
+                  {sectorAllocation.map(s => (
+                    <div key={s.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn("h-2 w-2 rounded-full", s.color)} />
+                        <span className="text-[11px] text-slate-500 font-medium">{s.name}</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-primary">{s.pct}%</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               <Link
                 to="/deals"
-                className="w-full mt-8 border border-slate-200 text-slate-400 py-2 rounded text-[9px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
+                className="w-full border border-slate-200 text-slate-500 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
               >
-                Detailed Analytics <ArrowRight className="h-3 w-3" />
+                Analytics <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
-            {/* Compliance Notice */}
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-5 flex items-start space-x-3">
-              <div className="bg-white p-1.5 rounded border border-slate-100 text-primary shrink-0">
-                <Info className="h-4 w-4" />
-              </div>
-              <div>
-                <h4 className="text-[11px] font-bold text-primary uppercase tracking-wide">Compliance Notice</h4>
-                <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">
-                  Quarterly asset valuation audits are scheduled for next Monday. Ensure documentation is current.
-                </p>
-              </div>
-            </div>
-
             {/* Pipeline Summary */}
-            <div className="bg-white border border-slate-100 rounded-xl p-6 shadow-sm">
+            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">Pipeline</h3>
-                <Link to="/pipeline" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors">
-                  View
+                <h3 className="text-sm font-bold text-primary">Pipeline</h3>
+                <Link to="/pipeline" className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-0.5">
+                  View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
               {(["screening", "due_diligence", "ic_approval", "documentation"] as DealStage[]).map(stage => {
                 const count = sampleDeals.filter(d => d.stage === stage).length;
                 return (
-                  <div key={stage} className="flex items-center justify-between py-2.5 border-b border-slate-100 last:border-0">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{stageLabels[stage]}</span>
-                    <span className="text-sm font-bold text-primary">{count}</span>
+                  <div key={stage} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
+                    <span className="text-[11px] text-slate-500 font-medium">{stageLabels[stage]}</span>
+                    <span className="text-[13px] font-bold text-primary bg-slate-50 px-2 py-0.5 rounded-md">{count}</span>
                   </div>
                 );
               })}
+            </div>
+
+            {/* Compliance Notice */}
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 flex items-start gap-3 border border-amber-100/50">
+              <div className="bg-white p-2 rounded-lg shadow-sm shrink-0">
+                <Info className="h-4 w-4 text-amber-500" />
+              </div>
+              <div>
+                <h4 className="text-[11px] font-bold text-amber-800">Compliance Notice</h4>
+                <p className="text-[10px] text-amber-700/70 mt-1 leading-relaxed">
+                  Quarterly asset valuation audits are scheduled for next Monday. Ensure documentation is current.
+                </p>
+              </div>
             </div>
           </div>
         </section>
