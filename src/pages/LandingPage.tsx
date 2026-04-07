@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
@@ -107,7 +107,18 @@ function checkLand(lat: number, lon: number): boolean {
   return false;
 }
 
+const rotatingWords = ["scale", "deploy", "grow"];
+
 export default function LandingPage() {
+  const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex(prev => (prev + 1) % rotatingWords.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-primary font-body">
       {/* Nav */}
@@ -158,10 +169,21 @@ export default function LandingPage() {
             The platform
             <br />
             to{" "}
-            <span className="inline-block relative">
-              <span className="bg-gradient-to-r from-primary via-slate-600 to-slate-300 bg-clip-text text-transparent animate-pulse" style={{ animationDuration: "3s" }}>
-                scale
-              </span>
+            <span className="inline-block relative overflow-hidden h-[1.1em] align-bottom">
+              {rotatingWords.map((word, i) => (
+                <span
+                  key={word}
+                  className="absolute left-0 top-0 transition-all duration-700 ease-in-out bg-gradient-to-r from-primary via-slate-600 to-slate-300 bg-clip-text text-transparent"
+                  style={{
+                    transform: i === wordIndex ? "translateY(0)" : i === (wordIndex - 1 + rotatingWords.length) % rotatingWords.length ? "translateY(-120%)" : "translateY(120%)",
+                    opacity: i === wordIndex ? 1 : 0,
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
+              {/* Invisible text for width */}
+              <span className="invisible">{rotatingWords.reduce((a, b) => a.length > b.length ? a : b)}</span>
               <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent rounded-full" />
             </span>
           </h1>
