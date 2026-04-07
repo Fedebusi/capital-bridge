@@ -3,7 +3,8 @@ import { sampleDeals, formatMillions, formatPercent, formatCurrency, stageLabels
 import { sampleTermSheets, sampleEnhancedWaivers, termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FileText, Shield, Clock, CheckCircle2, AlertTriangle, ArrowRight, Lock, Banknote, Percent, Calendar, Building2 } from "lucide-react";
+import { FileText, Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer } from "lucide-react";
+import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
 
 export default function TermSheetPage() {
   const dealsWithTS = sampleDeals.filter(d => sampleTermSheets[d.id]);
@@ -36,9 +37,18 @@ export default function TermSheetPage() {
                   </Link>
                   <span className="text-xs text-slate-400">{deal.borrower}</span>
                 </div>
-                <span className={cn("rounded-lg px-3 py-1 text-[10px] font-bold uppercase", termSheetStatusColors[ts.currentStatus])}>
-                  {termSheetStatusLabels[ts.currentStatus]}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => generateTermSheetPDF(deal, ts)}
+                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-bold text-slate-600 hover:bg-slate-50 transition-colors uppercase tracking-wide"
+                  >
+                    <Printer className="h-3.5 w-3.5" />
+                    Print PDF
+                  </button>
+                  <span className={cn("rounded-lg px-3 py-1 text-[10px] font-bold uppercase", termSheetStatusColors[ts.currentStatus])}>
+                    {termSheetStatusLabels[ts.currentStatus]}
+                  </span>
+                </div>
               </div>
 
               <div className="p-6 grid lg:grid-cols-3 gap-6">
