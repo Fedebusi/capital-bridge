@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { DealsProvider } from "@/hooks/useDeals";
 import Index from "./pages/Index.tsx";
 import PipelinePage from "./pages/PipelinePage.tsx";
 import ScreeningPage from "./pages/ScreeningPage.tsx";
@@ -23,6 +24,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <DealsProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -46,6 +48,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </DealsProvider>
   </QueryClientProvider>
 );
 

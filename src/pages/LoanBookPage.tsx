@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import { sampleDeals, formatMillions, formatCurrency, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
+import { formatMillions, formatCurrency, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { exportDealsToExcel } from "@/lib/excelDealImport";
 import { cn } from "@/lib/utils";
-import { Search, ArrowUpDown, TrendingUp, Wallet, ShieldCheck, Building2 } from "lucide-react";
+import { Search, ArrowUpDown, TrendingUp, Wallet, ShieldCheck, Building2, Download } from "lucide-react";
 
 const filterStages: { label: string; value: DealStage | "all" }[] = [
   { label: "All", value: "all" },
@@ -16,11 +18,12 @@ const filterStages: { label: string; value: DealStage | "all" }[] = [
 ];
 
 export default function LoanBookPage() {
+  const { deals: allDeals } = useDeals();
   const [activeFilter, setActiveFilter] = useState<DealStage | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"loanAmount" | "ltv" | "totalRate" | "maturity">("loanAmount");
 
-  const filtered = sampleDeals
+  const filtered = allDeals
     .filter(d => activeFilter === "all" ? d.stage !== "rejected" : d.stage === activeFilter)
     .filter(d => searchQuery === "" || d.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || d.borrower.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
@@ -44,7 +47,11 @@ export default function LoanBookPage() {
             <h1 className="text-2xl font-extrabold text-primary">Loan Book</h1>
             <p className="text-slate-500 text-sm mt-1">Active and historical loan positions</p>
           </div>
-          <button className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+          <button
+            onClick={() => exportDealsToExcel(filtered)}
+            className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+          >
+            <Download className="h-3.5 w-3.5" />
             Export to Excel
           </button>
         </header>
@@ -78,8 +85,8 @@ export default function LoanBookPage() {
           <div className="flex items-center gap-2 flex-wrap">
             {filterStages.map(f => {
               const count = f.value === "all"
-                ? sampleDeals.filter(d => d.stage !== "rejected").length
-                : sampleDeals.filter(d => d.stage === f.value).length;
+                ? allDeals.filter(d => d.stage !== "rejected").length
+                : allDeals.filter(d => d.stage === f.value).length;
               return (
                 <button
                   key={f.value}
@@ -170,7 +177,7 @@ export default function LoanBookPage() {
             </table>
           </div>
           <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Showing {filtered.length} of {sampleDeals.length} deals
+            Showing {filtered.length} of {allDeals.length} deals
           </div>
         </div>
       </div>
