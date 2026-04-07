@@ -36,10 +36,9 @@ const TEMPLATE_COLUMNS = [
 export function downloadDealTemplate() {
   const wb = XLSX.utils.book_new();
 
-  // Main data sheet with headers + example row
+  // Main data sheet with headers only (empty template)
   const headers = TEMPLATE_COLUMNS.map(c => c.header);
-  const exampleRow = TEMPLATE_COLUMNS.map(c => c.example);
-  const wsData = [headers, exampleRow];
+  const wsData = [headers];
   const ws = XLSX.utils.aoa_to_sheet(wsData);
 
   // Set column widths
