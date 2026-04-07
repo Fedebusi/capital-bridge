@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import { formatMillions, formatCurrency, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
+import { formatMillions, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
 import { useDeals } from "@/hooks/useDeals";
 import { exportDealsToExcel } from "@/lib/excelDealImport";
 import { cn } from "@/lib/utils";

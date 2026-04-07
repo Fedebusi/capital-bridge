@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { sampleDeals, getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
-import { TrendingUp, Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity, Clock, CheckCircle2, AlertTriangle, FileText, DollarSign, Gavel } from "lucide-react";
+import { Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity, Clock, CheckCircle2, AlertTriangle, FileText, DollarSign, Gavel } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const timelineEvents = [

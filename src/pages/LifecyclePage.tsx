@@ -1,7 +1,7 @@
 import AppLayout from "@/components/layout/AppLayout";
 import LifecycleProgressBar from "@/components/deals/LifecycleProgressBar";
 import { sampleDeals, stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
-import { sampleLifecycles, getCurrentPhaseNumber, getLifecycleProgress, phaseStatusColors, phaseStatusLabels } from "@/data/lifecyclePhases";
+import { sampleLifecycles, getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Flag, Users, ArrowRight } from "lucide-react";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { sampleDeals, formatMillions, formatPercent } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3, Calendar, ArrowRight, Download } from "lucide-react";
+import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 

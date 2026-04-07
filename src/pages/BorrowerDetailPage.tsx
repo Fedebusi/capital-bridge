@@ -4,7 +4,7 @@ import { sampleBorrowers, ratingColors, kycStatusColors } from "@/data/borrowers
 import { sampleDeals, formatCurrency, formatMillions, formatPercent, stageLabels, stageColors } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Building, Users, Shield, FileText, TrendingUp, CheckCircle2, Clock, AlertTriangle, XCircle, ExternalLink } from "lucide-react";
+import { ArrowLeft, Building, Users, Shield, TrendingUp, CheckCircle2, Clock, AlertTriangle, XCircle } from "lucide-react";
 
 export default function BorrowerDetailPage() {
   const { id } = useParams<{ id: string }>();

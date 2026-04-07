@@ -1,9 +1,9 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { sampleBorrowers, ratingColors, kycStatusColors } from "@/data/borrowers";
+import { sampleBorrowers, ratingColors } from "@/data/borrowers";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { Users, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
 export default function BorrowersPage() {
   return (
