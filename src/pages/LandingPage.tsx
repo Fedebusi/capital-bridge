@@ -21,7 +21,7 @@ function Globe() {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const size = 500;
+    const size = 900;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     ctx.scale(dpr, dpr);
@@ -80,8 +80,8 @@ function Globe() {
   return (
     <canvas
       ref={canvasRef}
-      className="w-[500px] h-[500px]"
-      style={{ width: 500, height: 500 }}
+      className="w-[900px] h-[900px]"
+      style={{ width: 900, height: 900 }}
     />
   );
 }
@@ -142,7 +142,7 @@ export default function LandingPage() {
       {/* Hero */}
       <div className="relative min-h-screen flex items-center overflow-hidden">
         {/* Globe */}
-        <div className="absolute right-[-50px] top-1/2 -translate-y-1/2 opacity-40 pointer-events-none select-none">
+        <div className="absolute right-[-150px] top-1/2 -translate-y-1/2 opacity-30 pointer-events-none select-none">
           <Globe />
         </div>
 
