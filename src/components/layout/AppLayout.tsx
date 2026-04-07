@@ -33,11 +33,13 @@ const navItems = [
   { to: "/screening", icon: Search, label: "Screening", group: "deals" },
   { to: "/deals", icon: FileText, label: "Loan Book", group: "deals" },
   { to: "/lifecycle", icon: Route, label: "Lifecycle", group: "deals" },
+  { to: "/term-sheets", icon: FileText, label: "Term Sheets", group: "deals" },
   { to: "/pik-engine", icon: TrendingUp, label: "PIK Engine", group: "ops" },
   { to: "/construction", icon: HardHat, label: "Construction", group: "ops" },
   { to: "/borrowers", icon: Users, label: "Borrowers", group: "ops" },
   { to: "/due-diligence", icon: ClipboardCheck, label: "Due Diligence", group: "ops" },
   { to: "/approvals", icon: Vote, label: "Approvals", group: "ops" },
+  { to: "/it-instructions", icon: BookOpen, label: "IT Docs", group: "ops" },
 ];
 
 interface AppLayoutProps {

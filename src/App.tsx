@@ -19,6 +19,8 @@ import ConstructionMonitoringPage from "./pages/ConstructionMonitoringPage.tsx";
 import LifecyclePage from "./pages/LifecyclePage.tsx";
 import MapPage from "./pages/MapPage.tsx";
 import InvestorPortalPage from "./pages/InvestorPortalPage.tsx";
+import TermSheetPage from "./pages/TermSheetPage.tsx";
+import ITInstructionsPage from "./pages/ITInstructionsPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -47,6 +49,8 @@ const App = () => (
           <Route path="/lifecycle" element={<LifecyclePage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/investor" element={<InvestorPortalPage />} />
+          <Route path="/term-sheets" element={<TermSheetPage />} />
+          <Route path="/it-instructions" element={<ITInstructionsPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
