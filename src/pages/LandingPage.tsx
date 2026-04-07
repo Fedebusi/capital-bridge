@@ -114,7 +114,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-[1400px] mx-auto px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-12">
-            <Link to="/landing" className="text-xl font-extrabold tracking-tight font-headline">
+            <Link to="/" className="text-xl font-extrabold tracking-tight font-headline">
               CapitalBridge <span className="text-[10px] font-medium text-slate-400 align-super">TM</span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
@@ -126,11 +126,11 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-sm text-slate-600 hover:text-primary transition-colors font-medium">
+            <Link to="/dashboard" className="text-sm text-slate-600 hover:text-primary transition-colors font-medium">
               Sign in
             </Link>
             <Link
-              to="/"
+              to="/dashboard"
               className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-colors"
             >
               Start creating
@@ -176,7 +176,7 @@ export default function LandingPage() {
           {/* CTAs */}
           <div className="flex items-center gap-4 mt-10">
             <Link
-              to="/"
+              to="/dashboard"
               className="bg-primary text-white px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
             >
               Start free trial <ArrowRight className="h-4 w-4" />
