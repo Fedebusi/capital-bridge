@@ -80,17 +80,19 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - [x] Document/photo storage hooks
 
 ### In Progress
-- [ ] Integrate "New Deal" button into more pages (loan book, dashboard)
-- [ ] Wire up borrower form to BorrowersPage
-- [ ] Add user profile menu to sidebar (with logout, role display)
-- [ ] Run migration on Supabase (user needs to do this in SQL Editor)
-- [ ] Seed initial data into Supabase
+- [ ] Seed sample data into Supabase so the app shows real data from DB
+- [ ] Wire up all pages to use Supabase data when available
+
+### Blocked / Deferred
+- [ ] **Authentication login flow** — trigger `handle_new_user` fails on user creation.
+      The trigger was dropped. Need to fix and re-create it. Login redirect is
+      commented out in `ProtectedRoute.tsx` (search for TODO). Re-enable once fixed.
+- [ ] User profile menu in sidebar (depends on auth)
+- [ ] Role-based access enforcement (depends on auth)
 
 ### Pending
-- [ ] Tests for financial logic (PIK calculations, screening, waterfall)
 - [ ] Design polish pass (after backend is fully wired)
 - [ ] CI/CD pipeline (GitHub Actions for lint + test + build)
-- [ ] Seed data migration for initial deals/borrowers
 - [ ] Mobile optimizations for forms
 - [ ] Branding customization ("APEX CAPITAL" still hardcoded in PDFs)
 
