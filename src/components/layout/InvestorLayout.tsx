@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Landmark, BarChart3, FileText, HelpCircle, LogOut, Wallet } from "lucide-react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Landmark, BarChart3, FileText, HelpCircle, LogOut, Wallet, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -13,6 +13,9 @@ interface InvestorLayoutProps {
 
 export default function InvestorLayout({ children }: InvestorLayoutProps) {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  // Show "Back to Platform" if user came from the main app (not from investor login)
+  const showBackLink = !searchParams.has("standalone");
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -55,6 +58,15 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
           </div>
 
           <div className="flex items-center gap-3">
+            {showBackLink && (
+              <Link
+                to="/dashboard"
+                className="text-sm text-slate-500 hover:text-primary font-medium transition-colors flex items-center gap-1.5 mr-2"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Back to Platform
+              </Link>
+            )}
             <a href="#" className="text-slate-400 hover:text-primary p-2 rounded-lg hover:bg-slate-50 transition-all">
               <HelpCircle className="h-4.5 w-4.5" />
             </a>
