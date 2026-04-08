@@ -3,6 +3,7 @@ import InvestorLayout from "@/components/layout/InvestorLayout";
 import { sampleDeals, formatMillions, formatPercent } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download } from "lucide-react";
+import { generateTaxReport } from "@/lib/generateTaxReport";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
@@ -50,7 +51,10 @@ export default function InvestorPortalPage() {
             <p className="text-slate-500 text-sm mt-1">Welcome back. Here's your investment summary.</p>
           </div>
           <div className="flex space-x-2">
-            <button className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
+            <button
+              onClick={() => generateTaxReport(sampleDeals)}
+              className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+            >
               <Download className="h-3.5 w-3.5" />
               Tax Report
             </button>
