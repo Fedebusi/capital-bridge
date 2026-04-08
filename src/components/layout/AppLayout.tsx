@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Overview", group: "main" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Overview", group: "main" },
   { to: "/investor", icon: Landmark, label: "Investor Portal", group: "main" },
   { to: "/map", icon: MapPin, label: "Map", group: "main" },
   { to: "/pipeline", icon: FolderOpen, label: "Pipeline", group: "deals" },
@@ -58,7 +58,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <p className="px-3 mb-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400">{label}</p>
         <div className="space-y-0.5">
           {items.map(item => {
-            const isActive = location.pathname === item.to || (item.to !== "/" && location.pathname.startsWith(item.to));
+            const isActive = location.pathname === item.to || location.pathname.startsWith(item.to + "/");
             return (
               <Link
                 key={item.to}
@@ -95,7 +95,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       )}>
         {/* Logo */}
         <div className="px-5 pt-5 pb-4">
-          <Link to="/" className="flex items-center gap-2.5">
+          <Link to="/dashboard" className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center">
               <Wallet className="h-4 w-4 text-white" />
             </div>

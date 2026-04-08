@@ -42,12 +42,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/landing" element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />
 
           {/* Protected routes */}
-          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/pipeline" element={<ProtectedRoute><PipelinePage /></ProtectedRoute>} />
           <Route path="/screening" element={<ProtectedRoute><ScreeningPage /></ProtectedRoute>} />
           <Route path="/deals" element={<ProtectedRoute><LoanBookPage /></ProtectedRoute>} />
