@@ -1,6 +1,7 @@
 import AppLayout from "@/components/layout/AppLayout";
 import DealCard from "@/components/dashboard/DealCard";
 import DealImportDialog from "@/components/dashboard/DealImportDialog";
+import { DealFormDialog } from "@/components/deals/DealFormDialog";
 import { stageLabels, type DealStage } from "@/data/sampleDeals";
 import { exportDealsToExcel } from "@/lib/excelDealImport";
 import { useDeals } from "@/hooks/useDeals";
@@ -25,6 +26,7 @@ export default function PipelinePage() {
             <p className="text-slate-500 text-sm mt-1">Track all deals from screening to repayment</p>
           </div>
           <div className="flex items-center gap-2">
+            <DealFormDialog />
             <DealImportDialog />
             <button
               onClick={() => exportDealsToExcel(deals)}

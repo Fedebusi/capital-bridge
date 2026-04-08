@@ -4,7 +4,10 @@ import { Analytics } from "@vercel/analytics/react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { DealsProvider } from "@/hooks/useDeals";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
 import PipelinePage from "./pages/PipelinePage.tsx";
 import ScreeningPage from "./pages/ScreeningPage.tsx";
@@ -23,44 +26,53 @@ import TermSheetPage from "./pages/TermSheetPage.tsx";
 import ITInstructionsPage from "./pages/ITInstructionsPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
+  <ErrorBoundary>
   <QueryClientProvider client={queryClient}>
+    <AuthProvider>
     <DealsProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/landing" element={<LandingPage />} />
-          <Route path="/pipeline" element={<PipelinePage />} />
-          <Route path="/screening" element={<ScreeningPage />} />
-          <Route path="/deals" element={<LoanBookPage />} />
-          <Route path="/deals/:id" element={<DealDetailPage />} />
-          <Route path="/due-diligence" element={<DueDiligencePage />} />
-          <Route path="/approvals" element={<ApprovalsPage />} />
-          <Route path="/borrowers" element={<BorrowersPage />} />
-          <Route path="/borrowers/:id" element={<BorrowerDetailPage />} />
-          <Route path="/pik-engine" element={<PIKEnginePage />} />
-          <Route path="/construction" element={<ConstructionMonitoringPage />} />
-          <Route path="/lifecycle" element={<LifecyclePage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/investor" element={<InvestorPortalPage />} />
-          <Route path="/term-sheets" element={<TermSheetPage />} />
-          <Route path="/it-instructions" element={<ITInstructionsPage />} />
           <Route path="/about" element={<AboutPage />} />
+
+          {/* Protected routes */}
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/pipeline" element={<ProtectedRoute><PipelinePage /></ProtectedRoute>} />
+          <Route path="/screening" element={<ProtectedRoute><ScreeningPage /></ProtectedRoute>} />
+          <Route path="/deals" element={<ProtectedRoute><LoanBookPage /></ProtectedRoute>} />
+          <Route path="/deals/:id" element={<ProtectedRoute><DealDetailPage /></ProtectedRoute>} />
+          <Route path="/due-diligence" element={<ProtectedRoute><DueDiligencePage /></ProtectedRoute>} />
+          <Route path="/approvals" element={<ProtectedRoute requiredRoles={["admin","analyst","portfolio_manager"]}><ApprovalsPage /></ProtectedRoute>} />
+          <Route path="/borrowers" element={<ProtectedRoute><BorrowersPage /></ProtectedRoute>} />
+          <Route path="/borrowers/:id" element={<ProtectedRoute><BorrowerDetailPage /></ProtectedRoute>} />
+          <Route path="/pik-engine" element={<ProtectedRoute><PIKEnginePage /></ProtectedRoute>} />
+          <Route path="/construction" element={<ProtectedRoute><ConstructionMonitoringPage /></ProtectedRoute>} />
+          <Route path="/lifecycle" element={<ProtectedRoute><LifecyclePage /></ProtectedRoute>} />
+          <Route path="/map" element={<ProtectedRoute><MapPage /></ProtectedRoute>} />
+          <Route path="/investor" element={<ProtectedRoute><InvestorPortalPage /></ProtectedRoute>} />
+          <Route path="/term-sheets" element={<ProtectedRoute><TermSheetPage /></ProtectedRoute>} />
+          <Route path="/it-instructions" element={<ProtectedRoute requiredRoles={["admin"]}><ITInstructionsPage /></ProtectedRoute>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
     </DealsProvider>
+    </AuthProvider>
     <Analytics />
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
