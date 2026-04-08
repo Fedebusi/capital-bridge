@@ -65,28 +65,50 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+## Supabase Instance
+
+- **URL**: `https://slexqygrfyvfqikopmwm.supabase.co`
+- **Ref ID**: `slexqygrfyvfqikopmwm`
+- **Anon key**: configured in `.env` (not committed)
+- **Schema migration**: executed successfully (00001_initial_schema.sql)
+- **Seed data**: file ready at `supabase/seed.sql` — needs to be run in SQL Editor
+- **Auth trigger**: `handle_new_user` was dropped due to casting error. Needs to be
+  re-created (see Blocked section below).
+
 ## Current Status (Last Updated: 2026-04-08)
 
 ### Completed
 - [x] Full frontend UI (19 pages, 67+ components)
-- [x] Supabase client setup with demo/live dual mode
-- [x] Complete database schema with RLS and audit triggers
-- [x] Authentication system (login, signup, roles, protected routes)
-- [x] React Query API hooks for all entities (`useSupabaseQuery.ts`)
+- [x] Supabase client setup with demo/live dual mode (`src/lib/supabase.ts`)
+- [x] `.env` file configured with Supabase URL + anon key
+- [x] `.env` added to `.gitignore`
+- [x] Complete database schema with RLS and audit triggers (migration run on Supabase)
+- [x] Authentication system code (login page, AuthContext, ProtectedRoute)
+- [x] React Query API hooks for all entities (`src/hooks/useSupabaseQuery.ts`)
 - [x] CRUD forms for deals and borrowers (dialog-based)
 - [x] Real-time notifications (covenant breaches, stage changes, approvals)
 - [x] Error boundary component
 - [x] Audit trail logging (automatic on create/update via mutations)
 - [x] Document/photo storage hooks
+- [x] Tests: 22 passing (PIK engine + deal screening logic)
+- [x] Seed data SQL prepared (`supabase/seed.sql`)
+- [x] "New Deal" button added to Pipeline page
 
 ### In Progress
-- [ ] Seed sample data into Supabase so the app shows real data from DB
-- [ ] Wire up all pages to use Supabase data when available
+- [ ] **Run seed.sql** in Supabase SQL Editor to populate sample data
+- [ ] Add "New Deal" button to dashboard and loan book pages
+- [ ] Add "New Borrower" button to borrowers page
+- [ ] Add "Edit" button on deal detail page
+- [ ] Add stage change functionality on deals
+- [ ] Wire up all pages to use Supabase data when available (currently demo mode)
 
 ### Blocked / Deferred
-- [ ] **Authentication login flow** — trigger `handle_new_user` fails on user creation.
-      The trigger was dropped. Need to fix and re-create it. Login redirect is
-      commented out in `ProtectedRoute.tsx` (search for TODO). Re-enable once fixed.
+- [ ] **Authentication login flow** — trigger `handle_new_user` fails on user creation
+      with "Database error creating new user". The trigger was dropped via
+      `DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;`.
+      Need to fix the trigger function (issue was enum casting of role from
+      `raw_user_meta_data`) and re-create it. Login redirect is commented out
+      in `ProtectedRoute.tsx` (search for TODO). Re-enable once fixed.
 - [ ] User profile menu in sidebar (depends on auth)
 - [ ] Role-based access enforcement (depends on auth)
 
@@ -111,6 +133,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 | `src/components/borrowers/BorrowerFormDialog.tsx` | Create/edit borrower form |
 | `src/components/ErrorBoundary.tsx` | Global error boundary |
 | `supabase/migrations/00001_initial_schema.sql` | Complete DB schema |
+| `supabase/seed.sql` | Sample data (6 deals, 5 borrowers + sub-entities) |
 
 ## Business Logic Notes
 
