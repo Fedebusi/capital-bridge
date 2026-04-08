@@ -70,10 +70,11 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - **URL**: `https://slexqygrfyvfqikopmwm.supabase.co`
 - **Ref ID**: `slexqygrfyvfqikopmwm`
 - **Anon key**: configured in `.env` (not committed)
-- **Schema migration**: executed successfully (00001_initial_schema.sql)
-- **Seed data**: file ready at `supabase/seed.sql` — needs to be run in SQL Editor
-- **Auth trigger**: `handle_new_user` was dropped due to casting error. Needs to be
-  re-created (see Blocked section below).
+- **Migrations** (auto-deploy on merge to `main`):
+  - `00001_initial_schema.sql` — all tables, RLS, storage buckets (already executed)
+  - `00002_seed_data.sql` — sample deals, borrowers, contacts, KYC, drawdowns etc.
+  - `00003_fix_auth_trigger.sql` — fixed `handle_new_user` with safe defaults + error handling
+- **Auth trigger**: fixed in migration 00003 — everyone starts as `viewer`, admin promotes.
 
 ## Current Status (Last Updated: 2026-04-08)
 
@@ -95,20 +96,15 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - [x] "New Deal" button added to Pipeline page
 
 ### In Progress
-- [ ] **Run seed.sql** in Supabase SQL Editor to populate sample data
-- [ ] Add "New Deal" button to dashboard and loan book pages
-- [ ] Add "New Borrower" button to borrowers page
-- [ ] Add "Edit" button on deal detail page
-- [ ] Add stage change functionality on deals
-- [ ] Wire up all pages to use Supabase data when available (currently demo mode)
+- [ ] Merge branch to `main` — this auto-deploys migrations 00002 (seed) + 00003 (auth fix)
+- [ ] After merge: test user creation in Supabase Authentication
+- [ ] Re-enable login redirect in `ProtectedRoute.tsx` once auth works
+- [ ] Wire up all pages to use Supabase data when available
+- [ ] Add "New Deal" / "New Borrower" / "Edit" / stage change buttons across pages
 
 ### Blocked / Deferred
-- [ ] **Authentication login flow** — trigger `handle_new_user` fails on user creation
-      with "Database error creating new user". The trigger was dropped via
-      `DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;`.
-      Need to fix the trigger function (issue was enum casting of role from
-      `raw_user_meta_data`) and re-create it. Login redirect is commented out
-      in `ProtectedRoute.tsx` (search for TODO). Re-enable once fixed.
+- [ ] Login redirect commented out in `ProtectedRoute.tsx` (search for TODO)
+      Re-enable once auth trigger is confirmed working after migration 00003.
 - [ ] User profile menu in sidebar (depends on auth)
 - [ ] Role-based access enforcement (depends on auth)
 
