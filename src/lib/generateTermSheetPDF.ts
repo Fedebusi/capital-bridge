@@ -14,7 +14,7 @@ export function generateTermSheetPDF(deal: Deal, ts: TermSheet) {
 
   // Colors
   const navy = [25, 33, 46] as [number, number, number];
-  const headerBg = [25, 33, 46] as [number, number, number];
+  const headerBg = [41, 65, 122] as [number, number, number];
   const sectionBg = [226, 232, 240] as [number, number, number]; // slate-200
   const white = [255, 255, 255] as [number, number, number];
   const black = [15, 23, 42] as [number, number, number];
@@ -61,7 +61,7 @@ export function generateTermSheetPDF(deal: Deal, ts: TermSheet) {
       styles: {
         fontSize: 8.5,
         cellPadding: { top: 3, bottom: 3, left: 4, right: 4 },
-        lineColor: [200, 200, 200],
+        lineColor: [41, 65, 122],
         lineWidth: 0.3,
         textColor: black,
         font: "helvetica",
