@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AppLayout from "@/components/layout/AppLayout";
+import InvestorLayout from "@/components/layout/InvestorLayout";
 import { sampleDeals, formatMillions, formatPercent } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download } from "lucide-react";
@@ -40,7 +40,7 @@ export default function InvestorPortalPage() {
   const avgYield = activeDeals.length > 0 ? activeDeals.reduce((s, d) => s + d.totalRate, 0) / activeDeals.length : 0;
 
   return (
-    <AppLayout>
+    <InvestorLayout>
       <div className="space-y-8">
         {/* Header */}
         <header className="flex justify-between items-start">
@@ -312,6 +312,6 @@ export default function InvestorPortalPage() {
           </div>
         </section>
       </div>
-    </AppLayout>
+    </InvestorLayout>
   );
 }
