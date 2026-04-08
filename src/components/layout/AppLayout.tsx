@@ -40,6 +40,7 @@ const navItems = [
   { to: "/due-diligence", icon: ClipboardCheck, label: "Due Diligence", group: "ops" },
   { to: "/approvals", icon: Vote, label: "Approvals", group: "ops" },
   { to: "/it-instructions", icon: BookOpen, label: "IT Docs", group: "ops" },
+  { to: "/about", icon: Users, label: "About Us", group: "ops" },
 ];
 
 interface AppLayoutProps {

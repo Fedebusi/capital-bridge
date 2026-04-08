@@ -21,6 +21,7 @@ import MapPage from "./pages/MapPage.tsx";
 import InvestorPortalPage from "./pages/InvestorPortalPage.tsx";
 import TermSheetPage from "./pages/TermSheetPage.tsx";
 import ITInstructionsPage from "./pages/ITInstructionsPage.tsx";
+import AboutPage from "./pages/AboutPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/investor" element={<InvestorPortalPage />} />
           <Route path="/term-sheets" element={<TermSheetPage />} />
           <Route path="/it-instructions" element={<ITInstructionsPage />} />
+          <Route path="/about" element={<AboutPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
