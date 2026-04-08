@@ -14,6 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
+        sans: ['Inter', 'sans-serif'],
         display: ['Manrope', 'sans-serif'],
         headline: ['Manrope', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
