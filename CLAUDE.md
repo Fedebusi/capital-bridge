@@ -96,17 +96,15 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - [x] "New Deal" button added to Pipeline page
 
 ### In Progress
-- [ ] Merge branch to `main` — this auto-deploys migrations 00002 (seed) + 00003 (auth fix)
-- [ ] After merge: test user creation in Supabase Authentication
-- [ ] Re-enable login redirect in `ProtectedRoute.tsx` once auth works
 - [ ] Wire up all pages to use Supabase data when available
 - [ ] Add "New Deal" / "New Borrower" / "Edit" / stage change buttons across pages
+- [ ] User profile menu in sidebar
 
-### Blocked / Deferred
-- [ ] Login redirect commented out in `ProtectedRoute.tsx` (search for TODO)
-      Re-enable once auth trigger is confirmed working after migration 00003.
-- [ ] User profile menu in sidebar (depends on auth)
-- [ ] Role-based access enforcement (depends on auth)
+### Recently Completed
+- [x] Merged all features to `main` — migrations 00002 (seed) + 00003 (auth fix) deployed
+- [x] Auth enforcement enabled in `ProtectedRoute.tsx` (login redirect + role check active)
+- [x] "Back to Platform" link restricted to admin/analyst/PM roles only
+- [x] Role-based access enforcement active on protected routes
 
 ### Pending
 - [ ] Design polish pass (after backend is fully wired)
