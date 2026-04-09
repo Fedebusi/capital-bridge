@@ -1,12 +1,14 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { sampleDeals, formatCurrency } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { formatCurrency } from "@/data/sampleDeals";
 import { generatePIKSchedule } from "@/data/pikEngine";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { TrendingUp } from "lucide-react";
 
 export default function PIKEnginePage() {
-  const activeDeals = sampleDeals.filter(d => d.stage === "active" && d.firstDrawdownDate);
+  const { deals } = useDeals();
+  const activeDeals = deals.filter(d => d.stage === "active" && d.firstDrawdownDate);
 
   const summaries = activeDeals.map(deal => {
     const pik = generatePIKSchedule({

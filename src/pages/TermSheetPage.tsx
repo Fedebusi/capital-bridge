@@ -1,5 +1,6 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { sampleDeals, formatMillions, formatPercent, formatCurrency, stageLabels, stageColors } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { formatMillions, formatPercent, formatCurrency, stageLabels, stageColors } from "@/data/sampleDeals";
 import { sampleTermSheets, sampleEnhancedWaivers, termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,8 @@ import { FileText, Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, P
 import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
 
 export default function TermSheetPage() {
-  const dealsWithTS = sampleDeals.filter(d => sampleTermSheets[d.id]);
+  const { deals } = useDeals();
+  const dealsWithTS = deals.filter(d => sampleTermSheets[d.id]);
 
   return (
     <AppLayout>

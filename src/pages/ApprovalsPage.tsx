@@ -1,13 +1,15 @@
 import AppLayout from "@/components/layout/AppLayout";
 import ApprovalsPanel from "@/components/deals/ApprovalsPanel";
-import { sampleDeals, stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
 import { sampleApprovals } from "@/data/dealModules";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2 } from "lucide-react";
 
 export default function ApprovalsPage() {
-  const dealsWithApprovals = sampleDeals.filter(d => sampleApprovals[d.id]);
+  const { deals } = useDeals();
+  const dealsWithApprovals = deals.filter(d => sampleApprovals[d.id]);
   const pendingApprovals = dealsWithApprovals.filter(d => {
     const a = sampleApprovals[d.id];
     return a && (a.status === "pending_ic" || a.status === "pending_capital_partner");
