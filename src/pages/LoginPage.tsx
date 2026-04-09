@@ -39,7 +39,7 @@ export default function LoginPage() {
     if (isDemo) {
       // Demo mode: go directly to the right page
       setLoading(false);
-      navigate(mode === "investor" ? "/investor" : "/dashboard");
+      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
       return;
     }
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
     if (error) {
       toast.error(error);
     } else {
-      navigate(mode === "investor" ? "/investor" : "/dashboard");
+      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
     }
   }
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
     if (isDemo) {
       setLoading(false);
       toast.success("Demo mode — redirecting...");
-      navigate(mode === "investor" ? "/investor" : "/dashboard");
+      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
       return;
     }
 
