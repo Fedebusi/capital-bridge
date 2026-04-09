@@ -51,12 +51,12 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Page Header */}
         <header className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-extrabold text-primary">Portfolio Overview</h1>
-            <p className="text-slate-400 text-sm mt-0.5">Strategic Institutional Debt Aggregation & Allocation</p>
+            <p className="text-slate-500 text-sm mt-1">Strategic Institutional Debt Aggregation & Allocation</p>
           </div>
           <div className="flex items-center gap-2">
             <QuickScreenDialog />
@@ -134,24 +134,24 @@ export default function DashboardPage() {
         </section>
 
         {/* Metric Cards */}
-        <section className="grid grid-cols-3 gap-4">
+        <section className="grid grid-cols-3 gap-6">
           {[
-            { icon: Wallet, label: "Quarterly Cash", value: formatMillions(metrics.totalDisbursed * 0.12), change: "+8.2%", color: "bg-emerald-50 text-emerald-600", ringColor: "ring-emerald-500/20" },
-            { icon: ShieldCheck, label: "Impaired Ratio", value: "0.02%", change: "-0.01%", color: "bg-blue-50 text-blue-600", ringColor: "ring-blue-500/20" },
-            { icon: Rocket, label: "Fund IRR", value: "12.1%", change: "+1.4%", color: "bg-violet-50 text-violet-600", ringColor: "ring-violet-500/20" },
+            { icon: Wallet, label: "Quarterly Cash", value: formatMillions(metrics.totalDisbursed * 0.12), change: "+8.2%", color: "bg-emerald-50 text-emerald-600" },
+            { icon: ShieldCheck, label: "Impaired Ratio", value: "0.02%", change: "-0.01%", color: "bg-blue-50 text-blue-600" },
+            { icon: Rocket, label: "Fund IRR", value: "12.1%", change: "+1.4%", color: "bg-violet-50 text-violet-600" },
           ].map((card) => (
-            <div key={card.label} className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+            <div key={card.label} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-start justify-between">
-                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center ring-4", card.color, card.ringColor)}>
-                  <card.icon className="h-5 w-5" />
+                <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center", card.color)}>
+                  <card.icon className="h-4.5 w-4.5" />
                 </div>
-                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold">
+                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-xs font-semibold">
                   <ArrowUpRight className="h-2.5 w-2.5" />
                   {card.change}
                 </span>
               </div>
-              <p className="text-2xl font-extrabold text-primary mt-3">{card.value}</p>
-              <p className="text-[11px] text-slate-400 font-medium mt-0.5">{card.label}</p>
+              <p className="text-2xl font-bold text-primary mt-3">{card.value}</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mt-1">{card.label}</p>
             </div>
           ))}
         </section>

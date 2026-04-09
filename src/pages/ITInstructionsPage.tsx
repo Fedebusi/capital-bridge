@@ -230,10 +230,10 @@ PRIORIDAD BAJA — Nice to have:
 export default function ITInstructionsPage() {
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <header>
           <h1 className="text-2xl font-extrabold text-primary">Instrucciones para IT</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Documentación funcional y técnica del proyecto CapitalBridge</p>
+          <p className="text-slate-500 text-sm mt-1">Documentación funcional y técnica del proyecto CapitalBridge</p>
         </header>
 
         <div className="grid gap-4">

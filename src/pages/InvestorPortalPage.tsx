@@ -277,7 +277,7 @@ export default function InvestorPortalPage() {
           </div>
 
           {/* Upcoming Payments */}
-          <div className="col-span-12 lg:col-span-4 space-y-6">
+          <div className="col-span-12 lg:col-span-4 space-y-8">
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
               <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">Upcoming Payments</h3>
               <div className="space-y-3">

@@ -21,7 +21,7 @@ export default function DueDiligencePage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-extrabold text-primary">Due Diligence</h1>
           <p className="text-slate-500 text-sm mt-1">Track due diligence progress across all active deals</p>

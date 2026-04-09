@@ -19,11 +19,11 @@ export default function TermSheetPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <header className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-extrabold text-primary">Term Sheets & Covenants</h1>
-            <p className="text-slate-400 text-sm mt-0.5">Term sheet lifecycle, key terms, security packages, and covenant waivers</p>
+            <p className="text-slate-500 text-sm mt-1">Term sheet lifecycle, key terms, security packages, and covenant waivers</p>
           </div>
         </header>
 
