@@ -18,19 +18,18 @@ export function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps)
     );
   }
 
-  // Demo mode or auth not yet configured: always allow
+  // Demo mode: always allow
   if (isDemo) return <>{children}</>;
 
-  // Auth configured but not logged in: allow for now (auth enforcement coming later)
-  // TODO: Re-enable login redirect once auth setup is complete
-  // if (!user || !profile) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  // Not logged in: redirect to login
+  if (!user || !profile) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // // Role check
-  // if (requiredRoles && !requiredRoles.includes(profile.role)) {
-  //   return <Navigate to="/" replace />;
-  // }
+  // Role check (if specific roles required)
+  if (requiredRoles && !requiredRoles.includes(profile.role)) {
+    return <Navigate to="/" replace />;
+  }
 
   return <>{children}</>;
 }
