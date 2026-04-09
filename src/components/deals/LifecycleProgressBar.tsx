@@ -24,7 +24,7 @@ export default function LifecycleProgressBar({ lifecycle, compact }: LifecyclePr
             )} />
             {!compact && (
               <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-10">
-                <div className="bg-foreground text-background rounded px-2 py-1 text-[10px] font-medium whitespace-nowrap shadow-lg">
+                <div className="bg-foreground text-background rounded px-2 py-1 text-xs font-medium whitespace-nowrap shadow-lg">
                   {phase.number}. {phase.name}
                 </div>
               </div>

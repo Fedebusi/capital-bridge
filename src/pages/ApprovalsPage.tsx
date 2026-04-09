@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import ApprovalsPanel from "@/components/deals/ApprovalsPanel";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
@@ -8,7 +9,12 @@ import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2 } from "lucide-react";
 
 export default function ApprovalsPage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const dealsWithApprovals = deals.filter(d => sampleApprovals[d.id]);
   const pendingApprovals = dealsWithApprovals.filter(d => {
     const a = sampleApprovals[d.id];

@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { BorrowerFormDialog } from "@/components/borrowers/BorrowerFormDialog";
 import { sampleBorrowers, ratingColors, type Borrower } from "@/data/borrowers";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
@@ -36,7 +37,12 @@ function dbBorrowerToFrontend(b: DbBorrower): Borrower {
 
 export default function BorrowersPage() {
   const isLive = isSupabaseConfigured();
-  const { data: dbBorrowers } = useBorrowersQuery();
+  const { data: dbBorrowers, isLoading } = useBorrowersQuery();
+
+  if (isLoading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const borrowers: Borrower[] = isLive && dbBorrowers
     ? dbBorrowers.map(dbBorrowerToFrontend)
     : sampleBorrowers;

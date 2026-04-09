@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { useDeals } from "@/hooks/useDeals";
 import { formatCurrency } from "@/data/sampleDeals";
 import { generatePIKSchedule } from "@/data/pikEngine";
@@ -7,7 +8,12 @@ import { cn } from "@/lib/utils";
 import { TrendingUp } from "lucide-react";
 
 export default function PIKEnginePage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const activeDeals = deals.filter(d => d.stage === "active" && d.firstDrawdownDate);
 
   const summaries = activeDeals.map(deal => {

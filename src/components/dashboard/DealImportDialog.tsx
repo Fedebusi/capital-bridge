@@ -124,7 +124,7 @@ export default function DealImportDialog() {
             {parsedDeals.length > 0 && (
               <div className="rounded-xl border border-slate-100 overflow-hidden max-h-72 overflow-y-auto">
                 <table className="w-full text-left">
-                  <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400 sticky top-0">
+                  <thead className="bg-slate-50 text-xs font-bold uppercase tracking-widest text-slate-400 sticky top-0">
                     <tr>
                       <th className="px-4 py-2">Project</th>
                       <th className="px-4 py-2">Borrower</th>

@@ -27,6 +27,7 @@ import ITInstructionsPage from "./pages/ITInstructionsPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/about" element={<AboutPage />} />
 
           {/* Protected routes */}

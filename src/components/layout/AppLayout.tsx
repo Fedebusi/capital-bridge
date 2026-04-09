@@ -62,7 +62,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     const items = navItems.filter(i => i.group === group);
     return (
       <div>
-        <p className="px-3 mb-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400">{label}</p>
+        <p className="px-3 mb-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">{label}</p>
         <div className="space-y-0.5">
           {items.map(item => {
             const isActive = location.pathname === item.to || location.pathname.startsWith(item.to + "/");
@@ -115,12 +115,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
         {/* Fund card */}
         <div className="mx-4 mb-5 rounded-xl bg-gradient-to-br from-primary to-slate-700 p-3.5 text-white">
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-md bg-white/15 flex items-center justify-center text-[9px] font-bold backdrop-blur-sm">
+            <div className="h-7 w-7 rounded-md bg-white/15 flex items-center justify-center text-[11px] font-bold backdrop-blur-sm">
               GDF
             </div>
             <div>
               <p className="text-[11px] font-bold leading-none">Global Debt Fund I</p>
-              <p className="text-[9px] text-white/60 font-medium mt-0.5">Institutional Grade</p>
+              <p className="text-[11px] text-white/60 font-medium mt-0.5">Institutional Grade</p>
             </div>
           </div>
         </div>
@@ -147,11 +147,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
             New Deal
           </Link>
           <div className="flex gap-1 mb-3">
-            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-[10px] font-medium transition-colors" href="#">
+            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-xs font-medium transition-colors" href="#">
               <HelpCircle className="h-3 w-3" />
               <span>Help</span>
             </a>
-            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-[10px] font-medium transition-colors" href="#">
+            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-xs font-medium transition-colors" href="#">
               <BookOpen className="h-3 w-3" />
               <span>Docs</span>
             </a>
@@ -159,13 +159,13 @@ export default function AppLayout({ children }: AppLayoutProps) {
           {/* User profile */}
           <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg bg-white/60 border border-slate-200/50">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center shrink-0">
-              <span className="text-[10px] font-bold text-white">
+              <span className="text-xs font-bold text-white">
                 {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[11px] font-semibold text-primary truncate">{profile?.full_name || "User"}</p>
-              <p className="text-[9px] text-slate-400 font-medium capitalize">{profile?.role || "viewer"}</p>
+              <p className="text-[11px] text-slate-400 font-medium capitalize">{profile?.role || "viewer"}</p>
             </div>
             <button
               onClick={handleLogout}
@@ -181,7 +181,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top nav */}
-        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100">
+        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200">
           <div className="mx-auto max-w-[1400px] px-8 py-2.5 flex justify-between items-center">
             <div className="flex items-center space-x-6">
               <button onClick={() => setMobileOpen(true)} className="rounded p-2 text-slate-400 hover:text-primary lg:hidden">
@@ -195,21 +195,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   type="text"
                 />
               </div>
-              <nav className="hidden md:flex space-x-1">
-                {[
-                  { to: "/dashboard", label: "Portfolio" },
-                  { to: "/borrowers", label: "Borrowers" },
-                  { to: "/approvals", label: "Compliance" },
-                ].map(tab => {
-                  const isActive = location.pathname === tab.to;
-                  return (
-                    <Link key={tab.to} to={tab.to} className={cn(
-                      "px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
-                      isActive ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 hover:text-primary"
-                    )}>{tab.label}</Link>
-                  );
-                })}
-              </nav>
             </div>
             <div className="flex items-center space-x-3">
             <Link
@@ -228,7 +213,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <UserCircle className="h-4.5 w-4.5" />
               </button>
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center ml-1">
-                <span className="text-[10px] font-bold text-white">
+                <span className="text-xs font-bold text-white">
                   {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
                 </span>
               </div>

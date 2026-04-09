@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { formatMillions, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
 import { useDeals } from "@/hooks/useDeals";
 import { exportDealsToExcel } from "@/lib/excelDealImport";
@@ -18,10 +19,14 @@ const filterStages: { label: string; value: DealStage | "all" }[] = [
 ];
 
 export default function LoanBookPage() {
-  const { deals: allDeals } = useDeals();
+  const { deals: allDeals, loading } = useDeals();
   const [activeFilter, setActiveFilter] = useState<DealStage | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"loanAmount" | "ltv" | "totalRate" | "maturity">("loanAmount");
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
 
   const filtered = allDeals
     .filter(d => activeFilter === "all" ? d.stage !== "rejected" : d.stage === activeFilter)
@@ -58,24 +63,24 @@ export default function LoanBookPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4">
-          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
             <Wallet className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Total Facilities</p>
+            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Total Facilities</p>
             <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalFacilities)}</p>
           </div>
-          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
             <Building2 className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Total Exposure</p>
+            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Total Exposure</p>
             <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalExposure)}</p>
           </div>
-          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
             <ShieldCheck className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Avg LTV</p>
+            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Avg LTV</p>
             <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgLTV)}</p>
           </div>
-          <div className="bg-white border border-slate-100 rounded-lg p-5 hover:shadow-sm transition-shadow">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
             <TrendingUp className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Avg Rate</p>
+            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Avg Rate</p>
             <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgRate)}</p>
           </div>
         </div>
@@ -92,7 +97,7 @@ export default function LoanBookPage() {
                   key={f.value}
                   onClick={() => setActiveFilter(f.value)}
                   className={cn(
-                    "px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide transition-all",
+                    "px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all",
                     activeFilter === f.value
                       ? "bg-primary text-white shadow-sm"
                       : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
@@ -115,10 +120,10 @@ export default function LoanBookPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <thead className="bg-slate-50 text-xs font-bold uppercase tracking-widest text-slate-400">
                 <tr>
                   <th className="px-6 py-3">Project</th>
                   <th className="px-6 py-3">Stage</th>
@@ -145,11 +150,11 @@ export default function LoanBookPage() {
                     <td className="px-6 py-4">
                       <Link to={`/deals/${d.id}`} className="group">
                         <div className="font-bold text-primary group-hover:text-slate-600 transition-colors">{d.projectName}</div>
-                        <div className="text-[10px] text-slate-400 mt-0.5">{d.borrower} · {d.location}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{d.borrower} · {d.location}</div>
                       </Link>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={cn("px-2 py-0.5 rounded text-[9px] font-bold uppercase", stageColors[d.stage])}>
+                      <span className={cn("px-2 py-0.5 rounded text-[11px] font-bold uppercase", stageColors[d.stage])}>
                         {stageLabels[d.stage]}
                       </span>
                     </td>
@@ -167,7 +172,7 @@ export default function LoanBookPage() {
                         <div className="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
                           <div className="h-full bg-primary rounded-full" style={{ width: `${d.constructionProgress}%` }} />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-400">{d.constructionProgress}%</span>
+                        <span className="text-xs font-bold text-slate-400">{d.constructionProgress}%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-slate-500">{d.expectedMaturity}</td>
@@ -176,7 +181,7 @@ export default function LoanBookPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs font-bold text-slate-400 uppercase tracking-widest">
             Showing {filtered.length} of {allDeals.length} deals
           </div>
         </div>

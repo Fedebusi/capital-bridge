@@ -23,7 +23,7 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Top nav */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/investor" className="flex items-center gap-2.5">
@@ -32,7 +32,7 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
               </div>
               <div>
                 <span className="text-[15px] font-extrabold text-primary tracking-tight">CapitalBridge</span>
-                <span className="text-[10px] text-emerald-600 font-semibold ml-2 bg-emerald-50 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-emerald-600 font-semibold ml-2 bg-emerald-50 px-2 py-0.5 rounded-full">
                   Investor
                 </span>
               </div>
@@ -80,7 +80,7 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
               <LogOut className="h-4.5 w-4.5" />
             </Link>
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center ml-1">
-              <span className="text-[10px] font-bold text-white">LP</span>
+              <span className="text-xs font-bold text-white">LP</span>
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-100 mt-12">
+      <footer className="border-t border-slate-200 mt-12">
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex items-center justify-between">
           <p className="text-xs text-slate-400">
             CapitalBridge Investor Portal — Confidential

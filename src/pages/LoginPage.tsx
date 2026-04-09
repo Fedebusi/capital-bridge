@@ -91,7 +91,7 @@ export default function LoginPage() {
             {/* Admin / Platform */}
             <button
               onClick={() => setMode("admin")}
-              className="group relative rounded-2xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/5"
+              className="group relative rounded-xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/5"
             >
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center mb-5">
                 <ShieldCheck className="h-6 w-6 text-white" />
@@ -108,7 +108,7 @@ export default function LoginPage() {
             {/* Investor */}
             <button
               onClick={() => setMode("investor")}
-              className="group relative rounded-2xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/5"
+              className="group relative rounded-xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/5"
             >
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mb-5">
                 <Landmark className="h-6 w-6 text-white" />
@@ -206,6 +206,9 @@ export default function LoginPage() {
                     <LogIn className="mr-2 h-4 w-4" />
                     {loading ? "Signing in..." : "Sign In"}
                   </Button>
+                  <Link to="/reset-password" className="text-xs text-slate-400 hover:text-primary transition-colors">
+                    Forgot your password?
+                  </Link>
                 </CardFooter>
               </form>
             </Card>

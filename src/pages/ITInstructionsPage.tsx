@@ -238,15 +238,15 @@ export default function ITInstructionsPage() {
 
         <div className="grid gap-4">
           {sections.map((section) => (
-            <div key={section.title} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+            <div key={section.title} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
                 <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", section.color)}>
                   <section.icon className="h-4 w-4" />
                 </div>
                 <h2 className="text-sm font-bold text-primary">{section.title}</h2>
               </div>
               <div className="px-6 py-5">
-                <pre className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap font-body">{section.content}</pre>
+                <pre className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap font-body">{section.content}</pre>
               </div>
             </div>
           ))}

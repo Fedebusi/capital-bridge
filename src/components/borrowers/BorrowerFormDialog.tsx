@@ -163,10 +163,12 @@ export function BorrowerFormDialog({ borrower, trigger, onSuccess }: BorrowerFor
               <div className="space-y-2">
                 <Label>Headquarters *</Label>
                 <Input {...register("headquarters")} />
+                {errors.headquarters && <p className="text-xs text-destructive">{errors.headquarters.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Year Established</Label>
                 <Input type="number" {...register("yearEstablished")} />
+                {errors.yearEstablished && <p className="text-xs text-destructive">{errors.yearEstablished.message}</p>}
               </div>
             </div>
 

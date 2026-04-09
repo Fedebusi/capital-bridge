@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import ConstructionMonitoringPanel from "@/components/deals/ConstructionMonitoringPanel";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
@@ -8,7 +9,12 @@ import { cn } from "@/lib/utils";
 import { HardHat } from "lucide-react";
 
 export default function ConstructionMonitoringPage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const dealsWithMonitoring = deals.filter(d =>
     sampleSiteVisits[d.id] || sampleCertifications[d.id] || sampleMonitoringReports[d.id]
   );
