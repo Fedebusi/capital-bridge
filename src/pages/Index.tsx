@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
-import { sampleDeals, getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
 import { Wallet, ShieldCheck, Rocket, ArrowRight, Info, ArrowUpRight, Activity, Clock, CheckCircle2, AlertTriangle, FileText, DollarSign, Gavel } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +30,11 @@ const sectorAllocation = [
 ];
 
 export default function DashboardPage() {
-  const metrics = getPortfolioMetrics();
-  const activeDeals = sampleDeals.filter(d => d.stage === "active");
+  const { deals } = useDeals();
+  const metrics = getPortfolioMetrics(deals);
+  const activeDeals = deals.filter(d => d.stage === "active");
 
-  const pipelineVolume = sampleDeals
+  const pipelineVolume = deals
     .filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage))
     .reduce((s, d) => s + d.loanAmount, 0);
 
@@ -259,7 +261,7 @@ export default function DashboardPage() {
                 </Link>
               </div>
               {(["screening", "due_diligence", "ic_approval", "documentation"] as DealStage[]).map(stage => {
-                const count = sampleDeals.filter(d => d.stage === stage).length;
+                const count = deals.filter(d => d.stage === stage).length;
                 return (
                   <div key={stage} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
                     <span className="text-[11px] text-slate-500 font-medium">{stageLabels[stage]}</span>

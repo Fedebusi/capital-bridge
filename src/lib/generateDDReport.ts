@@ -33,7 +33,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.text("APEX CAPITAL", margin, 14);
+  doc.text("CAPITALBRIDGE", margin, 14);
 
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
@@ -243,7 +243,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(156, 163, 175);
-    doc.text("APEX CAPITAL — Confidential", margin, pageH - 8);
+    doc.text("CapitalBridge — Confidential", margin, pageH - 8);
     doc.text(`Page ${i} of ${totalPages}`, pageW - margin, pageH - 8, { align: "right" });
   }
 

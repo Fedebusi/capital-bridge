@@ -76,7 +76,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
   - `00003_fix_auth_trigger.sql` — fixed `handle_new_user` with safe defaults + error handling
 - **Auth trigger**: fixed in migration 00003 — everyone starts as `viewer`, admin promotes.
 
-## Current Status (Last Updated: 2026-04-08)
+## Current Status (Last Updated: 2026-04-09)
 
 ### Completed
 - [x] Full frontend UI (19 pages, 67+ components)
@@ -85,32 +85,29 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - [x] `.env` added to `.gitignore`
 - [x] Complete database schema with RLS and audit triggers (migration run on Supabase)
 - [x] Authentication system code (login page, AuthContext, ProtectedRoute)
+- [x] Auth enforcement enabled — login redirect + role-based access active
+- [x] Separate Platform / Investor portals with role-based access
 - [x] React Query API hooks for all entities (`src/hooks/useSupabaseQuery.ts`)
-- [x] CRUD forms for deals and borrowers (dialog-based)
+- [x] CRUD forms: deals (Pipeline) + borrowers (BorrowersPage) with dialog-based forms
 - [x] Real-time notifications (covenant breaches, stage changes, approvals)
 - [x] Error boundary component
 - [x] Audit trail logging (automatic on create/update via mutations)
 - [x] Document/photo storage hooks
 - [x] Tests: 22 passing (PIK engine + deal screening logic)
-- [x] Seed data SQL prepared (`supabase/seed.sql`)
-- [x] "New Deal" button added to Pipeline page
+- [x] Seed data deployed to Supabase (migration 00002)
+- [x] Auth trigger fix deployed (migration 00003)
+- [x] User profile + logout in sidebar
+- [x] Dashboard, Borrowers, DealDetail wired to Supabase (live/demo dual mode)
+- [x] Branding fixed — "APEX CAPITAL" replaced with "CapitalBridge" in PDFs
 
 ### In Progress
-- [ ] Wire up all pages to use Supabase data when available
-- [ ] Add "New Deal" / "New Borrower" / "Edit" / stage change buttons across pages
-- [ ] User profile menu in sidebar
-
-### Recently Completed
-- [x] Merged all features to `main` — migrations 00002 (seed) + 00003 (auth fix) deployed
-- [x] Auth enforcement enabled in `ProtectedRoute.tsx` (login redirect + role check active)
-- [x] "Back to Platform" link restricted to admin/analyst/PM roles only
-- [x] Role-based access enforcement active on protected routes
+- [ ] Wire remaining pages to Supabase (Approvals, DD, TermSheets, Construction, Lifecycle)
+- [ ] Add "Edit" / stage change buttons on deal and borrower detail pages
 
 ### Pending
-- [ ] Design polish pass (after backend is fully wired)
+- [ ] Design polish pass
 - [ ] CI/CD pipeline (GitHub Actions for lint + test + build)
 - [ ] Mobile optimizations for forms
-- [ ] Branding customization ("APEX CAPITAL" still hardcoded in PDFs)
 
 ## Key Files
 
