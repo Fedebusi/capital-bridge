@@ -1,39 +1,83 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { sampleBorrowers, ratingColors } from "@/data/borrowers";
+import { BorrowerFormDialog } from "@/components/borrowers/BorrowerFormDialog";
+import { sampleBorrowers, ratingColors, type Borrower } from "@/data/borrowers";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { useBorrowersQuery } from "@/hooks/useSupabaseQuery";
+import type { DbBorrower } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Plus } from "lucide-react";
+
+function dbBorrowerToFrontend(b: DbBorrower): Borrower {
+  return {
+    id: b.id,
+    name: b.name,
+    group: b.group_name,
+    type: b.type,
+    internalRating: b.internal_rating,
+    ratingDate: b.rating_date,
+    headquarters: b.headquarters,
+    yearEstablished: b.year_established,
+    website: b.website ?? undefined,
+    description: b.description,
+    totalExposure: Number(b.total_exposure),
+    totalCommitments: Number(b.total_commitments),
+    numberOfActiveDeals: b.number_of_active_deals,
+    avgIRR: b.avg_irr ? Number(b.avg_irr) : undefined,
+    avgMultiple: b.avg_multiple ? Number(b.avg_multiple) : undefined,
+    contacts: [],
+    corporateStructure: [],
+    kyc: [],
+    completedProjects: [],
+    activeDealIds: [],
+  };
+}
 
 export default function BorrowersPage() {
+  const isLive = isSupabaseConfigured();
+  const { data: dbBorrowers } = useBorrowersQuery();
+  const borrowers: Borrower[] = isLive && dbBorrowers
+    ? dbBorrowers.map(dbBorrowerToFrontend)
+    : sampleBorrowers;
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-extrabold text-primary">Borrower Base</h1>
-          <p className="text-slate-500 text-sm mt-1">Complete registry of borrowers, sponsors, and counterparties</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-extrabold text-primary">Borrower Base</h1>
+            <p className="text-slate-500 text-sm mt-1">Complete registry of borrowers, sponsors, and counterparties</p>
+          </div>
+          <BorrowerFormDialog
+            trigger={
+              <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                <Plus className="h-4 w-4" />
+                New Borrower
+              </button>
+            }
+          />
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Borrowers</p>
-            <p className="font-display text-2xl font-bold text-foreground mt-1">{sampleBorrowers.length}</p>
+            <p className="font-display text-2xl font-bold text-foreground mt-1">{borrowers.length}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Rated A</p>
-            <p className="font-display text-2xl font-bold text-accent mt-1">{sampleBorrowers.filter(b => b.internalRating === "A").length}</p>
+            <p className="font-display text-2xl font-bold text-accent mt-1">{borrowers.filter(b => b.internalRating === "A").length}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">KYC Issues</p>
             <p className="font-display text-2xl font-bold text-warning mt-1">
-              {sampleBorrowers.filter(b => b.kyc.some(k => k.status !== "valid")).length}
+              {borrowers.filter(b => b.kyc.some(k => k.status !== "valid")).length}
             </p>
           </div>
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Exposure</p>
             <p className="font-display text-2xl font-bold text-foreground mt-1">
-              {formatMillions(sampleBorrowers.reduce((s, b) => s + b.totalExposure, 0))}
+              {formatMillions(borrowers.reduce((s, b) => s + b.totalExposure, 0))}
             </p>
           </div>
         </div>
@@ -56,7 +100,7 @@ export default function BorrowersPage() {
                 </tr>
               </thead>
               <tbody>
-                {sampleBorrowers.map((b, i) => {
+                {borrowers.map((b, i) => {
                   const kycOk = b.kyc.every(k => k.status === "valid");
                   const kycExpiring = b.kyc.some(k => k.status === "expiring_soon");
                   const kycBad = b.kyc.some(k => k.status === "expired" || k.status === "pending");

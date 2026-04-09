@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
   Search,
@@ -17,6 +18,7 @@ import {
   UserCircle,
   HelpCircle,
   BookOpen,
+  LogOut,
   Wallet,
   MapPin,
   Plus,
@@ -47,7 +49,14 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { profile, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  async function handleLogout() {
+    await signOut();
+    navigate("/login");
+  }
 
   const renderNavGroup = (group: string, label: string) => {
     const items = navItems.filter(i => i.group === group);
@@ -137,7 +146,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             <Plus className="h-3.5 w-3.5" />
             New Deal
           </Link>
-          <div className="flex gap-1">
+          <div className="flex gap-1 mb-3">
             <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-[10px] font-medium transition-colors" href="#">
               <HelpCircle className="h-3 w-3" />
               <span>Help</span>
@@ -146,6 +155,25 @@ export default function AppLayout({ children }: AppLayoutProps) {
               <BookOpen className="h-3 w-3" />
               <span>Docs</span>
             </a>
+          </div>
+          {/* User profile */}
+          <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg bg-white/60 border border-slate-200/50">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center shrink-0">
+              <span className="text-[10px] font-bold text-white">
+                {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-semibold text-primary truncate">{profile?.full_name || "User"}</p>
+              <p className="text-[9px] text-slate-400 font-medium capitalize">{profile?.role || "viewer"}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-all shrink-0"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
       </aside>
@@ -200,7 +228,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <UserCircle className="h-4.5 w-4.5" />
               </button>
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center ml-1">
-                <span className="text-[10px] font-bold text-white">AC</span>
+                <span className="text-[10px] font-bold text-white">
+                  {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
+                </span>
               </div>
             </div>
           </div>

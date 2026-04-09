@@ -480,16 +480,17 @@ export const formatPercent = (value: number): string => `${value.toFixed(1)}%`;
 
 export const formatMillions = (amount: number): string => `€${(amount / 1000000).toFixed(1)}M`;
 
-export const getPortfolioMetrics = () => {
-  const activeDeals = sampleDeals.filter(d => d.stage === "active");
-  const allDeals = sampleDeals.filter(d => d.stage !== "rejected");
+export const getPortfolioMetrics = (deals?: Deal[]) => {
+  const source = deals ?? sampleDeals;
+  const activeDeals = source.filter(d => d.stage === "active");
+  const allDeals = source.filter(d => d.stage !== "rejected");
   const totalCommitments = allDeals.reduce((sum, d) => sum + d.loanAmount, 0);
   const totalExposure = allDeals.reduce((sum, d) => sum + d.totalExposure, 0);
   const totalGDV = allDeals.reduce((sum, d) => sum + d.gdv, 0);
   const totalDisbursed = allDeals.reduce((sum, d) => sum + d.disbursedAmount, 0);
   const avgLTV = activeDeals.length > 0 ? activeDeals.reduce((sum, d) => sum + d.ltv, 0) / activeDeals.length : 0;
   const avgLTC = activeDeals.length > 0 ? activeDeals.reduce((sum, d) => sum + d.ltc, 0) / activeDeals.length : 0;
-  const pipelineDeals = sampleDeals.filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage)).length;
+  const pipelineDeals = source.filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage)).length;
   const totalAccruedPIK = allDeals.reduce((sum, d) => sum + d.accruedPIK, 0);
   return { totalCommitments, totalExposure, totalGDV, totalDisbursed, avgLTV, avgLTC, activeDeals: activeDeals.length, pipelineDeals, totalDeals: allDeals.length, totalAccruedPIK };
 };
