@@ -22,7 +22,7 @@ export default function AboutPage() {
         {/* Header */}
         <header>
           <h1 className="text-2xl font-extrabold text-primary">About Us</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Chi siamo, cosa facciamo, e perché il Milan vincerà la Champions</p>
+          <p className="text-slate-500 text-sm mt-1">Chi siamo, cosa facciamo, e perché il Milan vincerà la Champions</p>
         </header>
 
         {/* Mission */}

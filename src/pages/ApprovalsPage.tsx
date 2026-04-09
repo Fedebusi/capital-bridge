@@ -27,7 +27,7 @@ export default function ApprovalsPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-extrabold text-primary">Approvals</h1>
           <p className="text-slate-500 text-sm mt-1">IC voting, capital partner sign-off, and audit trail</p>

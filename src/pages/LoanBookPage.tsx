@@ -45,7 +45,7 @@ export default function LoanBookPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <header className="flex justify-between items-start">
           <div>
@@ -62,26 +62,22 @@ export default function LoanBookPage() {
         </header>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
-            <Wallet className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Total Facilities</p>
-            <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalFacilities)}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Facilities</p>
+            <p className="text-2xl font-bold text-primary mt-2">{formatMillions(totalFacilities)}</p>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
-            <Building2 className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Total Exposure</p>
-            <p className="text-xl font-extrabold text-primary mt-1">{formatMillions(totalExposure)}</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Exposure</p>
+            <p className="text-2xl font-bold text-primary mt-2">{formatMillions(totalExposure)}</p>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
-            <ShieldCheck className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Avg LTV</p>
-            <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgLTV)}</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Avg LTV</p>
+            <p className="text-2xl font-bold text-primary mt-2">{formatPercent(avgLTV)}</p>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
-            <TrendingUp className="h-4 w-4 text-slate-400 mb-2" />
-            <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Avg Rate</p>
-            <p className="text-xl font-extrabold text-primary mt-1">{formatPercent(avgRate)}</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Avg Rate</p>
+            <p className="text-2xl font-bold text-primary mt-2">{formatPercent(avgRate)}</p>
           </div>
         </div>
 

@@ -48,7 +48,7 @@ export default function BorrowersPage() {
     : sampleBorrowers;
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-primary">Borrower Base</h1>
@@ -66,21 +66,21 @@ export default function BorrowersPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Borrowers</p>
             <p className="font-display text-2xl font-bold text-foreground mt-1">{borrowers.length}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Rated A</p>
             <p className="font-display text-2xl font-bold text-accent mt-1">{borrowers.filter(b => b.internalRating === "A").length}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">KYC Issues</p>
             <p className="font-display text-2xl font-bold text-warning mt-1">
               {borrowers.filter(b => b.kyc.some(k => k.status !== "valid")).length}
             </p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Exposure</p>
             <p className="font-display text-2xl font-bold text-foreground mt-1">
               {formatMillions(borrowers.reduce((s, b) => s + b.totalExposure, 0))}

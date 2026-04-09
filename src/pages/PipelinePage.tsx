@@ -24,7 +24,7 @@ export default function PipelinePage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <header className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-extrabold text-primary">Deal Pipeline</h1>

@@ -25,7 +25,7 @@ export default function ConstructionMonitoringPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-extrabold text-primary">Construction Monitoring</h1>
           <p className="text-slate-500 text-sm mt-1">Site visits, certifications, monitoring reports, and retention tracking</p>

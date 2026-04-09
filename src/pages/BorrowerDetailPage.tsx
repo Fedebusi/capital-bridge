@@ -46,7 +46,7 @@ export default function BorrowerDetailPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex items-start gap-4">
           <Link to="/borrowers" className="mt-1 rounded-lg border border-border bg-card p-2 hover:bg-muted transition-colors">
