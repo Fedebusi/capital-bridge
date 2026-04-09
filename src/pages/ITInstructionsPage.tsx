@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { BookOpen, FolderTree, FileText, Database, Palette, Wrench, Server, Shield, Target } from "lucide-react";
+import { BookOpen, FolderTree, FileText, Database, Palette, Wrench, Server, Shield, Target, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sections = [
@@ -19,84 +19,113 @@ Permite a un equipo de originación y gestión de préstamos:
 El usuario típico es un analista o portfolio manager de un fondo de deuda que presta dinero a promotores inmobiliarios para desarrollo residencial, comercial o refurbishment.`,
   },
   {
-    title: "Páginas y su Lógica de Negocio",
+    title: "Páginas y su Lógica de Negocio (con Prioridad)",
     icon: FileText,
     color: "bg-emerald-50 text-emerald-600",
-    content: `DASHBOARD (/)
+    content: `═══════════════════════════════════════════════
+ P0 — CORE (construir primero)
+═══════════════════════════════════════════════
+
+DASHBOARD (/) — [P0 CORE]
 Para qué sirve: Vista ejecutiva del fondo. El portfolio manager abre esta página cada mañana para ver el estado general.
 Qué muestra: NAV total del fondo, métricas clave (IRR, impaired ratio, cash distribuible), últimas transacciones, timeline de eventos recientes, y distribución sectorial.
 Lógica: Los datos se calculan agregando todos los deals activos — suma de exposiciones, media ponderada de tasas, etc.
+Técnico: Usa useDeals() context. Datos vienen de Supabase cuando configurado, fallback a datos demo.
 
-INVESTOR PORTAL (/investor)
-Para qué sirve: Página orientada al inversor/LP del fondo. Sirve para que los inversores vean cómo va su inversión.
-Qué muestra: Valor total del portafolio, rendimientos trimestrales, IRR anualizado, chart de performance en el tiempo, donut de asset allocation, lista de inversiones activas con progreso, y calendario de próximos pagos.
-Lógica: Agrega datos de deals activos para mostrar returns y distribuciones.
+LOAN BOOK (/deals) — [P0 CORE]
+Para qué sirve: Vista tabular completa de todo el portafolio de préstamos. Es la referencia diaria del equipo.
+Qué muestra: Tabla con todas las métricas de cada deal (facility, disbursed, PIK, exposure, rate, LTV, construction progress, maturity). Cards de resumen arriba con totales.
+Lógica: Filtrable por stage, buscable por nombre/borrower, ordenable por columnas. Exportable a Excel.
+Técnico: Usa useDeals() context. Tabla con overflow-x-auto para mobile.
 
-MAPA (/map)
-Para qué sirve: Visualizar dónde están físicamente los proyectos financiados.
-Qué muestra: Mapa interactivo de España con pins coloreados por stage del deal. Al hacer click en un pin se ve el nombre del proyecto, ubicación, facility y LTV, con link al detalle.
-Lógica: Cada deal tiene coordenadas GPS. Los colores de los pins indican el estado (activo=negro, pipeline=azul, repaid=verde).
-
-PIPELINE (/pipeline)
+PIPELINE (/pipeline) — [P0 CORE]
 Para qué sirve: Gestionar el flujo de nuevos deals. Es la "bandeja de entrada" del equipo de originación.
 Qué muestra: Grid de cards de deals filtrable por stage (Screening, Due Diligence, IC Approval, Documentation, Active, Repaid). Cada card muestra nombre, borrower, facility, métricas clave.
-Lógica: Los deals pasan por stages secuenciales. Aquí también se pueden IMPORTAR nuevos deals via Excel y EXPORTAR el portafolio.
-Funcionalidad Excel: Botón "Import Excel" abre un dialog donde descargas un template vacío, lo llenas con datos del deal, lo subes, ves una preview y confirmas. Los deals importados entran como "Screening".
+Lógica: Los deals pasan por stages secuenciales. Se pueden IMPORTAR nuevos deals via Excel y CREAR via formulario.
+Técnico: Usa useDeals() context. DealFormDialog con validación Zod (21 campos). Excel import via SheetJS.
 
-SCREENING (/screening)
-Para qué sirve: Evaluar rápidamente si una oportunidad cumple los criterios del fondo ANTES de invertir tiempo en due diligence.
-Qué muestra: Formulario donde ingresas tipo de activo, loan amount, GDV, total cost, pre-sales. El sistema calcula LTV, LTC y evalúa cada criterio contra los umbrales del fondo.
-Lógica: Criterios predefinidos — max LTV 65%, max LTC 75%, ticket €5-25M, min pre-sales 15%. Resultado: score en % con "PROCEED TO DD" / "REVIEW REQUIRED" / "DOES NOT MEET CRITERIA".
-
-LOAN BOOK (/deals)
-Para qué sirve: Vista tabular completa de todo el portafolio de préstamos.
-Qué muestra: Tabla con todas las métricas de cada deal (facility, disbursed, PIK, exposure, rate, LTV, construction progress, maturity). Cards de resumen arriba con totales.
-Lógica: Filtrable por stage, buscable por nombre/borrower, ordenable por columnas (facility, rate, LTV, maturity). También exportable a Excel.
-
-DEAL DETAIL (/deals/:id)
+DEAL DETAIL (/deals/:id) — [P0 CORE]
 Para qué sirve: Vista 360° de un deal específico. Todo lo que necesitas saber de un préstamo en una sola página.
 Qué muestra: 7 paneles — Due Diligence (checklist items), Approvals (votación IC), Term Sheet & Waivers, Legal & Security, Waterfall (distribución cash flows), PIK Schedule (intereses mensuales), Construction Monitoring.
 Lógica: Cada panel carga datos del deal específico. Los paneles son independientes y se pueden expandir/colapsar.
+Técnico: Usa useDeals() para encontrar el deal por ID. Sub-datos (DD, approvals, etc.) usan datos demo actualmente — necesitan hooks Supabase dedicados.
 
-TERM SHEETS (/term-sheets)
-Para qué sirve: Gestionar los term sheets emitidos y los covenant waivers.
-Qué muestra: Para cada deal con term sheet: key terms (facility, rates, fees, tenor, LTV/LTC limits), security package (hipoteca, pledges, garantías), waivers activos de covenants, validación del Capital Partner, historial de versiones, y audit trail completo.
-Lógica: Un term sheet pasa por stages: Draft → Internal Review → CP Validation → Issued → Signed. Los waivers se solicitan cuando un covenant se incumple y requieren aprobación interna + del Capital Partner.
-
-LIFECYCLE (/lifecycle)
-Para qué sirve: Seguir el workflow completo de 12 fases de cada deal, desde originación hasta close-out.
-Qué muestra: Barra de progreso visual por deal, fase actual, agentes asignados, próximos milestones pendientes, y blockers.
-Lógica: 12 fases secuenciales con milestones específicos. Cada fase tiene agentes responsables. Se trackean blockers y completamiento de milestones.
-
-PIK ENGINE (/pik-engine)
-Para qué sirve: Calcular y proyectar los intereses PIK (Payment-in-Kind) que se capitalizan mensualmente.
-Qué muestra: Tabla con principal outstanding, PIK accrued, total exposure, monthly accrual, y proyección de PIK y exposición al vencimiento.
-Lógica: El motor calcula mes a mes: PIK = outstanding × PIK spread / 12. Se acumula al principal. Proyecta hasta el tenor completo. Crítico para entender la exposición real del fondo.
-
-CONSTRUCTION MONITORING (/construction)
-Para qué sirve: Monitorear el avance de obra de los proyectos financiados. Fundamental para autorizar drawdowns.
-Qué muestra: Para cada deal: site visits (informes de visita), certificaciones de avance, monitoring reports, y retenciones.
-Lógica: El fondo solo desembolsa dinero cuando la construcción avanza según certificaciones. Esta página trackea ese progreso.
-
-BORROWERS (/borrowers)
+BORROWERS (/borrowers) — [P0 CORE]
 Para qué sirve: Registro centralizado de todos los prestatarios/promotores con los que trabaja el fondo.
 Qué muestra: Tabla con nombre, grupo, rating interno (A/B/C), deals activos, commitments, exposure, IRR histórico, track record, estado KYC.
-Lógica: Rating interno basado en track record y comportamiento. KYC (Know Your Customer) verifica identidad, documentos, compliance AML.
+Lógica: Rating interno basado en track record. KYC verifica identidad, documentos, compliance AML.
+Técnico: Usa useBorrowersQuery() de Supabase con fallback a sampleBorrowers. BorrowerFormDialog para crear nuevos.
 
-BORROWER DETAIL (/borrowers/:id)
-Para qué sirve: Vista completa de un borrower específico con todo su historial.
+BORROWER DETAIL (/borrowers/:id) — [P0 CORE]
+Para qué sirve: Vista completa de un borrower con todo su historial.
 Qué muestra: 4 tabs — Perfil (info empresa, contactos, estructura societaria), Exposure & Deals (deals vinculados), Track Record (proyectos completados con IRR y multiple), KYC & Compliance (checklist de documentos con fechas de vencimiento).
-Lógica: Permite evaluar el riesgo de concentración (cuánta exposición tenemos con un solo borrower) y verificar que el KYC esté al día.
+Lógica: Evalúa riesgo de concentración y verifica que el KYC esté al día.
+Técnico: Usa useBorrowersQuery() + useDeals(). Sub-datos (contacts, KYC, corporate) necesitan hooks Supabase dedicados.
 
-DUE DILIGENCE (/due-diligence)
-Para qué sirve: Trackear el progreso de la due diligence en todos los deals. Es el checklist de todo lo que hay que verificar antes de prestar.
-Qué muestra: Lista de items de DD por deal (valuation, legal, environmental, insurance, etc.) con status (completed, pending, flagged). Progress bar por deal.
-Lógica: Cada deal tiene ~15-20 items de DD agrupados por categoría. Se puede exportar un reporte PDF con el estado de la DD.
+═══════════════════════════════════════════════
+ P1 — IMPORTANTE (construir segundo)
+═══════════════════════════════════════════════
 
-APPROVALS (/approvals)
+SCREENING (/screening) — [P1 IMPORTANTE]
+Para qué sirve: Evaluar rápidamente si una oportunidad cumple los criterios del fondo ANTES de invertir tiempo en due diligence.
+Qué muestra: Formulario donde ingresas tipo de activo, loan amount, GDV, total cost, pre-sales. El sistema calcula LTV, LTC y evalúa contra umbrales.
+Lógica: Criterios predefinidos — max LTV 65%, max LTC 75%, ticket €5-25M, min pre-sales 15%. Resultado: score en % con "PROCEED TO DD" / "REVIEW REQUIRED" / "DOES NOT MEET CRITERIA".
+Técnico: Lógica standalone (no necesita DB). 10 tests unitarios cubren esta lógica.
+
+DUE DILIGENCE (/due-diligence) — [P1 IMPORTANTE]
+Para qué sirve: Trackear el progreso de la due diligence. Es el checklist de todo lo que hay que verificar antes de prestar.
+Qué muestra: Lista de items de DD por deal (valuation, legal, environmental, insurance) con status. Progress bar por deal. Exporta reporte PDF.
+Lógica: Cada deal tiene ~15-20 items de DD agrupados por categoría.
+Técnico: Usa useDeals() para la lista de deals. Items de DD son datos demo — necesitan useDueDiligenceItems(dealId) de Supabase.
+
+APPROVALS (/approvals) — [P1 IMPORTANTE]
 Para qué sirve: Gestionar el proceso de aprobación del Investment Committee (IC).
-Qué muestra: Deals pendientes de aprobación y deals ya aprobados/rechazados. Para cada uno: votación del IC (approve/reject/abstain por miembro), condiciones, y status del Capital Partner.
-Lógica: Un deal necesita aprobación del IC antes de poder emitir el term sheet. Se registra el voto de cada miembro del comité.`,
+Qué muestra: Deals pendientes y completados. Votación del IC (approve/reject/abstain por miembro), condiciones, status del Capital Partner.
+Lógica: Un deal necesita aprobación del IC antes de emitir term sheet. Se registra el voto de cada miembro.
+Técnico: Usa useDeals(). Datos de approval son demo — necesitan useApprovalRecord(dealId) y useICVotes(approvalId) de Supabase.
+
+TERM SHEETS (/term-sheets) — [P1 IMPORTANTE]
+Para qué sirve: Gestionar term sheets emitidos y covenant waivers.
+Qué muestra: Key terms (facility, rates, fees, tenor, LTV/LTC limits), security package, waivers activos, validación Capital Partner, historial versiones, audit trail.
+Lógica: Term sheet stages: Draft → Internal Review → CP Validation → Issued → Signed. Waivers requieren aprobación interna + CP.
+Técnico: Usa useDeals(). Datos de term sheet son demo — necesitan useTermSheet(dealId) y useWaivers(dealId).
+
+═══════════════════════════════════════════════
+ P2 — ÚTIL (construir tercero)
+═══════════════════════════════════════════════
+
+LIFECYCLE (/lifecycle) — [P2 ÚTIL]
+Para qué sirve: Seguir el workflow completo de 12 fases de cada deal.
+Qué muestra: Barra de progreso visual, fase actual, agentes asignados, milestones, blockers.
+Lógica: 12 fases secuenciales con milestones específicos y agentes responsables.
+Técnico: Usa useDeals(). Fases de lifecycle son demo — necesitan tabla dedicada en Supabase.
+
+PIK ENGINE (/pik-engine) — [P2 ÚTIL]
+Para qué sirve: Calcular y proyectar intereses PIK que se capitalizan mensualmente.
+Qué muestra: Tabla con principal outstanding, PIK accrued, total exposure, proyección al vencimiento.
+Lógica: PIK = outstanding × PIK spread / 12, se acumula al principal. 11 tests unitarios cubren esta lógica.
+Técnico: Usa useDeals(). Cálculos en src/data/pikEngine.ts (bien testeado).
+
+CONSTRUCTION MONITORING (/construction) — [P2 ÚTIL]
+Para qué sirve: Monitorear avance de obra. Fundamental para autorizar drawdowns.
+Qué muestra: Site visits, certificaciones de avance, monitoring reports, retenciones.
+Lógica: El fondo desembolsa solo cuando la construcción avanza según certificaciones.
+Técnico: Usa useDeals(). Datos de construction son demo — necesitan useSiteVisits(), useConstructionCertifications(), useMonitoringReports().
+
+INVESTOR PORTAL (/investor) — [P2 ÚTIL]
+Para qué sirve: Página orientada al inversor/LP del fondo.
+Qué muestra: Valor portafolio, rendimientos, IRR, chart performance, asset allocation, calendario pagos. Genera Tax Report PDF.
+Lógica: Agrega datos de deals activos para mostrar returns.
+Técnico: Usa useDeals(). Layout separado (InvestorLayout). Acceso via login dedicado (/login?role=investor).
+
+═══════════════════════════════════════════════
+ P3 — NICE TO HAVE
+═══════════════════════════════════════════════
+
+MAP (/map) — [P3 NICE TO HAVE]
+Para qué sirve: Visualizar dónde están los proyectos.
+Qué muestra: Mapa interactivo de España con pins coloreados por stage.
+Técnico: Usa Leaflet + CartoDB tiles. Cada deal tiene coordenadas GPS.`,
   },
   {
     title: "Modelo de Datos — Qué Representa Cada Campo",
@@ -139,9 +168,11 @@ CONSTRUCCIÓN:
 STAGES (ciclo de vida):
 screening → due_diligence → ic_approval → documentation → active → repaid/rejected
 
-DATOS MOCK: Actualmente todo está en src/data/*.ts como archivos estáticos.
-Para producción necesitáis conectar una base de datos (recomiendo Supabase/PostgreSQL).
-React Query ya está instalado y listo para usar.`,
+DÓNDE ESTÁN LOS DATOS:
+• Backend: Supabase PostgreSQL (24 tablas con RLS, foreign keys, triggers)
+• Frontend: useDeals() context que switcha automáticamente entre datos Supabase (live) y datos demo (cuando Supabase no está configurado)
+• Tipos TypeScript: src/types/database.ts (DbDeal, DbBorrower, etc.)
+• Hooks Supabase: src/hooks/useSupabaseQuery.ts (36 hooks listos para usar)`,
   },
   {
     title: "Import/Export Excel — Cómo Funciona",
@@ -178,7 +209,7 @@ Archivo principal: src/lib/excelDealImport.ts`,
     color: "bg-cyan-50 text-cyan-600",
     content: `FRONTEND:
 • React 18 + TypeScript — Framework principal
-• Vite — Bundler y dev server (muy rápido)
+• Vite — Bundler y dev server
 • Tailwind CSS — Estilos utility-first
 • shadcn/ui — 40+ componentes UI (Button, Dialog, Tabs, Select, etc.)
 • Recharts — Charts (AreaChart, PieChart)
@@ -187,43 +218,122 @@ Archivo principal: src/lib/excelDealImport.ts`,
 • jsPDF — Generación de reportes PDF
 • xlsx (SheetJS) — Import/export Excel
 • React Router — Navegación
-• React Query — Data fetching (instalado, listo para conectar)
-• Zod — Validación de schemas (instalado, listo para usar)
+• React Query — Data fetching y cache
+• Zod — Validación de schemas en formularios
 
-HOSTING:
+BACKEND:
+• Supabase (PostgreSQL) — Base de datos con RLS (Row Level Security)
+• Supabase Auth — Autenticación con email/password
+• Supabase Storage — Almacenamiento de documentos y fotos
+• Supabase Realtime — Notificaciones en tiempo real
+
+INFRAESTRUCTURA:
 • Vercel — Deploy automático desde GitHub (branch main)
-• Vercel Analytics — Integrado
+• Vercel Analytics — Page views y performance
+• Sentry — Error tracking en producción (VITE_SENTRY_DSN)
+• GitHub Actions — CI/CD pipeline (lint + typecheck + test + build en cada PR)
+• vercel.json — Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
 
 CÓMO EJECUTAR:
   npm install          → Instalar dependencias
   npm run dev          → Dev server en http://localhost:5173
   npm run build        → Build de producción
   npm run lint         → Verificar código con ESLint
-  npm run test         → Ejecutar tests con Vitest`,
+  npm run test         → Ejecutar 22 tests con Vitest
+
+VARIABLES DE ENTORNO (.env):
+  VITE_SUPABASE_URL    → URL de tu proyecto Supabase
+  VITE_SUPABASE_ANON_KEY → Anon key de Supabase
+  VITE_SENTRY_DSN      → DSN de Sentry (opcional)`,
   },
   {
-    title: "Qué Falta para Producción",
+    title: "Estado Actual y Qué Falta",
     icon: Shield,
     color: "bg-amber-50 text-amber-600",
-    content: `PRIORIDAD ALTA — Sin esto no se puede usar en real:
-1. BASE DE DATOS: Conectar Supabase (PostgreSQL). Crear tablas para deals, borrowers, users, documents.
-2. AUTENTICACIÓN: Login con email/password o SSO. Roles: admin, analyst, investor (solo lectura).
-3. CRUD REAL: Formularios para crear/editar/eliminar deals. Actualmente solo se puede importar via Excel.
-4. PERSISTENCIA: Los datos importados via Excel se pierden al recargar la página. Necesitan guardarse en DB.
+    content: `═══════════════════════════════════════════════
+ ✅ YA COMPLETADO
+═══════════════════════════════════════════════
 
-PRIORIDAD MEDIA — Mejora mucho la experiencia:
-5. UPLOAD DE DOCUMENTOS: Subir PDFs de term sheets, valuations, contratos. Almacenar en Supabase Storage.
-6. NOTIFICACIONES: Email/push cuando un covenant se incumple, un deal necesita aprobación, etc.
-7. AUDIT TRAIL REAL: Registrar quién hizo qué y cuándo en base de datos.
-8. ERROR HANDLING: Agregar Error Boundaries y manejo de errores de API.
-9. TESTS: Unit tests para la lógica financiera (PIK, screening, covenants).
+Frontend:
+• 19 páginas funcionales con 67+ componentes
+• Design system unificado (tipografía, spacing, colores, componentes)
+• Formularios con validación Zod (crear deal, crear borrower)
+• Generación PDF (Term Sheet, DD Report, Tax Report)
+• Import/Export Excel
+• Loading skeletons en todas las páginas
+• Error boundary global
+• Responsive (sidebar mobile, tablas scrollables)
 
-PRIORIDAD BAJA — Nice to have:
-10. Dark mode
-11. Internacionalización (español/inglés)
+Backend:
+• Supabase configurado y conectado
+• 24 tablas con RLS (Row Level Security)
+• 4 migraciones deployadas (schema, seed data, auth trigger fix, audit logs fix)
+• 36 hooks React Query listos para usar
+• Auth system completo (login, signup, password recovery, roles)
+• File upload con validación (tipo, tamaño, path)
+• Audit logging en creación de deals y borrowers
+
+Infraestructura:
+• CI/CD pipeline (GitHub Actions: lint + typecheck + test + build)
+• Security headers (vercel.json)
+• Sentry integrado (necesita DSN en env vars)
+• 22 tests automatizados (PIK engine + screening logic)
+• npm audit: vulnerabilidades críticas patcheadas
+
+Conexión Supabase:
+• Dashboard, Loan Book, Pipeline → conectados via useDeals() context
+• Borrowers, Borrower Detail → conectados via useBorrowersQuery()
+• Approvals, DD, Term Sheets, Construction, Lifecycle, PIK Engine → usan useDeals() para deals, pero sub-datos (items DD, votos IC, etc.) todavía usan datos demo
+
+═══════════════════════════════════════════════
+ 🔧 QUÉ FALTA PARA PRODUCCIÓN
+═══════════════════════════════════════════════
+
+PRIORIDAD P0 — Sin esto no se puede usar en real:
+1. Conectar sub-datos a Supabase: DD items, approval records, IC votes, term sheets, waivers, site visits, certifications, monitoring reports. Los hooks ya existen en useSupabaseQuery.ts — hay que usarlos en las páginas.
+2. Botones Edit/Delete en Deal Detail y Borrower Detail. Los mutation hooks (useUpdateDeal, useDeleteDeal, useUpdateBorrower) ya existen.
+3. Cambio de stage de un deal (ej: de screening a due_diligence). Necesita un botón + llamada a useUpdateDeal().
+4. Activar autenticación (actualmente desactivada temporalmente). Hay que descomentar 3 líneas en src/components/auth/ProtectedRoute.tsx.
+
+PRIORIDAD P1 — Mejora mucho la experiencia:
+5. Searchbar funcional en el header (actualmente es decorativa).
+6. Upload de documentos: UI para subir PDFs de term sheets, valuations, contratos. Los hooks de storage ya existen.
+7. Email transaccionales: notificar cuando un covenant se incumple, un deal necesita aprobación, etc.
+8. Filtros avanzados en Loan Book (por borrower, por rango de fechas, por LTV).
+
+PRIORIDAD P2 — Nice to have:
+9. Dark mode
+10. Internacionalización (español/inglés toggle)
+11. Dashboard personalizable (widgets drag & drop)
 12. App móvil o PWA
-13. Integración con APIs externas (registros de propiedad, credit bureaus)
-14. Dashboard personalizable (widgets drag & drop)`,
+13. Integración APIs externas (registros propiedad, credit bureaus)
+
+═══════════════════════════════════════════════
+ 📋 ARCHIVOS CLAVE
+═══════════════════════════════════════════════
+
+Configuración:
+• src/lib/supabase.ts — Cliente Supabase (con fallback demo)
+• src/contexts/AuthContext.tsx — Estado auth, login, signup, roles
+• src/hooks/useDeals.tsx — Context de deals (demo/live switch)
+• src/hooks/useSupabaseQuery.ts — 36 hooks React Query para Supabase
+• src/types/database.ts — Tipos TypeScript para todas las tablas
+• src/components/auth/ProtectedRoute.tsx — Guard de rutas (auth desactivada temp.)
+
+Migraciones DB:
+• supabase/migrations/00001_initial_schema.sql — Schema completo
+• supabase/migrations/00002_seed_data.sql — Datos de ejemplo
+• supabase/migrations/00003_fix_auth_trigger.sql — Fix auth trigger
+• supabase/migrations/00004_fix_audit_logs_policy.sql — Fix audit logs RLS
+
+Datos demo:
+• src/data/sampleDeals.ts — 6 deals de ejemplo
+• src/data/borrowers.ts — 5 borrowers de ejemplo
+• src/data/dealModules.ts — DD items, approvals de ejemplo
+• src/data/termSheetData.ts — Term sheets de ejemplo
+• src/data/constructionMonitoring.ts — Site visits, certificaciones
+• src/data/lifecyclePhases.ts — Fases de lifecycle
+• src/data/pikEngine.ts — Motor de cálculo PIK (bien testeado)`,
   },
 ];
 
