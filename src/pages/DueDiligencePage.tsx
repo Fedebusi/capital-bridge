@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import DueDiligencePanel from "@/components/deals/DueDiligencePanel";
 import { useDeals } from "@/hooks/useDeals";
 import { sampleDueDiligence } from "@/data/dealModules";
@@ -9,7 +10,12 @@ import { generateDDReport } from "@/lib/generateDDReport";
 import { FileDown } from "lucide-react";
 
 export default function DueDiligencePage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const dealsWithDD = deals.filter(d => sampleDueDiligence[d.id]);
   const dealsWithoutDD = deals.filter(d => !sampleDueDiligence[d.id] && d.stage !== "repaid" && d.stage !== "rejected");
 

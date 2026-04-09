@@ -128,7 +128,7 @@ export default function PortfolioMap() {
           ].map(item => (
             <div key={item.label} className="flex items-center gap-1.5">
               <div className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</span>
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</span>
             </div>
           ))}
         </div>

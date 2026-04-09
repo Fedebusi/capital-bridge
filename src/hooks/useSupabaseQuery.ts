@@ -668,11 +668,30 @@ export function useUpdateDrawdown() {
 
 // ===== FILE STORAGE =====
 
+const ALLOWED_FILE_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+function sanitizePath(path: string): string {
+  return path.replace(/[^a-zA-Z0-9_\-./]/g, "_").replace(/\.{2,}/g, ".");
+}
+
 export function useUploadDocument() {
   return useMutation({
     mutationFn: async ({ bucket, path, file }: { bucket: string; path: string; file: File }) => {
       if (!isSupabaseConfigured()) throw new Error("Supabase not configured");
-      const { data, error } = await supabase!.storage.from(bucket).upload(path, file);
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        throw new Error(`File type "${file.type}" not allowed. Accepted: PDF, JPEG, PNG, WEBP`);
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        throw new Error(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 10MB`);
+      }
+      const safePath = sanitizePath(path);
+      const { data, error } = await supabase!.storage.from(bucket).upload(safePath, file);
       if (error) throw error;
       return data;
     },

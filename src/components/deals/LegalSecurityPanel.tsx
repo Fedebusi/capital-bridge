@@ -122,7 +122,7 @@ export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) 
                   </div>
                   <div className="text-right shrink-0">
                     <span className={cn("text-xs font-medium", cfg.className)}>{cfg.label}</span>
-                    {cp.verifiedBy && <p className="text-[10px] text-muted-foreground">{cp.verifiedBy} • {cp.verifiedDate}</p>}
+                    {cp.verifiedBy && <p className="text-xs text-muted-foreground">{cp.verifiedBy} • {cp.verifiedDate}</p>}
                   </div>
                 </div>
               );
@@ -151,7 +151,7 @@ export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) 
                   </div>
                   <div className="text-right shrink-0">
                     <span className={cn("rounded-md px-2 py-0.5 text-xs font-medium", cfg.className)}>{cfg.label}</span>
-                    {s.registrationDate && <p className="text-[10px] text-muted-foreground mt-0.5">{s.registrationDate}</p>}
+                    {s.registrationDate && <p className="text-xs text-muted-foreground mt-0.5">{s.registrationDate}</p>}
                   </div>
                 </div>
               );

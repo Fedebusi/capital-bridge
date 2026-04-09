@@ -54,11 +54,11 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                     {phase.number}. {phase.name}
                   </h3>
                   {isCurrent && (
-                    <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold bg-accent/20 text-accent uppercase tracking-wide">
+                    <span className="rounded-full px-2 py-0.5 text-xs font-semibold bg-accent/20 text-accent uppercase tracking-wide">
                       Current
                     </span>
                   )}
-                  <span className={cn("rounded-md px-2 py-0.5 text-[10px] font-medium", phaseStatusColors[phase.status])}>
+                  <span className={cn("rounded-md px-2 py-0.5 text-xs font-medium", phaseStatusColors[phase.status])}>
                     {phaseStatusLabels[phase.status]}
                   </span>
                 </div>
@@ -132,7 +132,7 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <p className={cn("text-sm", s.status === "completed" ? "text-muted-foreground" : "text-foreground")}>{s.label}</p>
-                              <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", phaseStatusColors[s.status])}>
+                              <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", phaseStatusColors[s.status])}>
                                 {phaseStatusLabels[s.status]}
                               </span>
                             </div>

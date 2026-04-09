@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import LifecycleProgressBar from "@/components/deals/LifecycleProgressBar";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
@@ -8,7 +9,12 @@ import { cn } from "@/lib/utils";
 import { Flag, Users, ArrowRight } from "lucide-react";
 
 export default function LifecyclePage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const dealsWithLifecycle = deals.filter(d => sampleLifecycles[d.id]);
 
   return (

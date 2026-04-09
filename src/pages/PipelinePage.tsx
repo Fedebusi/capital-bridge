@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import DealCard from "@/components/dashboard/DealCard";
 import DealImportDialog from "@/components/dashboard/DealImportDialog";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";
@@ -12,8 +13,12 @@ import { Download } from "lucide-react";
 const stages: DealStage[] = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"];
 
 export default function PipelinePage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
   const [filter, setFilter] = useState<DealStage | "all">("all");
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
 
   const filteredDeals = filter === "all" ? deals : deals.filter(d => d.stage === filter);
 

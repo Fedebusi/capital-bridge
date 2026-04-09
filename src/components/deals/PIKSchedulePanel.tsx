@@ -99,7 +99,7 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
                     <td className="px-3 py-2">{entry.month}</td>
                     <td className="px-3 py-2">
                       {entry.date}
-                      {isCurrent && <span className="ml-1.5 text-[10px] rounded px-1.5 py-0.5 bg-accent/10 text-accent font-semibold">CURRENT</span>}
+                      {isCurrent && <span className="ml-1.5 text-xs rounded px-1.5 py-0.5 bg-accent/10 text-accent font-semibold">CURRENT</span>}
                     </td>
                     <td className="px-3 py-2 text-right">{formatCurrency(entry.openingPrincipal)}</td>
                     <td className="px-3 py-2 text-right">{entry.drawdown > 0 ? formatCurrency(entry.drawdown) : "—"}</td>

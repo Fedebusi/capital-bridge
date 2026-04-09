@@ -5,6 +5,11 @@
 @tailwind utilities;
 
 @layer base {
+  /* Tabular numbers for financial data alignment */
+  .font-display, .font-headline, td, th {
+    font-variant-numeric: tabular-nums;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222 27% 11%;

@@ -26,11 +26,11 @@ export default function AboutPage() {
         </header>
 
         {/* Mission */}
-        <div className="bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-2xl p-8 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-xl p-8 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full -translate-y-1/3 translate-x-1/4" />
           <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-red-500/5 rounded-full translate-y-1/2" />
           <div className="relative z-10 max-w-2xl">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-3">La nostra missione</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">La nostra missione</p>
             <h2 className="text-3xl font-extrabold tracking-tight leading-tight">
               Finanziare lo sviluppo immobiliare con disciplina istituzionale e passione rossonera.
             </h2>
@@ -48,7 +48,7 @@ export default function AboutPage() {
         {/* Values */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {values.map(v => (
-            <div key={v.title} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-all">
+            <div key={v.title} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition-all">
               <div className="h-10 w-10 rounded-xl bg-red-50 flex items-center justify-center mb-3">
                 <v.icon className="h-5 w-5 text-red-600" />
               </div>
@@ -63,14 +63,14 @@ export default function AboutPage() {
           <h2 className="text-lg font-extrabold text-primary mb-4">Il Team</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {team.map(member => (
-              <div key={member.name} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-all group">
+              <div key={member.name} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all group">
                 {/* Avatar placeholder */}
                 <div className="h-32 bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
                   <span className="text-4xl font-extrabold text-white/20">{member.name.split(" ").map(n => n[0]).join("")}</span>
                 </div>
                 <div className="p-4">
                   <h3 className="text-sm font-extrabold text-primary">{member.name}</h3>
-                  <p className="text-[10px] text-red-600 font-bold uppercase tracking-wide mt-0.5">{member.role}</p>
+                  <p className="text-xs text-red-600 font-bold uppercase tracking-wide mt-0.5">{member.role}</p>
                   <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{member.bio}</p>
                   <p className="text-[11px] text-red-600 font-medium mt-2 italic">{member.funFact}</p>
                 </div>
@@ -80,7 +80,7 @@ export default function AboutPage() {
         </div>
 
         {/* Stats */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-extrabold text-primary mb-5">Numeri chiave</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
             {[
@@ -92,14 +92,14 @@ export default function AboutPage() {
             ].map(s => (
               <div key={s.label}>
                 <p className="text-3xl font-extrabold text-primary">{s.value}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{s.label}</p>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{s.label}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Contact */}
-        <div className="bg-gradient-to-br from-red-50 to-red-100/30 rounded-2xl border border-red-200/30 p-6">
+        <div className="bg-gradient-to-br from-red-50 to-red-100/30 rounded-xl border border-red-200/30 p-6">
           <h2 className="text-lg font-extrabold text-primary mb-4">Contatti</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ export default function AboutPage() {
                 <MapPin className="h-4 w-4 text-red-600" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Sede</p>
+                <p className="text-xs text-slate-400 font-bold uppercase">Sede</p>
                 <p className="text-sm text-primary font-medium">Madrid, España</p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function AboutPage() {
                 <Mail className="h-4 w-4 text-red-600" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Email</p>
+                <p className="text-xs text-slate-400 font-bold uppercase">Email</p>
                 <p className="text-sm text-primary font-medium">info@capitalbridge.com</p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
                 <Globe className="h-4 w-4 text-red-600" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Stadio preferito</p>
+                <p className="text-xs text-slate-400 font-bold uppercase">Stadio preferito</p>
                 <p className="text-sm text-primary font-medium">San Siro, Milano 🏟️</p>
               </div>
             </div>

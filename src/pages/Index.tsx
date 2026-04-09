@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { useDeals } from "@/hooks/useDeals";
 import { getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
@@ -30,7 +31,12 @@ const sectorAllocation = [
 ];
 
 export default function DashboardPage() {
-  const { deals } = useDeals();
+  const { deals, loading } = useDeals();
+
+  if (loading) {
+    return <AppLayout><LoadingSkeleton /></AppLayout>;
+  }
+
   const metrics = getPortfolioMetrics(deals);
   const activeDeals = deals.filter(d => d.stage === "active");
 
@@ -63,13 +69,13 @@ export default function DashboardPage() {
         {/* Hero Section */}
         <section className="grid grid-cols-12 gap-4">
           {/* NAV Hero Card */}
-          <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-2xl p-7 text-white relative overflow-hidden">
+          <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-xl p-7 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/4" />
             <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-emerald-500/10 rounded-full translate-y-1/2" />
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Net Asset Value</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-bold">LIVE</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-white/50">Net Asset Value</span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-bold">LIVE</span>
               </div>
               <h2 className="text-4xl font-extrabold tracking-tight">{formatMillions(totalNAV)}</h2>
               <div className="flex items-center gap-2 mt-2">
@@ -82,24 +88,24 @@ export default function DashboardPage() {
             </div>
             <div className="relative z-10 flex gap-10 mt-8 pt-5 border-t border-white/10">
               <div>
-                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Dry Powder</span>
+                <span className="text-[11px] text-white/40 uppercase font-bold tracking-widest">Dry Powder</span>
                 <p className="text-lg font-bold mt-0.5">{formatMillions(pipelineVolume)}</p>
               </div>
               <div>
-                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Avg Life</span>
+                <span className="text-[11px] text-white/40 uppercase font-bold tracking-widest">Avg Life</span>
                 <p className="text-lg font-bold mt-0.5">4.2 Yrs</p>
               </div>
               <div>
-                <span className="text-[9px] text-white/40 uppercase font-bold tracking-widest">Deals</span>
+                <span className="text-[11px] text-white/40 uppercase font-bold tracking-widest">Deals</span>
                 <p className="text-lg font-bold mt-0.5">{metrics.activeDeals + metrics.pipelineDeals}</p>
               </div>
             </div>
           </div>
 
           {/* Portfolio Diversity */}
-          <div className="col-span-12 lg:col-span-5 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="col-span-12 lg:col-span-5 bg-white rounded-xl p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Portfolio Diversity</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Portfolio Diversity</span>
               <div className="flex justify-between items-end mt-4">
                 <div>
                   <h3 className="text-4xl font-extrabold text-primary tracking-tight">{metrics.activeDeals}</h3>
@@ -107,7 +113,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-2xl font-extrabold text-primary">{formatPercent(avgRate)}</span>
-                  <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">Avg Rate</p>
+                  <p className="text-[11px] uppercase font-bold text-slate-400 tracking-widest">Avg Rate</p>
                 </div>
               </div>
             </div>
@@ -118,7 +124,7 @@ export default function DashboardPage() {
                 <div className="bg-slate-400 h-full rounded-full" style={{ width: "25%" }} />
                 <div className="bg-slate-300 h-full rounded-full" style={{ width: "10%" }} />
               </div>
-              <div className="flex justify-between mt-2.5 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+              <div className="flex justify-between mt-2.5 text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 <span className="text-primary">Senior (65%)</span>
                 <span>Mezz (25%)</span>
                 <span>Bridge (10%)</span>
@@ -134,12 +140,12 @@ export default function DashboardPage() {
             { icon: ShieldCheck, label: "Impaired Ratio", value: "0.02%", change: "-0.01%", color: "bg-blue-50 text-blue-600", ringColor: "ring-blue-500/20" },
             { icon: Rocket, label: "Fund IRR", value: "12.1%", change: "+1.4%", color: "bg-violet-50 text-violet-600", ringColor: "ring-violet-500/20" },
           ].map((card) => (
-            <div key={card.label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+            <div key={card.label} className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all group">
               <div className="flex items-start justify-between">
                 <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center ring-4", card.color, card.ringColor)}>
                   <card.icon className="h-5 w-5" />
                 </div>
-                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">
+                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold">
                   <ArrowUpRight className="h-2.5 w-2.5" />
                   {card.change}
                 </span>
@@ -153,21 +159,21 @@ export default function DashboardPage() {
         {/* Bottom Section */}
         <section className="grid grid-cols-12 gap-4">
           {/* Activity Feed Table */}
-          <div className="col-span-12 lg:col-span-8 bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+          <div className="col-span-12 lg:col-span-8 bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="h-7 w-7 rounded-lg bg-primary/5 flex items-center justify-center">
                   <Activity className="h-3.5 w-3.5 text-primary" />
                 </div>
                 <h2 className="text-sm font-bold text-primary">Recent Activity</h2>
               </div>
-              <Link to="/deals" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1">
+              <Link to="/deals" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1">
                 View All <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50/80 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <thead className="bg-slate-50/80 text-xs font-bold uppercase tracking-widest text-slate-400">
                   <tr>
                     <th className="px-6 py-2.5">Entity / Transaction</th>
                     <th className="px-6 py-2.5">Type</th>
@@ -179,12 +185,12 @@ export default function DashboardPage() {
                   {recentActivity.map((item, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-3.5">
-                        <div className="font-bold text-primary text-[13px]">{item.entity}</div>
-                        <div className="text-[10px] text-slate-400 mt-0.5">{item.subtitle}</div>
+                        <div className="font-bold text-primary text-sm">{item.entity}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{item.subtitle}</div>
                       </td>
                       <td className="px-6 py-3.5">
                         <span className={cn(
-                          "px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase",
+                          "px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase",
                           item.type === "Funding" ? "bg-blue-50 text-blue-600" :
                           item.type === "Repayment" ? "bg-emerald-50 text-emerald-600" :
                           "bg-amber-50 text-amber-600"
@@ -195,12 +201,12 @@ export default function DashboardPage() {
                       <td className="px-6 py-3.5 font-bold text-primary">{item.amount}</td>
                       <td className="px-6 py-3.5 text-right">
                         {item.status === "completed" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px]">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 font-bold text-xs">
                             <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full" />
                             COMPLETED
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 font-bold text-[10px]">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 font-bold text-xs">
                             <span className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse" />
                             PROCESSING
                           </span>
@@ -216,7 +222,7 @@ export default function DashboardPage() {
           {/* Right column */}
           <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
             {/* Sector Allocation */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
               <h3 className="text-sm font-bold text-primary mb-5">Sector Allocation</h3>
               {/* Mini donut visualization */}
               <div className="flex items-center gap-5 mb-5">
@@ -246,17 +252,17 @@ export default function DashboardPage() {
               </div>
               <Link
                 to="/deals"
-                className="w-full border border-slate-200 text-slate-500 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
+                className="w-full border border-slate-200 text-slate-500 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
               >
                 Analytics <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
             {/* Pipeline Summary */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-primary">Pipeline</h3>
-                <Link to="/pipeline" className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-0.5">
+                <Link to="/pipeline" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-0.5">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -265,20 +271,20 @@ export default function DashboardPage() {
                 return (
                   <div key={stage} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
                     <span className="text-[11px] text-slate-500 font-medium">{stageLabels[stage]}</span>
-                    <span className="text-[13px] font-bold text-primary bg-slate-50 px-2 py-0.5 rounded-md">{count}</span>
+                    <span className="text-sm font-bold text-primary bg-slate-50 px-2 py-0.5 rounded-md">{count}</span>
                   </div>
                 );
               })}
             </div>
 
             {/* Compliance Notice */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 flex items-start gap-3 border border-amber-100/50">
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 flex items-start gap-3 border border-amber-100/50">
               <div className="bg-white p-2 rounded-lg shadow-sm shrink-0">
                 <Info className="h-4 w-4 text-amber-500" />
               </div>
               <div>
                 <h4 className="text-[11px] font-bold text-amber-800">Compliance Notice</h4>
-                <p className="text-[10px] text-amber-700/70 mt-1 leading-relaxed">
+                <p className="text-xs text-amber-700/70 mt-1 leading-relaxed">
                   Quarterly asset valuation audits are scheduled for next Monday. Ensure documentation is current.
                 </p>
               </div>
@@ -286,15 +292,15 @@ export default function DashboardPage() {
           </div>
         </section>
         {/* Timeline */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+        <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-violet-50 flex items-center justify-center">
                 <Clock className="h-3.5 w-3.5 text-violet-600" />
               </div>
               <h2 className="text-sm font-bold text-primary">Event Timeline</h2>
             </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last 14 days</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Last 14 days</span>
           </div>
           <div className="p-6">
             <div className="relative">
@@ -313,9 +319,9 @@ export default function DashboardPage() {
                     {/* Content */}
                     <div className="flex-1 pb-6 group-last:pb-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold text-slate-400">{event.date} · {event.time}</span>
+                        <span className="text-xs font-bold text-slate-400">{event.date} · {event.time}</span>
                         <span className={cn(
-                          "px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase",
+                          "px-2 py-0.5 rounded-lg text-[11px] font-bold uppercase",
                           event.tag === "Funding" || event.tag === "Repayment" ? "bg-emerald-50 text-emerald-600" :
                           event.tag === "Approval" ? "bg-blue-50 text-blue-600" :
                           event.tag === "Alert" ? "bg-amber-50 text-amber-600" :
@@ -325,7 +331,7 @@ export default function DashboardPage() {
                           {event.tag}
                         </span>
                       </div>
-                      <p className="text-[13px] font-bold text-primary">{event.title}</p>
+                      <p className="text-sm font-bold text-primary">{event.title}</p>
                       <p className="text-[11px] text-slate-400 mt-0.5">{event.subtitle}</p>
                     </div>
                   </div>

@@ -122,11 +122,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-primary font-body">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-12">
             <Link to="/" className="text-xl font-extrabold tracking-tight font-headline">
-              CapitalBridge <span className="text-[10px] font-medium text-slate-400 align-super">TM</span>
+              CapitalBridge <span className="text-xs font-medium text-slate-400 align-super">TM</span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
               {["Features", "How it works", "Investors", "Pricing"].map(item => (
@@ -214,7 +214,7 @@ export default function LandingPage() {
       </div>
 
       {/* Scrolling Stats Ticker */}
-      <div className="border-t border-slate-100 bg-white overflow-hidden">
+      <div className="border-t border-slate-200 bg-white overflow-hidden">
         <div className="flex animate-marquee whitespace-nowrap py-6">
           {[...stats, ...stats, ...stats].map((stat, i) => (
             <div key={i} className="flex items-baseline gap-3 mx-10 shrink-0">
@@ -222,7 +222,7 @@ export default function LandingPage() {
               <div>
                 <span className="text-sm text-slate-400 font-medium">{stat.label}</span>
                 <br />
-                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{stat.client}</span>
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">{stat.client}</span>
               </div>
             </div>
           ))}
