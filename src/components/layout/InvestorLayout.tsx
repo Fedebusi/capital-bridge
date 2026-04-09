@@ -1,6 +1,7 @@
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Landmark, BarChart3, FileText, HelpCircle, LogOut, Wallet, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/investor", icon: BarChart3, label: "Portfolio Overview" },
@@ -13,9 +14,9 @@ interface InvestorLayoutProps {
 
 export default function InvestorLayout({ children }: InvestorLayoutProps) {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
-  // Show "Back to Platform" if user came from the main app (not from investor login)
-  const showBackLink = !searchParams.has("standalone");
+  const { hasRole } = useAuth();
+  // Only show "Back to Platform" for users with platform access (admin, analyst, portfolio_manager)
+  const showBackLink = hasRole("admin", "analyst", "portfolio_manager");
 
   return (
     <div className="min-h-screen bg-slate-50">
