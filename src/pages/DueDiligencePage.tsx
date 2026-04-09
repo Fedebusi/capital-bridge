@@ -1,6 +1,6 @@
 import AppLayout from "@/components/layout/AppLayout";
 import DueDiligencePanel from "@/components/deals/DueDiligencePanel";
-import { sampleDeals } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
 import { sampleDueDiligence } from "@/data/dealModules";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -9,8 +9,9 @@ import { generateDDReport } from "@/lib/generateDDReport";
 import { FileDown } from "lucide-react";
 
 export default function DueDiligencePage() {
-  const dealsWithDD = sampleDeals.filter(d => sampleDueDiligence[d.id]);
-  const dealsWithoutDD = sampleDeals.filter(d => !sampleDueDiligence[d.id] && d.stage !== "repaid" && d.stage !== "rejected");
+  const { deals } = useDeals();
+  const dealsWithDD = deals.filter(d => sampleDueDiligence[d.id]);
+  const dealsWithoutDD = deals.filter(d => !sampleDueDiligence[d.id] && d.stage !== "repaid" && d.stage !== "rejected");
 
   return (
     <AppLayout>

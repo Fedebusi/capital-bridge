@@ -1,20 +1,45 @@
 import { useParams, Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import { sampleBorrowers, ratingColors, kycStatusColors } from "@/data/borrowers";
-import { sampleDeals, formatCurrency, formatMillions, formatPercent, stageLabels, stageColors } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { formatCurrency, formatMillions, formatPercent, stageLabels, stageColors } from "@/data/sampleDeals";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { useBorrowersQuery } from "@/hooks/useSupabaseQuery";
+import type { DbBorrower } from "@/types/database";
+import type { Borrower } from "@/data/borrowers";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Building, Users, Shield, TrendingUp, CheckCircle2, Clock, AlertTriangle, XCircle } from "lucide-react";
 
+function dbBorrowerToFrontend(b: DbBorrower): Borrower {
+  return {
+    id: b.id, name: b.name, group: b.group_name, type: b.type,
+    internalRating: b.internal_rating, ratingDate: b.rating_date,
+    headquarters: b.headquarters, yearEstablished: b.year_established,
+    website: b.website ?? undefined, description: b.description,
+    totalExposure: Number(b.total_exposure), totalCommitments: Number(b.total_commitments),
+    numberOfActiveDeals: b.number_of_active_deals,
+    avgIRR: b.avg_irr ? Number(b.avg_irr) : undefined,
+    avgMultiple: b.avg_multiple ? Number(b.avg_multiple) : undefined,
+    contacts: [], corporateStructure: [], kyc: [], completedProjects: [], activeDealIds: [],
+  };
+}
+
 export default function BorrowerDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const borrower = sampleBorrowers.find(b => b.id === id);
+  const { deals } = useDeals();
+  const isLive = isSupabaseConfigured();
+  const { data: dbBorrowers } = useBorrowersQuery();
+
+  const borrower = isLive && dbBorrowers
+    ? dbBorrowers.map(dbBorrowerToFrontend).find(b => b.id === id)
+    : sampleBorrowers.find(b => b.id === id);
 
   if (!borrower) {
     return <AppLayout><div className="flex items-center justify-center py-20"><p className="text-muted-foreground">Borrower not found</p></div></AppLayout>;
   }
 
-  const linkedDeals = sampleDeals.filter(d => borrower.activeDealIds.includes(d.id));
+  const linkedDeals = deals.filter(d => borrower.activeDealIds.includes(d.id) || d.borrower === borrower.name);
   const kycValid = borrower.kyc.filter(k => k.status === "valid").length;
   const kycTotal = borrower.kyc.length;
   const allKycValid = kycValid === kycTotal;

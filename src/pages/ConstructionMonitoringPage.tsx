@@ -1,16 +1,18 @@
 import AppLayout from "@/components/layout/AppLayout";
 import ConstructionMonitoringPanel from "@/components/deals/ConstructionMonitoringPanel";
-import { sampleDeals, stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
 import { sampleCertifications, sampleMonitoringReports, sampleSiteVisits } from "@/data/constructionMonitoring";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { HardHat } from "lucide-react";
 
 export default function ConstructionMonitoringPage() {
-  const dealsWithMonitoring = sampleDeals.filter(d =>
+  const { deals } = useDeals();
+  const dealsWithMonitoring = deals.filter(d =>
     sampleSiteVisits[d.id] || sampleCertifications[d.id] || sampleMonitoringReports[d.id]
   );
-  const dealsWithout = sampleDeals.filter(d =>
+  const dealsWithout = deals.filter(d =>
     !sampleSiteVisits[d.id] && !sampleCertifications[d.id] && !sampleMonitoringReports[d.id] &&
     d.stage !== "repaid" && d.stage !== "rejected" && d.stage !== "screening"
   );

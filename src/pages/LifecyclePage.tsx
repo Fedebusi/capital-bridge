@@ -1,13 +1,15 @@
 import AppLayout from "@/components/layout/AppLayout";
 import LifecycleProgressBar from "@/components/deals/LifecycleProgressBar";
-import { sampleDeals, stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
+import { stageLabels, stageColors, formatMillions } from "@/data/sampleDeals";
 import { sampleLifecycles, getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Flag, Users, ArrowRight } from "lucide-react";
 
 export default function LifecyclePage() {
-  const dealsWithLifecycle = sampleDeals.filter(d => sampleLifecycles[d.id]);
+  const { deals } = useDeals();
+  const dealsWithLifecycle = deals.filter(d => sampleLifecycles[d.id]);
 
   return (
     <AppLayout>
