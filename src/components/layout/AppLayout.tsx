@@ -18,6 +18,7 @@ import {
   UserCircle,
   HelpCircle,
   BookOpen,
+  Landmark,
   LogOut,
   Wallet,
   MapPin,
@@ -28,6 +29,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview", group: "main" },
+  { to: "/investor", icon: Landmark, label: "Investor Portal", group: "main" },
   { to: "/map", icon: MapPin, label: "Map", group: "main" },
   { to: "/pipeline", icon: FolderOpen, label: "Pipeline", group: "deals" },
   { to: "/screening", icon: Search, label: "Screening", group: "deals" },
