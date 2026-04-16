@@ -53,8 +53,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Public routes — login hidden for now */}
-          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/about" element={<AboutPage />} />
