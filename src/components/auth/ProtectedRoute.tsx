@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps) {
-  const { user, profile, loading, isDemo } = useAuth();
+  const { profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -18,11 +18,8 @@ export function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps)
     );
   }
 
-  // Demo mode: always allow
-  if (isDemo) return <>{children}</>;
-
-  // Not logged in: redirect to login
-  if (!user || !profile) {
+  // Not logged in (either demo or live): redirect to login
+  if (!profile) {
     return <Navigate to="/login" replace />;
   }
 

@@ -28,6 +28,8 @@ const DEMO_PROFILE: DbProfile = {
   updated_at: new Date().toISOString(),
 };
 
+const DEMO_SESSION_KEY = "capitalbridge_demo_session";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<DbProfile | null>(null);
@@ -37,8 +39,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isDemo) {
-      // Demo mode: auto-login with fake admin profile
-      setProfile(DEMO_PROFILE);
+      // Demo mode: require explicit sign-in ceremony (any credentials work)
+      // Only auto-restore if there's a previous demo session in this browser
+      try {
+        const stored = sessionStorage.getItem(DEMO_SESSION_KEY);
+        if (stored) {
+          const demoProfile = JSON.parse(stored) as DbProfile;
+          setProfile(demoProfile);
+        }
+      } catch {
+        // ignore parse errors
+      }
       setLoading(false);
       return;
     }
@@ -85,13 +96,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signIn(email: string, password: string) {
-    if (isDemo) return { error: null };
+    if (isDemo) {
+      // Demo mode: accept any credentials, create a demo session
+      const demoProfile: DbProfile = {
+        ...DEMO_PROFILE,
+        email: email || DEMO_PROFILE.email,
+        full_name: email ? email.split("@")[0] : DEMO_PROFILE.full_name,
+      };
+      sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoProfile));
+      setProfile(demoProfile);
+      return { error: null };
+    }
     const { error } = await supabase!.auth.signInWithPassword({ email, password });
     return { error: error?.message ?? null };
   }
 
   async function signUp(email: string, password: string, fullName: string) {
-    if (isDemo) return { error: null };
+    if (isDemo) {
+      // Demo mode: accept signup, auto sign-in
+      const demoProfile: DbProfile = {
+        ...DEMO_PROFILE,
+        email: email || DEMO_PROFILE.email,
+        full_name: fullName || (email ? email.split("@")[0] : DEMO_PROFILE.full_name),
+      };
+      sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoProfile));
+      setProfile(demoProfile);
+      return { error: null };
+    }
     const { error } = await supabase!.auth.signUp({
       email,
       password,
@@ -101,7 +132,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
-    if (isDemo) return;
+    if (isDemo) {
+      sessionStorage.removeItem(DEMO_SESSION_KEY);
+      setProfile(null);
+      return;
+    }
     await supabase!.auth.signOut();
   }
 
