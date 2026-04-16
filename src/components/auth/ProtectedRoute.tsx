@@ -18,11 +18,18 @@ export function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps)
     );
   }
 
-  // Auth temporarily disabled — allow everyone through
-  // TODO: Re-enable when ready:
-  // if (isDemo) return <>{children}</>;
-  // if (!user || !profile) return <Navigate to="/login" replace />;
-  // if (requiredRoles && !requiredRoles.includes(profile.role)) return <Navigate to="/" replace />;
+  // Demo mode: always allow
+  if (isDemo) return <>{children}</>;
+
+  // Not logged in: redirect to login
+  if (!user || !profile) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Role check (if specific roles required)
+  if (requiredRoles && !requiredRoles.includes(profile.role)) {
+    return <Navigate to="/" replace />;
+  }
 
   return <>{children}</>;
 }
