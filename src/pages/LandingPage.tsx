@@ -141,7 +141,7 @@ export default function LandingPage() {
               to="/dashboard"
               className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-colors"
             >
-              Accedi alla piattaforma
+              Access platform
             </Link>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function LandingPage() {
               to="/dashboard"
               className="bg-primary text-white px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
             >
-              Accedi alla piattaforma <ArrowRight className="h-4 w-4" />
+              Access platform <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/investor?standalone"
