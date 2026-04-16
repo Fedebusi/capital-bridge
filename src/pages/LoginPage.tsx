@@ -140,6 +140,12 @@ export default function LoginPage() {
           <p className="text-sm text-slate-500">
             {isInvestor ? "Investor Portal" : "Portfolio Management Platform"}
           </p>
+          <div className="mt-3 inline-flex items-center gap-1.5">
+            <span className={`h-2 w-2 rounded-full ${isDemo ? "bg-amber-500" : "bg-emerald-500"}`} />
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              {isDemo ? "Demo mode" : "Live mode"}
+            </span>
+          </div>
         </div>
 
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
