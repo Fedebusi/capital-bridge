@@ -1,12 +1,19 @@
 import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stageColors } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
-import { 
+import {
   ArrowLeft, Building, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature, Route
+  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature, Route,
+  Pencil, Trash2
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { DealFormDialog } from "@/components/deals/DealFormDialog";
+import { useUpdateDeal, useDeleteDeal } from "@/hooks/useSupabaseQuery";
+import { useDeals } from "@/hooks/useDeals";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { toast } from "sonner";
 import DueDiligencePanel from "./DueDiligencePanel";
 import ApprovalsPanel from "./ApprovalsPanel";
 import LegalSecurityPanel from "./LegalSecurityPanel";
@@ -24,7 +31,46 @@ interface DealDetailProps {
 
 export default function DealDetail({ deal }: DealDetailProps) {
   const lifecycle = sampleLifecycles[deal.id];
-  
+  const navigate = useNavigate();
+  const updateDeal = useUpdateDeal();
+  const deleteDeal = useDeleteDeal();
+  const { removeDeal, updateDealInContext } = useDeals();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showStageChange, setShowStageChange] = useState(false);
+  const isLive = isSupabaseConfigured();
+
+  const stageOrder = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"] as const;
+  const currentIdx = stageOrder.indexOf(deal.stage as any);
+  const nextStage = currentIdx >= 0 && currentIdx < stageOrder.length - 1 ? stageOrder[currentIdx + 1] : null;
+
+  async function handleStageChange(newStage: string) {
+    try {
+      if (isLive) {
+        await updateDeal.mutateAsync({ id: deal.id, stage: newStage });
+      } else {
+        updateDealInContext(deal.id, { stage: newStage as any });
+      }
+      toast.success(`Stage changed to ${stageLabels[newStage as keyof typeof stageLabels] || newStage}`);
+      setShowStageChange(false);
+    } catch (err) {
+      toast.error("Failed to change stage");
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      if (isLive) {
+        await deleteDeal.mutateAsync(deal.id);
+      } else {
+        removeDeal(deal.id);
+      }
+      toast.success("Deal deleted");
+      navigate("/pipeline");
+    } catch (err) {
+      toast.error("Failed to delete deal");
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -46,11 +92,82 @@ export default function DealDetail({ deal }: DealDetailProps) {
           <h1 className="text-4xl font-bold text-primary tracking-tight">{deal.projectName}</h1>
           <p className="text-base text-slate-500 mt-2">{deal.borrower} • {deal.sponsor}</p>
         </div>
-        <div className="text-right">
-          <p className="text-4xl font-bold text-accent tracking-tight">{formatMillions(deal.loanAmount)}</p>
-          <p className="text-sm text-slate-500 mt-1">Total Facility</p>
+        <div className="flex items-start gap-3">
+          <div className="text-right mr-4">
+            <p className="text-4xl font-bold text-accent tracking-tight">{formatMillions(deal.loanAmount)}</p>
+            <p className="text-sm text-slate-500 mt-1">Total Facility</p>
+          </div>
+          {nextStage && (
+            <button
+              onClick={() => setShowStageChange(true)}
+              className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm shadow-accent/20"
+            >
+              Advance to {stageLabels[nextStage as keyof typeof stageLabels]}
+            </button>
+          )}
+          <DealFormDialog
+            deal={deal}
+            trigger={
+              <button className="rounded-full bg-slate-50 hover:bg-slate-100 p-2.5 transition-colors" title="Edit deal">
+                <Pencil className="h-4 w-4 text-slate-500" />
+              </button>
+            }
+          />
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="rounded-full bg-slate-50 hover:bg-red-50 p-2.5 transition-colors group"
+            title="Delete deal"
+          >
+            <Trash2 className="h-4 w-4 text-slate-400 group-hover:text-red-500" />
+          </button>
         </div>
       </div>
+
+      {/* Stage change confirmation */}
+      {showStageChange && nextStage && (
+        <div className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between">
+          <p className="text-sm text-primary font-medium">
+            Move "{deal.projectName}" from <strong>{stageLabels[deal.stage as keyof typeof stageLabels]}</strong> to <strong>{stageLabels[nextStage as keyof typeof stageLabels]}</strong>?
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowStageChange(false)}
+              className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleStageChange(nextStage)}
+              className="px-4 py-2 rounded-full text-sm font-semibold text-white bg-accent hover:bg-accent/90 transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation */}
+      {showDeleteConfirm && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 flex items-center justify-between">
+          <p className="text-sm text-red-700 font-medium">
+            Are you sure you want to delete "{deal.projectName}"? This cannot be undone.
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowDeleteConfirm(false)}
+              className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 rounded-full text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Lifecycle Progress Bar */}
       {lifecycle && (
