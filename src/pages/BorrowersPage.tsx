@@ -65,24 +65,24 @@ export default function BorrowersPage() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Borrowers</p>
-            <p className="font-display text-2xl font-bold text-foreground mt-1">{borrowers.length}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Total Borrowers</p>
+            <p className="text-3xl font-bold text-primary mt-4 tracking-tight">{borrowers.length}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Rated A</p>
-            <p className="font-display text-2xl font-bold text-accent mt-1">{borrowers.filter(b => b.internalRating === "A").length}</p>
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Rated A</p>
+            <p className="text-3xl font-bold text-accent mt-4 tracking-tight">{borrowers.filter(b => b.internalRating === "A").length}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">KYC Issues</p>
-            <p className="font-display text-2xl font-bold text-warning mt-1">
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">KYC Issues</p>
+            <p className="text-3xl font-bold text-warning mt-4 tracking-tight">
               {borrowers.filter(b => b.kyc.some(k => k.status !== "valid")).length}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Exposure</p>
-            <p className="font-display text-2xl font-bold text-foreground mt-1">
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Total Exposure</p>
+            <p className="text-3xl font-bold text-primary mt-4 tracking-tight">
               {formatMillions(borrowers.reduce((s, b) => s + b.totalExposure, 0))}
             </p>
           </div>

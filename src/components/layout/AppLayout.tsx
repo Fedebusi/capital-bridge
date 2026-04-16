@@ -15,15 +15,11 @@ import {
   HardHat,
   Route,
   Bell,
-  UserCircle,
-  HelpCircle,
   BookOpen,
   Landmark,
   LogOut,
-  Wallet,
   MapPin,
   Plus,
-  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,7 +38,6 @@ const navItems = [
   { to: "/due-diligence", icon: ClipboardCheck, label: "Due Diligence", group: "ops" },
   { to: "/approvals", icon: Vote, label: "Approvals", group: "ops" },
   { to: "/it-instructions", icon: BookOpen, label: "IT Docs", group: "ops" },
-  { to: "/about", icon: Users, label: "About Us", group: "ops" },
 ];
 
 interface AppLayoutProps {
@@ -64,8 +59,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
     const items = navItems.filter(i => i.group === group);
     return (
       <div>
-        <p className="px-3 mb-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">{label}</p>
-        <div className="space-y-0.5">
+        <p className="px-4 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+        <div className="space-y-1">
           {items.map(item => {
             const isActive = location.pathname === item.to || location.pathname.startsWith(item.to + "/");
             return (
@@ -74,15 +69,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 to={item.to}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-200 group",
+                  "flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-white text-primary shadow-sm font-semibold"
-                    : "text-slate-500 hover:bg-white/60 hover:text-primary"
+                    ? "bg-accent text-white shadow-sm shadow-accent/20"
+                    : "text-slate-500 hover:bg-slate-100 hover:text-primary"
                 )}
               >
-                <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-emerald-600" : "text-slate-400 group-hover:text-slate-500")} />
+                <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-slate-400")} />
                 <span>{item.label}</span>
-                {isActive && <ChevronRight className="h-3 w-3 ml-auto text-slate-300" />}
               </Link>
             );
           })}
@@ -92,89 +86,58 @@ export default function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-white">
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-[250px] flex-col bg-gradient-to-b from-slate-50 to-blue-50/30 border-r border-slate-200/60 transition-transform duration-300 lg:relative lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-white border-r border-slate-100 transition-transform duration-300 lg:relative lg:translate-x-0",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo */}
-        <div className="px-5 pt-5 pb-4">
-          <Link to="/dashboard" className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center">
-              <Wallet className="h-4 w-4 text-white" />
+        <div className="px-5 pt-6 pb-6">
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center">
+              <span className="text-white text-sm font-bold">C</span>
             </div>
             <div>
-              <span className="text-[15px] font-extrabold text-primary tracking-tight">CapitalBridge</span>
+              <span className="text-lg font-bold text-primary tracking-tight">CapitalBridge</span>
             </div>
           </Link>
         </div>
 
-        {/* Fund card */}
-        <div className="mx-4 mb-5 rounded-xl bg-gradient-to-br from-primary to-slate-700 p-3.5 text-white">
-          <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-md bg-white/15 flex items-center justify-center text-[11px] font-bold backdrop-blur-sm">
-              GDF
-            </div>
-            <div>
-              <p className="text-[11px] font-bold leading-none">Global Debt Fund I</p>
-              <p className="text-[11px] text-white/60 font-medium mt-0.5">Institutional Grade</p>
-            </div>
-          </div>
-        </div>
-
         {/* Mobile close */}
-        <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 rounded p-1 text-slate-400 hover:text-primary lg:hidden">
+        <button onClick={() => setMobileOpen(false)} className="absolute top-5 right-4 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 lg:hidden">
           <X className="h-4 w-4" />
         </button>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 space-y-5">
+        <nav className="flex-1 overflow-y-auto px-3 space-y-6 pb-4">
           {renderNavGroup("main", "Dashboard")}
           {renderNavGroup("deals", "Deal Management")}
           {renderNavGroup("ops", "Operations")}
         </nav>
 
-        {/* Bottom */}
-        <div className="p-3 mt-auto border-t border-slate-200/50">
-          <Link
-            to="/pipeline"
-            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-[11px] uppercase tracking-wider font-bold transition-colors shadow-sm shadow-emerald-600/20 mb-3"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            New Deal
-          </Link>
-          <div className="flex gap-1 mb-3">
-            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-xs font-medium transition-colors" href="#">
-              <HelpCircle className="h-3 w-3" />
-              <span>Help</span>
-            </a>
-            <a className="flex-1 flex items-center justify-center gap-1.5 text-slate-400 py-1.5 hover:bg-white/50 rounded-lg text-xs font-medium transition-colors" href="#">
-              <BookOpen className="h-3 w-3" />
-              <span>Docs</span>
-            </a>
-          </div>
-          {/* User profile */}
-          <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg bg-white/60 border border-slate-200/50">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center shrink-0">
+        {/* User profile */}
+        <div className="p-3 border-t border-slate-100">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center shrink-0">
               <span className="text-xs font-bold text-white">
                 {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-semibold text-primary truncate">{profile?.full_name || "User"}</p>
-              <p className="text-[11px] text-slate-400 font-medium capitalize">{profile?.role || "viewer"}</p>
+              <p className="text-sm font-semibold text-primary truncate">{profile?.full_name || "User"}</p>
+              <p className="text-xs text-slate-400 font-medium truncate">{profile?.email || "viewer"}</p>
             </div>
             <button
               onClick={handleLogout}
-              className="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-all shrink-0"
+              className="text-slate-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all shrink-0"
               title="Sign out"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -183,49 +146,37 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top nav */}
-        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200">
-          <div className="mx-auto max-w-[1400px] px-8 py-2.5 flex justify-between items-center">
-            <div className="flex items-center space-x-6">
-              <button onClick={() => setMobileOpen(true)} className="rounded p-2 text-slate-400 hover:text-primary lg:hidden">
-                <Menu className="h-5 w-5" />
-              </button>
-              <div className="relative hidden sm:block">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                <input
-                  className="bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 w-72 placeholder:text-slate-400 outline-none transition-all"
-                  placeholder="Search facilities, deals, borrowers..."
-                  type="text"
-                />
-              </div>
+        <header className="sticky top-0 z-30 w-full bg-white border-b border-slate-100">
+          <div className="mx-auto max-w-[1400px] px-8 py-4 flex justify-between items-center gap-6">
+            <button onClick={() => setMobileOpen(true)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 lg:hidden">
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="relative flex-1 max-w-2xl hidden sm:block">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                className="w-full bg-slate-50 border-0 rounded-full py-3 pl-12 pr-5 text-sm placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-accent/30 transition-all"
+                placeholder="Search funds, deals, borrowers..."
+                type="text"
+              />
             </div>
-            <div className="flex items-center space-x-3">
-            <Link
-              to="/pipeline"
-              className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-emerald-700 hidden sm:flex items-center gap-1.5 shadow-sm shadow-emerald-600/20"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Deploy Capital
-            </Link>
-            <div className="flex items-center space-x-1 border-l border-slate-200 pl-3">
-              <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2 rounded-lg transition-all relative">
-                <Bell className="h-4.5 w-4.5" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-emerald-500 rounded-full border border-white" />
+            <div className="flex items-center gap-3">
+              <Link
+                to="/pipeline"
+                className="hidden sm:flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-sm shadow-accent/20"
+              >
+                <Plus className="h-4 w-4" />
+                Add New Deal
+              </Link>
+              <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all relative">
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full" />
               </button>
-              <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2 rounded-lg transition-all">
-                <UserCircle className="h-4.5 w-4.5" />
-              </button>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center ml-1">
-                <span className="text-xs font-bold text-white">
-                  {(profile?.full_name || "U").slice(0, 2).toUpperCase()}
-                </span>
-              </div>
             </div>
-          </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-slate-50/50">
-          <div className="mx-auto max-w-[1400px] p-8">
+        <main className="flex-1 overflow-auto bg-white">
+          <div className="mx-auto max-w-[1400px] p-8 lg:p-12">
             {children}
           </div>
         </main>

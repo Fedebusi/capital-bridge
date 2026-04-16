@@ -62,22 +62,22 @@ export default function LoanBookPage() {
         </header>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Facilities</p>
-            <p className="text-2xl font-bold text-primary mt-2">{formatMillions(totalFacilities)}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Total Facilities</p>
+            <p className="text-3xl font-bold text-primary mt-4 tracking-tight">{formatMillions(totalFacilities)}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Exposure</p>
-            <p className="text-2xl font-bold text-primary mt-2">{formatMillions(totalExposure)}</p>
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Total Exposure</p>
+            <p className="text-3xl font-bold text-primary mt-4 tracking-tight">{formatMillions(totalExposure)}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Avg LTV</p>
-            <p className="text-2xl font-bold text-primary mt-2">{formatPercent(avgLTV)}</p>
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Avg LTV</p>
+            <p className="text-3xl font-bold text-primary mt-4 tracking-tight">{formatPercent(avgLTV)}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Avg Rate</p>
-            <p className="text-2xl font-bold text-primary mt-2">{formatPercent(avgRate)}</p>
+          <div className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+            <p className="text-sm text-slate-500 font-medium">Avg Rate</p>
+            <p className="text-3xl font-bold text-accent mt-4 tracking-tight">{formatPercent(avgRate)}</p>
           </div>
         </div>
 

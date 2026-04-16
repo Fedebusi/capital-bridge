@@ -53,14 +53,14 @@ export default function DashboardPage() {
     <AppLayout>
       <div className="space-y-8">
         {/* Page Header */}
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-end">
           <div>
-            <h1 className="text-2xl font-extrabold text-primary">Portfolio Overview</h1>
-            <p className="text-slate-500 text-sm mt-1">Strategic Institutional Debt Aggregation & Allocation</p>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">Portfolio Overview</h1>
+            <p className="text-slate-500 text-base mt-2">Strategic Institutional Debt Aggregation & Allocation</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <QuickScreenDialog />
-            <button className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+            <button className="bg-slate-50 hover:bg-slate-100 px-5 py-3 rounded-full text-sm font-semibold text-slate-700 transition-colors">
               Export Report
             </button>
           </div>
@@ -134,24 +134,19 @@ export default function DashboardPage() {
         </section>
 
         {/* Metric Cards */}
-        <section className="grid grid-cols-3 gap-6">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { icon: Wallet, label: "Quarterly Cash", value: formatMillions(metrics.totalDisbursed * 0.12), change: "+8.2%", color: "bg-emerald-50 text-emerald-600" },
-            { icon: ShieldCheck, label: "Impaired Ratio", value: "0.02%", change: "-0.01%", color: "bg-blue-50 text-blue-600" },
-            { icon: Rocket, label: "Fund IRR", value: "12.1%", change: "+1.4%", color: "bg-violet-50 text-violet-600" },
+            { label: "Total AUM", value: formatMillions(metrics.totalCommitments), accent: false },
+            { label: "Total Invested", value: formatMillions(metrics.totalDisbursed), accent: false },
+            { label: "Available Capital", value: formatMillions(metrics.totalCommitments - metrics.totalDisbursed), accent: false },
+            { label: "Avg. Returns", value: "8.6%", accent: true },
           ].map((card) => (
-            <div key={card.label} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center", card.color)}>
-                  <card.icon className="h-4.5 w-4.5" />
-                </div>
-                <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-xs font-semibold">
-                  <ArrowUpRight className="h-2.5 w-2.5" />
-                  {card.change}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-primary mt-3">{card.value}</p>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mt-1">{card.label}</p>
+            <div key={card.label} className="rounded-2xl bg-slate-50 p-7 hover:bg-slate-100/70 transition-colors">
+              <p className="text-sm text-slate-500 font-medium leading-tight">{card.label}</p>
+              <p className={cn(
+                "text-3xl font-bold mt-4 tracking-tight",
+                card.accent ? "text-accent" : "text-primary"
+              )}>{card.value}</p>
             </div>
           ))}
         </section>
