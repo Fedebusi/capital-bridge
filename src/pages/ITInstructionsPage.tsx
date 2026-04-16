@@ -342,7 +342,7 @@ export default function ITInstructionsPage() {
     <AppLayout>
       <div className="space-y-8">
         <header>
-          <h1 className="text-2xl font-extrabold text-primary">Instrucciones para IT</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Instrucciones para IT</h1>
           <p className="text-slate-500 text-sm mt-1">Documentación funcional y técnica del proyecto CapitalBridge</p>
         </header>
 

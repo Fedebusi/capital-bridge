@@ -107,10 +107,10 @@ export function BorrowerFormDialog({ borrower, trigger, onSuccess }: BorrowerFor
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
+          <button className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm shadow-accent/20">
+            <Plus className="h-4 w-4" />
             New Borrower
-          </Button>
+          </button>
         )}
       </DialogTrigger>
       <DialogContent className="max-w-lg max-h-[90vh]">

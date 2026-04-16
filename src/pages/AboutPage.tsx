@@ -21,7 +21,7 @@ export default function AboutPage() {
       <div className="space-y-8">
         {/* Header */}
         <header>
-          <h1 className="text-2xl font-extrabold text-primary">About Us</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">About Us</h1>
           <p className="text-slate-500 text-sm mt-1">Chi siamo, cosa facciamo, e perché il Milan vincerà la Champions</p>
         </header>
 

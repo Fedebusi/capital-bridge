@@ -274,10 +274,10 @@ export function DealFormDialog({ deal, trigger }: DealFormDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
+          <button className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm shadow-accent/20">
+            <Plus className="h-4 w-4" />
             New Deal
-          </Button>
+          </button>
         )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh]">
@@ -288,7 +288,7 @@ export function DealFormDialog({ deal, trigger }: DealFormDialogProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Deal Information</h3>
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Deal Information</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Project Name *</Label>
@@ -343,7 +343,7 @@ export function DealFormDialog({ deal, trigger }: DealFormDialogProps) {
 
             {/* Financial Terms */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Financial Terms</h3>
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Financial Terms</h3>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Loan Amount (EUR) *</Label>
@@ -381,7 +381,7 @@ export function DealFormDialog({ deal, trigger }: DealFormDialogProps) {
 
             {/* Project Metrics */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Project Metrics</h3>
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Project Metrics</h3>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>GDV (EUR)</Label>

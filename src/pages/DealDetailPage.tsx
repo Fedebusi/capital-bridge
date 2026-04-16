@@ -22,7 +22,7 @@ export default function DealDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center py-20">
-          <p className="text-muted-foreground">Deal not found</p>
+          <p className="text-slate-500">Deal not found</p>
         </div>
       </AppLayout>
     );

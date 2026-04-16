@@ -6,7 +6,7 @@ export default function MapPage() {
     <AppLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-primary">Geographic Distribution</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Geographic Distribution</h1>
           <p className="text-slate-500 text-sm mt-1">Portfolio assets mapped by location</p>
         </div>
         <PortfolioMap />

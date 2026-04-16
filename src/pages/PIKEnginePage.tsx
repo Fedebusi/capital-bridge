@@ -38,12 +38,12 @@ export default function PIKEnginePage() {
     <AppLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-primary">PIK Engine & Interest Accrual</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">PIK Engine & Interest Accrual</h1>
           <p className="text-slate-500 text-sm mt-1">Monthly interest calculation, PIK capitalization, and exposure projection across active deals</p>
         </div>
 
         {/* Portfolio Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           <MetricCard label="Total Principal Outstanding" value={formatCurrency(totalPrincipal)} />
           <MetricCard label="Total PIK Accrued" value={formatCurrency(totalPIK)} accent />
           <MetricCard label="Total Exposure" value={formatCurrency(totalExposure)} />
@@ -51,41 +51,41 @@ export default function PIKEnginePage() {
         </div>
 
         {/* Per-Deal Table */}
-        <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-          <div className="p-4 border-b border-border">
-            <h3 className="font-display text-sm font-semibold text-foreground flex items-center gap-2">
+        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="p-4 border-b border-slate-100">
+            <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-accent" /> Interest Accrual by Deal
             </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Project</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Rate</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Principal</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">PIK Accrued</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Total Exposure</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Monthly Accrual</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Proj. PIK at Maturity</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Proj. Exposure at Maturity</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Month</th>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Project</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Rate</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Principal</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">PIK Accrued</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Total Exposure</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Monthly Accrual</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Proj. PIK at Maturity</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Proj. Exposure at Maturity</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Month</th>
                 </tr>
               </thead>
               <tbody>
                 {summaries.map(({ deal, pik, current }) => (
-                  <tr key={deal.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                  <tr key={deal.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60 transition-colors">
                     <td className="px-4 py-3">
-                      <Link to={`/deals/${deal.id}`} className="font-medium text-foreground hover:text-primary transition-colors">{deal.projectName}</Link>
+                      <Link to={`/deals/${deal.id}`} className="font-medium text-primary hover:text-primary transition-colors">{deal.projectName}</Link>
                     </td>
-                    <td className="px-4 py-3 text-center text-foreground">{deal.interestRate}% + {deal.pikSpread}%</td>
-                    <td className="px-4 py-3 text-right text-foreground">{formatCurrency(current?.closingPrincipal || 0)}</td>
+                    <td className="px-4 py-3 text-center text-primary">{deal.interestRate}% + {deal.pikSpread}%</td>
+                    <td className="px-4 py-3 text-right text-primary">{formatCurrency(current?.closingPrincipal || 0)}</td>
                     <td className="px-4 py-3 text-right text-accent font-medium">{formatCurrency(current?.closingPIK || 0)}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-foreground">{formatCurrency(current?.closingExposure || 0)}</td>
+                    <td className="px-4 py-3 text-right font-semibold text-primary">{formatCurrency(current?.closingExposure || 0)}</td>
                     <td className="px-4 py-3 text-right text-primary">{formatCurrency((current?.cashInterest || 0) + (current?.pikAccrual || 0))}</td>
                     <td className="px-4 py-3 text-right text-warning">{formatCurrency(pik.projectedPIKAtMaturity)}</td>
                     <td className="px-4 py-3 text-right text-warning font-medium">{formatCurrency(pik.projectedTotalExposureAtMaturity)}</td>
-                    <td className="px-4 py-3 text-center text-muted-foreground">{pik.currentMonthIndex + 1}/{deal.tenor}</td>
+                    <td className="px-4 py-3 text-center text-slate-500">{pik.currentMonthIndex + 1}/{deal.tenor}</td>
                   </tr>
                 ))}
               </tbody>
@@ -99,9 +99,9 @@ export default function PIKEnginePage() {
 
 function MetricCard({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{label}</p>
-      <p className={cn("font-display text-xl font-bold mt-1", accent ? "text-accent" : "text-foreground")}>{value}</p>
+    <div className="rounded-2xl bg-slate-50 p-6 hover:bg-slate-100/70 transition-colors">
+      <p className="text-sm text-slate-500 font-medium">{label}</p>
+      <p className={cn("text-2xl font-bold mt-3 tracking-tight", accent ? "text-accent" : "text-primary")}>{value}</p>
     </div>
   );
 }

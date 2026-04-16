@@ -26,37 +26,37 @@ export default function DealDetail({ deal }: DealDetailProps) {
   const lifecycle = sampleLifecycles[deal.id];
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <Link to="/pipeline" className="mt-1 rounded-lg border border-border bg-card p-2 hover:bg-muted transition-colors">
-          <ArrowLeft className="h-4 w-4 text-muted-foreground" />
+        <Link to="/pipeline" className="mt-1 rounded-full bg-slate-50 hover:bg-slate-100 p-2.5 transition-colors">
+          <ArrowLeft className="h-4 w-4 text-slate-500" />
         </Link>
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-1">
-            <span className={cn("inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
+          <div className="flex items-center gap-3 mb-2">
+            <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
               {stageLabels[deal.stage]}
             </span>
             {deal.covenants.some(c => c.status !== "compliant") && (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-warning">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1 rounded-full">
                 <AlertTriangle className="h-3 w-3" /> Covenant Alert
               </span>
             )}
           </div>
-          <h1 className="font-display text-2xl font-bold text-foreground">{deal.projectName}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{deal.borrower} • {deal.sponsor}</p>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">{deal.projectName}</h1>
+          <p className="text-base text-slate-500 mt-2">{deal.borrower} • {deal.sponsor}</p>
         </div>
         <div className="text-right">
-          <p className="font-display text-3xl font-bold text-accent">{formatMillions(deal.loanAmount)}</p>
-          <p className="text-xs text-muted-foreground">Total Facility</p>
+          <p className="text-4xl font-bold text-accent tracking-tight">{formatMillions(deal.loanAmount)}</p>
+          <p className="text-sm text-slate-500 mt-1">Total Facility</p>
         </div>
       </div>
 
       {/* Lifecycle Progress Bar */}
       {lifecycle && (
-        <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+        <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-card">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
               <Route className="h-3 w-3" /> Loan Lifecycle — Phase {getCurrentPhaseNumber(lifecycle)}/12
             </p>
             <span className="text-xs font-semibold text-accent">{getLifecycleProgress(lifecycle)}% complete</span>
@@ -77,11 +77,11 @@ export default function DealDetail({ deal }: DealDetailProps) {
         ].map((m, i) => (
           <div
             key={m.label}
-            className="rounded-lg border border-border bg-card p-3 animate-fade-in"
+            className="rounded-lg border border-slate-100 bg-white p-3 animate-fade-in"
             style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
           >
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{m.label}</p>
-            <p className={cn("font-display text-lg font-bold mt-0.5", m.warn ? "text-warning" : "text-foreground")}>
+            <p className="text-[11px] text-slate-500 uppercase tracking-wide">{m.label}</p>
+            <p className={cn("font-display text-lg font-bold mt-0.5", m.warn ? "text-warning" : "text-primary")}>
               {m.value}
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="lifecycle" className="space-y-4">
-        <TabsList className="bg-muted border border-border flex-wrap h-auto gap-1 p-1">
+        <TabsList className="bg-muted border border-slate-100 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="drawdowns">Drawdowns</TabsTrigger>
@@ -110,8 +110,8 @@ export default function DealDetail({ deal }: DealDetailProps) {
           {lifecycle ? (
             <LifecycleTracker lifecycle={lifecycle} />
           ) : (
-            <div className="rounded-xl border border-border bg-card p-8 text-center">
-              <p className="text-sm text-muted-foreground">Lifecycle tracking not yet configured for this deal</p>
+            <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+              <p className="text-sm text-slate-500">Lifecycle tracking not yet configured for this deal</p>
             </div>
           )}
         </TabsContent>
@@ -152,36 +152,36 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </TabsContent>
 
         <TabsContent value="drawdowns">
-          <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-            <div className="p-5 border-b border-border">
-              <h3 className="font-display text-sm font-semibold text-foreground">Drawdown Schedule</h3>
-              <p className="text-xs text-muted-foreground mt-1">Disbursed: {formatCurrency(deal.disbursedAmount)} / {formatCurrency(deal.loanAmount)}</p>
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
+              <h3 className="font-display text-sm font-semibold text-primary">Drawdown Schedule</h3>
+              <p className="text-xs text-slate-500 mt-1">Disbursed: {formatCurrency(deal.disbursedAmount)} / {formatCurrency(deal.loanAmount)}</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-muted/50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Milestone</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Amount</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Scheduled</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Construction %</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Status</th>
+                  <tr className="border-b border-slate-100 bg-slate-50">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Milestone</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Amount</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Scheduled</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Construction %</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {deal.drawdowns.map(dd => (
-                    <tr key={dd.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3 font-medium text-foreground">{dd.milestone}</td>
-                      <td className="px-4 py-3 text-right text-foreground">{formatCurrency(dd.amount)}</td>
-                      <td className="px-4 py-3 text-center text-muted-foreground">{dd.scheduledDate}</td>
-                      <td className="px-4 py-3 text-center text-muted-foreground">{dd.constructionProgress}%</td>
+                    <tr key={dd.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-4 py-3 font-medium text-primary">{dd.milestone}</td>
+                      <td className="px-4 py-3 text-right text-primary">{formatCurrency(dd.amount)}</td>
+                      <td className="px-4 py-3 text-center text-slate-500">{dd.scheduledDate}</td>
+                      <td className="px-4 py-3 text-center text-slate-500">{dd.constructionProgress}%</td>
                       <td className="px-4 py-3 text-center">
                         <span className={cn(
                           "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium",
                           dd.status === "disbursed" ? "bg-success/10 text-success" :
                           dd.status === "approved" ? "bg-accent/10 text-accent" :
                           dd.status === "requested" ? "bg-warning/10 text-warning" :
-                          "bg-muted text-muted-foreground"
+                          "bg-muted text-slate-500"
                         )}>
                           {dd.status === "disbursed" && <CheckCircle2 className="h-3 w-3" />}
                           {dd.status === "pending" && <Clock className="h-3 w-3" />}
@@ -197,9 +197,9 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </TabsContent>
 
         <TabsContent value="covenants">
-          <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-            <div className="p-5 border-b border-border">
-              <h3 className="font-display text-sm font-semibold text-foreground">Covenant Compliance</h3>
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
+              <h3 className="font-display text-sm font-semibold text-primary">Covenant Compliance</h3>
             </div>
             <div className="p-5 space-y-3">
               {deal.covenants.map(c => (
@@ -214,62 +214,62 @@ export default function DealDetail({ deal }: DealDetailProps) {
                      c.status === "watch" ? <AlertTriangle className="h-4 w-4 text-warning" /> :
                      <XCircle className="h-4 w-4 text-destructive" />}
                     <div>
-                      <p className="text-sm font-medium text-foreground">{c.name}</p>
-                      <p className="text-xs text-muted-foreground">Threshold: {c.threshold}</p>
+                      <p className="text-sm font-medium text-primary">{c.name}</p>
+                      <p className="text-xs text-slate-500">Threshold: {c.threshold}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className={cn("text-sm font-semibold",
                       c.status === "compliant" ? "text-success" : c.status === "watch" ? "text-warning" : "text-destructive"
                     )}>{c.currentValue}</p>
-                    <p className="text-xs uppercase text-muted-foreground">{c.status}</p>
+                    <p className="text-xs uppercase text-slate-500">{c.status}</p>
                   </div>
                 </div>
               ))}
-              {deal.covenants.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No covenants configured</p>}
+              {deal.covenants.length === 0 && <p className="text-sm text-slate-500 text-center py-8">No covenants configured</p>}
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="sales">
-          <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-            <div className="p-5 border-b border-border">
-              <h3 className="font-display text-sm font-semibold text-foreground">Unit Sales Tracker</h3>
-              <p className="text-xs text-muted-foreground mt-1">Pre-sales: {deal.preSalesPercent}%</p>
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
+              <h3 className="font-display text-sm font-semibold text-primary">Unit Sales Tracker</h3>
+              <p className="text-xs text-slate-500 mt-1">Pre-sales: {deal.preSalesPercent}%</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-muted/50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Unit</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Type</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Area</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">List Price</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Sale Price</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Release Price</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">Status</th>
+                  <tr className="border-b border-slate-100 bg-slate-50">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Unit</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Type</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Area</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">List Price</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Sale Price</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Release Price</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-slate-500">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {deal.unitSales.map(u => (
-                    <tr key={u.unit} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3 font-medium text-foreground">{u.unit}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{u.type}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{u.area} sqm</td>
-                      <td className="px-4 py-3 text-right text-foreground">{formatCurrency(u.listPrice)}</td>
-                      <td className="px-4 py-3 text-right text-foreground">{u.salePrice ? formatCurrency(u.salePrice) : "—"}</td>
-                      <td className="px-4 py-3 text-right text-foreground">{u.releasePrice ? formatCurrency(u.releasePrice) : "—"}</td>
+                    <tr key={u.unit} className="border-b border-slate-100 last:border-0">
+                      <td className="px-4 py-3 font-medium text-primary">{u.unit}</td>
+                      <td className="px-4 py-3 text-slate-500">{u.type}</td>
+                      <td className="px-4 py-3 text-right text-slate-500">{u.area} sqm</td>
+                      <td className="px-4 py-3 text-right text-primary">{formatCurrency(u.listPrice)}</td>
+                      <td className="px-4 py-3 text-right text-primary">{u.salePrice ? formatCurrency(u.salePrice) : "—"}</td>
+                      <td className="px-4 py-3 text-right text-primary">{u.releasePrice ? formatCurrency(u.releasePrice) : "—"}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={cn("rounded-md px-2 py-0.5 text-xs font-medium",
                           u.status === "sold" ? "bg-success/10 text-success" :
                           u.status === "contracted" ? "bg-accent/10 text-accent" :
                           u.status === "reserved" ? "bg-warning/10 text-warning" :
-                          "bg-muted text-muted-foreground"
+                          "bg-muted text-slate-500"
                         )}>{u.status.charAt(0).toUpperCase() + u.status.slice(1)}</span>
                       </td>
                     </tr>
                   ))}
-                  {deal.unitSales.length === 0 && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">No unit sales data</td></tr>}
+                  {deal.unitSales.length === 0 && <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500">No unit sales data</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -310,8 +310,8 @@ export default function DealDetail({ deal }: DealDetailProps) {
 
 function Card({ title, icon: Icon, children }: { title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-      <h3 className="font-display text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+    <div className="rounded-2xl bg-slate-50 p-6">
+      <h3 className="font-display text-sm font-semibold text-primary mb-4 flex items-center gap-2">
         <Icon className="h-4 w-4 text-accent" /> {title}
       </h3>
       <div className="space-y-3 text-sm">{children}</div>
@@ -322,8 +322,8 @@ function Card({ title, icon: Icon, children }: { title: string; icon: React.Comp
 function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex justify-between items-start gap-4">
-      <span className="text-muted-foreground shrink-0">{label}</span>
-      <span className={cn("text-right", highlight ? "font-semibold text-accent" : "text-foreground")}>{value}</span>
+      <span className="text-slate-500 shrink-0">{label}</span>
+      <span className={cn("text-right", highlight ? "font-semibold text-accent" : "text-primary")}>{value}</span>
     </div>
   );
 }

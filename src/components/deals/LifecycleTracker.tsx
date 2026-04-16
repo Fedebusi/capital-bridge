@@ -34,7 +34,7 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
             {/* Phase Header */}
             <button
               onClick={() => setExpandedPhase(isExpanded ? null : phase.id)}
-              className="w-full flex items-center gap-3 p-4 text-left hover:bg-muted/30 transition-colors rounded-xl"
+              className="w-full flex items-center gap-3 p-4 text-left hover:bg-slate-50/60 transition-colors rounded-xl"
             >
               {/* Phase Number & Icon */}
               <div className={cn(
@@ -42,7 +42,7 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                 phase.status === "completed" ? "bg-emerald-100 text-emerald-700" :
                 phase.status === "in_progress" ? "bg-accent/20 text-accent" :
                 phase.status === "blocked" ? "bg-red-100 text-red-700" :
-                "bg-muted text-muted-foreground"
+                "bg-muted text-slate-500"
               )}>
                 {phase.status === "completed" ? <CheckCircle2 className="h-4 w-4" /> : phase.number}
               </div>
@@ -50,7 +50,7 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
               {/* Phase Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-display text-sm font-semibold text-foreground truncate">
+                  <h3 className="font-display text-sm font-semibold text-primary truncate">
                     {phase.number}. {phase.name}
                   </h3>
                   {isCurrent && (
@@ -62,7 +62,7 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                     {phaseStatusLabels[phase.status]}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-3 mt-0.5 text-xs text-slate-500">
                   {totalSubsteps > 0 && <span>{completedSubsteps}/{totalSubsteps} steps</span>}
                   {totalMilestones > 0 && <span className="flex items-center gap-0.5"><Flag className="h-3 w-3" /> {completedMilestones}/{totalMilestones} milestones</span>}
                   {phase.estimatedDuration && <span>~{phase.estimatedDuration}</span>}
@@ -72,18 +72,18 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
               </div>
 
               {/* Expand Icon */}
-              {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />}
+              {isExpanded ? <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" /> : <ChevronRight className="h-4 w-4 text-slate-500 shrink-0" />}
             </button>
 
             {/* Expanded Content */}
             {isExpanded && (
               <div className="px-4 pb-4 space-y-4">
                 {/* Description */}
-                <p className="text-sm text-muted-foreground leading-relaxed pl-11">{phase.description}</p>
+                <p className="text-sm text-slate-500 leading-relaxed pl-11">{phase.description}</p>
 
                 {/* Agents */}
                 <div className="pl-11">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-1">
                     <Users className="h-3 w-3" /> Agentes
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -98,21 +98,21 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                 {/* Milestones (Hitos) */}
                 {phase.milestones.length > 0 && (
                   <div className="pl-11">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1">
+                    <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-1">
                       <Flag className="h-3 w-3" /> Hitos (Milestones)
                     </p>
                     <div className="space-y-1.5">
                       {phase.milestones.map((m, j) => (
                         <div key={j} className={cn(
                           "flex items-start gap-2 rounded-lg border p-2.5",
-                          m.achieved ? "border-emerald-200/60 bg-emerald-50/50" : "border-border bg-muted/30"
+                          m.achieved ? "border-emerald-200/60 bg-emerald-50/50" : "border-border bg-slate-50/60"
                         )}>
-                          {m.achieved ? <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> : <Clock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />}
+                          {m.achieved ? <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> : <Clock className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />}
                           <div>
-                            <p className="text-sm text-foreground">{m.description}</p>
+                            <p className="text-sm text-primary">{m.description}</p>
                             <div className="flex items-center gap-2 mt-0.5">
                               {m.achievedDate && <span className="text-xs text-emerald-600">{m.achievedDate}</span>}
-                              {m.evidence && <span className="text-xs text-muted-foreground">📄 {m.evidence}</span>}
+                              {m.evidence && <span className="text-xs text-slate-500">📄 {m.evidence}</span>}
                             </div>
                           </div>
                         </div>
@@ -124,19 +124,19 @@ export default function LifecycleTracker({ lifecycle }: LifecycleTrackerProps) {
                 {/* Substeps */}
                 {phase.substeps.length > 0 && (
                   <div className="pl-11">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Steps</p>
+                    <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Steps</p>
                     <div className="space-y-1">
                       {phase.substeps.map(s => (
                         <div key={s.id} className="flex items-start gap-2 py-1.5">
                           <StatusIcon status={s.status} />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className={cn("text-sm", s.status === "completed" ? "text-muted-foreground" : "text-foreground")}>{s.label}</p>
+                              <p className={cn("text-sm", s.status === "completed" ? "text-slate-500" : "text-primary")}>{s.label}</p>
                               <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", phaseStatusColors[s.status])}>
                                 {phaseStatusLabels[s.status]}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2 text-xs text-slate-500">
                               {s.assignee && <span>{s.assignee}</span>}
                               {s.completedDate && <span>• {s.completedDate}</span>}
                             </div>
@@ -161,7 +161,7 @@ function StatusIcon({ status }: { status: PhaseStatus }) {
     case "completed": return <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />;
     case "in_progress": return <Clock className="h-4 w-4 text-accent mt-0.5 shrink-0" />;
     case "blocked": return <XCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />;
-    case "skipped": return <XCircle className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />;
+    case "skipped": return <XCircle className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />;
     default: return <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 mt-0.5 shrink-0" />;
   }
 }

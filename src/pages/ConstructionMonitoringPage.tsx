@@ -27,23 +27,23 @@ export default function ConstructionMonitoringPage() {
     <AppLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-primary">Construction Monitoring</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Construction Monitoring</h1>
           <p className="text-slate-500 text-sm mt-1">Site visits, certifications, monitoring reports, and retention tracking</p>
         </div>
 
         {dealsWithMonitoring.map(deal => (
-          <div key={deal.id} className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-            <div className="p-4 border-b border-border flex items-center justify-between">
+          <div key={deal.id} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
                   {stageLabels[deal.stage]}
                 </span>
-                <Link to={`/deals/${deal.id}`} className="font-display text-sm font-semibold text-foreground hover:text-accent transition-colors">
+                <Link to={`/deals/${deal.id}`} className="font-display text-sm font-semibold text-primary hover:text-accent transition-colors">
                   {deal.projectName}
                 </Link>
-                <span className="text-xs text-muted-foreground">{formatMillions(deal.loanAmount)}</span>
+                <span className="text-xs text-slate-500">{formatMillions(deal.loanAmount)}</span>
               </div>
-              <span className="text-xs text-muted-foreground">Progress: <strong className="text-foreground">{deal.constructionProgress}%</strong></span>
+              <span className="text-xs text-slate-500">Progress: <strong className="text-primary">{deal.constructionProgress}%</strong></span>
             </div>
             <div className="p-4">
               <ConstructionMonitoringPanel dealId={deal.id} />
@@ -52,14 +52,14 @@ export default function ConstructionMonitoringPage() {
         ))}
 
         {dealsWithout.length > 0 && (
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-            <h3 className="font-display text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <HardHat className="h-4 w-4 text-muted-foreground" /> Deals Without Monitoring Data
+          <div className="rounded-2xl bg-slate-50 p-6">
+            <h3 className="font-display text-sm font-semibold text-primary mb-3 flex items-center gap-2">
+              <HardHat className="h-4 w-4 text-slate-500" /> Deals Without Monitoring Data
             </h3>
             <div className="space-y-2">
               {dealsWithout.map(d => (
                 <div key={d.id} className="flex items-center justify-between py-2">
-                  <Link to={`/deals/${d.id}`} className="text-sm text-foreground hover:text-accent transition-colors">{d.projectName}</Link>
+                  <Link to={`/deals/${d.id}`} className="text-sm text-primary hover:text-accent transition-colors">{d.projectName}</Link>
                   <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[d.stage])}>{stageLabels[d.stage]}</span>
                 </div>
               ))}
