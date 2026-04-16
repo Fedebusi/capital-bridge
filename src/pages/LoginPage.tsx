@@ -14,8 +14,8 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold tracking-tight text-primary">CapitalBridge</span>
           </Link>
-          <h1 className="text-3xl font-bold text-primary tracking-tight">Benvenuto</h1>
-          <p className="text-slate-500 text-base mt-2">Scegli come accedere alla piattaforma</p>
+          <h1 className="text-3xl font-bold text-primary tracking-tight">Welcome</h1>
+          <p className="text-slate-500 text-base mt-2">Choose how to access the platform</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -27,12 +27,12 @@ export default function LoginPage() {
             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center mb-6">
               <ShieldCheck className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-lg font-bold text-primary mb-2">Piattaforma</h3>
+            <h3 className="text-lg font-bold text-primary mb-2">Platform</h3>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Per analisti, originator e portfolio manager. Accesso completo a deal, pipeline e operazioni.
+              For analysts, originators, and portfolio managers. Full access to deals, pipeline, and operations.
             </p>
             <div className="flex items-center gap-2 text-sm font-semibold text-accent">
-              Accedi alla piattaforma
+              Access platform
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
@@ -47,10 +47,10 @@ export default function LoginPage() {
             </div>
             <h3 className="text-lg font-bold text-primary mb-2">Investor</h3>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Per limited partner e capital provider. Vista portafoglio, rendimenti e reportistica.
+              For limited partners and capital providers. Portfolio view, returns, and reporting.
             </p>
             <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
-              Accedi come investor
+              Access as investor
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
@@ -59,7 +59,7 @@ export default function LoginPage() {
         <div className="text-center mt-10">
           <Link to="/" className="text-sm text-slate-400 hover:text-primary transition-colors inline-flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5" />
-            Torna alla homepage
+            Back to homepage
           </Link>
         </div>
       </div>
