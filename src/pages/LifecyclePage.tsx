@@ -21,12 +21,12 @@ export default function LifecyclePage() {
     <AppLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-primary">Deal Lifecycle</h1>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Deal Lifecycle</h1>
           <p className="text-slate-500 text-sm mt-1">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+        <div className="flex flex-wrap gap-4 text-xs text-slate-500">
           <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Completed</span>
           <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-accent" /> In Progress</span>
           <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-destructive" /> Blocked</span>
@@ -46,21 +46,21 @@ export default function LifecyclePage() {
               .slice(0, 3);
 
             return (
-              <div key={deal.id} className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
+              <div key={deal.id} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
                 {/* Header */}
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-slate-100">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
                         {stageLabels[deal.stage]}
                       </span>
-                      <Link to={`/deals/${deal.id}`} className="font-display text-sm font-semibold text-foreground hover:text-accent transition-colors">
+                      <Link to={`/deals/${deal.id}`} className="font-display text-sm font-semibold text-primary hover:text-accent transition-colors">
                         {deal.projectName}
                       </Link>
-                      <span className="text-xs text-muted-foreground">{formatMillions(deal.loanAmount)}</span>
+                      <span className="text-xs text-slate-500">{formatMillions(deal.loanAmount)}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground">Phase {currentPhaseNum}/12</span>
+                      <span className="text-xs text-slate-500">Phase {currentPhaseNum}/12</span>
                       <span className="text-xs font-semibold text-accent">{progress}%</span>
                       <Link to={`/deals/${deal.id}`} className="flex items-center gap-1 text-xs text-accent hover:underline">
                         View detail <ArrowRight className="h-3 w-3" />
@@ -76,10 +76,10 @@ export default function LifecyclePage() {
                 <div className="p-4 grid lg:grid-cols-3 gap-4">
                   {/* Current Phase */}
                   <div className="rounded-lg border border-accent/20 bg-accent/5 p-3">
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Current Phase</p>
-                    <p className="text-sm font-semibold text-foreground">{currentPhase?.number}. {currentPhase?.name}</p>
+                    <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-1">Current Phase</p>
+                    <p className="text-sm font-semibold text-primary">{currentPhase?.number}. {currentPhase?.name}</p>
                     {currentPhase && (
-                      <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
                         <Users className="h-3 w-3" />
                         <span>{currentPhase.agents.slice(0, 3).map(a => a.name).join(", ")}</span>
                       </div>
@@ -87,14 +87,14 @@ export default function LifecyclePage() {
                   </div>
 
                   {/* Next Milestones */}
-                  <div className="rounded-lg border border-border p-3">
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
+                  <div className="rounded-lg border border-slate-100 p-3">
+                    <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
                       <Flag className="h-3 w-3" /> Next Milestones
                     </p>
                     {pendingMilestones.length > 0 ? (
                       <ul className="space-y-1">
                         {pendingMilestones.map((m, i) => (
-                          <li key={i} className="text-xs text-foreground truncate">• {m.description}</li>
+                          <li key={i} className="text-xs text-primary truncate">• {m.description}</li>
                         ))}
                       </ul>
                     ) : (
@@ -103,8 +103,8 @@ export default function LifecyclePage() {
                   </div>
 
                   {/* Blockers / Alerts */}
-                  <div className="rounded-lg border border-border p-3">
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Blockers</p>
+                  <div className="rounded-lg border border-slate-100 p-3">
+                    <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-1">Blockers</p>
                     {blockedPhases.length > 0 ? (
                       blockedPhases.map(p => (
                         <p key={p.id} className="text-xs text-destructive">⚠ {p.name}: {p.substeps.find(s => s.status === "blocked")?.notes || "Blocked"}</p>

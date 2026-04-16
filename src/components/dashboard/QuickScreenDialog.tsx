@@ -97,7 +97,7 @@ export default function QuickScreenDialog() {
         {!results ? (
           <div className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs text-muted-foreground">Asset Type</Label>
+              <Label className="text-xs text-slate-500">Asset Type</Label>
               <Select value={form.assetType} onValueChange={v => setForm(p => ({ ...p, assetType: v }))}>
                 <SelectTrigger className="mt-1"><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>
@@ -110,20 +110,20 @@ export default function QuickScreenDialog() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <Label className="text-xs text-muted-foreground">Loan (€)</Label>
+                <Label className="text-xs text-slate-500">Loan (€)</Label>
                 <Input type="text" inputMode="numeric" value={displayCurrency(form.loanAmount)} onChange={handleCurrencyChange("loanAmount")} placeholder="12.000.000" className="mt-1" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">GDV (€)</Label>
+                <Label className="text-xs text-slate-500">GDV (€)</Label>
                 <Input type="text" inputMode="numeric" value={displayCurrency(form.gdv)} onChange={handleCurrencyChange("gdv")} placeholder="30.000.000" className="mt-1" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Total Cost (€)</Label>
+                <Label className="text-xs text-slate-500">Total Cost (€)</Label>
                 <Input type="text" inputMode="numeric" value={displayCurrency(form.totalCost)} onChange={handleCurrencyChange("totalCost")} placeholder="18.000.000" className="mt-1" />
               </div>
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Pre-Sales (%)</Label>
+              <Label className="text-xs text-slate-500">Pre-Sales (%)</Label>
               <Input type="number" value={form.preSales} onChange={e => setForm(p => ({ ...p, preSales: e.target.value }))} placeholder="25" className="mt-1" />
             </div>
             <Button onClick={handleScreen} className="w-full gap-2">
@@ -138,7 +138,7 @@ export default function QuickScreenDialog() {
               score >= 80 ? "bg-success/10" : score >= 60 ? "bg-warning/10" : "bg-destructive/10"
             )}>
               <p className={cn("font-display text-3xl font-bold", score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive")}>{score}%</p>
-              <p className="text-xs text-muted-foreground mt-1">{passCount}/{total} criteria passed</p>
+              <p className="text-xs text-slate-500 mt-1">{passCount}/{total} criteria passed</p>
               <p className={cn("mt-1.5 text-xs font-semibold", score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive")}>
                 {score >= 80 ? "PROCEED TO DD" : score >= 60 ? "REVIEW REQUIRED" : "DOES NOT MEET CRITERIA"}
               </p>

@@ -47,16 +47,16 @@ export default function LoanBookPage() {
     <AppLayout>
       <div className="space-y-8">
         {/* Header */}
-        <header className="flex justify-between items-start">
+        <header className="flex justify-between items-end">
           <div>
-            <h1 className="text-2xl font-extrabold text-primary">Loan Book</h1>
-            <p className="text-slate-500 text-sm mt-1">Active and historical loan positions</p>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">Loan Book</h1>
+            <p className="text-slate-500 text-base mt-2">Active and historical loan positions</p>
           </div>
           <button
             onClick={() => exportDealsToExcel(filtered)}
-            className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+            className="bg-slate-50 hover:bg-slate-100 px-5 py-2.5 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-4 w-4" />
             Export to Excel
           </button>
         </header>
@@ -93,10 +93,10 @@ export default function LoanBookPage() {
                   key={f.value}
                   onClick={() => setActiveFilter(f.value)}
                   className={cn(
-                    "px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all",
+                    "px-4 py-2 rounded-full text-sm font-medium transition-all",
                     activeFilter === f.value
                       ? "bg-primary text-white shadow-sm"
-                      : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                      : "bg-slate-50 text-slate-500 hover:bg-slate-100"
                   )}
                 >
                   {f.label} ({count})
@@ -105,9 +105,9 @@ export default function LoanBookPage() {
             })}
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
-              className="bg-white border border-slate-200 rounded py-1.5 pl-9 pr-4 text-xs w-56 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-primary"
+              className="bg-slate-50 border-0 rounded-full py-2.5 pl-11 pr-5 text-sm w-64 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-accent/30 transition-all"
               placeholder="Search deals..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -116,7 +116,7 @@ export default function LoanBookPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-slate-50 text-xs font-bold uppercase tracking-widest text-slate-400">

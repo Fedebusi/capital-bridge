@@ -70,23 +70,23 @@ export default function ScreeningTool() {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-          <h2 className="font-display text-lg font-semibold text-foreground mb-4">Quick Deal Screening</h2>
-          <p className="text-sm text-muted-foreground mb-6">Input basic deal parameters to get an instant pass/fail assessment against fund investment criteria.</p>
+        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-card">
+          <h2 className="font-display text-lg font-semibold text-primary mb-4">Quick Deal Screening</h2>
+          <p className="text-sm text-slate-500 mb-6">Input basic deal parameters to get an instant pass/fail assessment against fund investment criteria.</p>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs text-muted-foreground">Project Name</Label>
+                <Label className="text-xs text-slate-500">Project Name</Label>
                 <Input value={formData.projectName} onChange={e => setFormData(p => ({ ...p, projectName: e.target.value }))} placeholder="e.g. Residencial Sol" className="mt-1 bg-muted border-border" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Borrower / Sponsor</Label>
+                <Label className="text-xs text-slate-500">Borrower / Sponsor</Label>
                 <Input value={formData.borrower} onChange={e => setFormData(p => ({ ...p, borrower: e.target.value }))} placeholder="e.g. Grupo XYZ" className="mt-1 bg-muted border-border" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs text-muted-foreground">Asset Type</Label>
+                <Label className="text-xs text-slate-500">Asset Type</Label>
                 <Select value={formData.assetType} onValueChange={v => setFormData(p => ({ ...p, assetType: v }))}>
                   <SelectTrigger className="mt-1 bg-muted border-border"><SelectValue placeholder="Select type" /></SelectTrigger>
                   <SelectContent>
@@ -98,7 +98,7 @@ export default function ScreeningTool() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Location</Label>
+                <Label className="text-xs text-slate-500">Location</Label>
                 <Select value={formData.location} onValueChange={v => setFormData(p => ({ ...p, location: v }))}>
                   <SelectTrigger className="mt-1 bg-muted border-border"><SelectValue placeholder="Select location" /></SelectTrigger>
                   <SelectContent>
@@ -116,25 +116,25 @@ export default function ScreeningTool() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-xs text-muted-foreground">Loan Amount (€)</Label>
+                <Label className="text-xs text-slate-500">Loan Amount (€)</Label>
                 <Input type="number" value={formData.loanAmount} onChange={e => setFormData(p => ({ ...p, loanAmount: e.target.value }))} placeholder="12,000,000" className="mt-1 bg-muted border-border" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">GDV (€)</Label>
+                <Label className="text-xs text-slate-500">GDV (€)</Label>
                 <Input type="number" value={formData.gdv} onChange={e => setFormData(p => ({ ...p, gdv: e.target.value }))} placeholder="30,000,000" className="mt-1 bg-muted border-border" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Total Project Cost (€)</Label>
+                <Label className="text-xs text-slate-500">Total Project Cost (€)</Label>
                 <Input type="number" value={formData.totalCost} onChange={e => setFormData(p => ({ ...p, totalCost: e.target.value }))} placeholder="18,000,000" className="mt-1 bg-muted border-border" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs text-muted-foreground">Pre-Sales (%)</Label>
+                <Label className="text-xs text-slate-500">Pre-Sales (%)</Label>
                 <Input type="number" value={formData.preSales} onChange={e => setFormData(p => ({ ...p, preSales: e.target.value }))} placeholder="25" className="mt-1 bg-muted border-border" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Developer Completed Projects</Label>
+                <Label className="text-xs text-slate-500">Developer Completed Projects</Label>
                 <Input type="number" value={formData.developerProjects} onChange={e => setFormData(p => ({ ...p, developerProjects: e.target.value }))} placeholder="8" className="mt-1 bg-muted border-border" />
               </div>
             </div>
@@ -145,14 +145,14 @@ export default function ScreeningTool() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-          <h2 className="font-display text-lg font-semibold text-foreground mb-4">Screening Results</h2>
+        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-card">
+          <h2 className="font-display text-lg font-semibold text-primary mb-4">Screening Results</h2>
           {results ? (
             <div className="space-y-4 animate-fade-in">
               <div className={cn("rounded-lg p-4 text-center", score >= 80 ? "bg-success/10" : score >= 60 ? "bg-warning/10" : "bg-destructive/10")}>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Screening Score</p>
+                <p className="text-sm font-medium text-slate-500 mb-1">Screening Score</p>
                 <p className={cn("font-display text-4xl font-bold", score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive")}>{score}%</p>
-                <p className="text-sm text-muted-foreground mt-1">{passCount}/{totalCount} criteria passed</p>
+                <p className="text-sm text-slate-500 mt-1">{passCount}/{totalCount} criteria passed</p>
                 <p className={cn("mt-2 text-sm font-semibold", score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive")}>
                   {score >= 80 ? "PROCEED TO DUE DILIGENCE" : score >= 60 ? "CONDITIONAL — REVIEW REQUIRED" : "DOES NOT MEET CRITERIA"}
                 </p>
@@ -163,8 +163,8 @@ export default function ScreeningTool() {
                     <div className="flex items-center gap-3">
                       {r.pass ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                       <div>
-                        <p className="text-sm font-medium text-foreground">{r.label}</p>
-                        <p className="text-xs text-muted-foreground">Threshold: {r.threshold}</p>
+                        <p className="text-sm font-medium text-primary">{r.label}</p>
+                        <p className="text-xs text-slate-500">Threshold: {r.threshold}</p>
                       </div>
                     </div>
                     <p className={cn("text-sm font-semibold", r.pass ? "text-success" : "text-destructive")}>{r.value}</p>
@@ -174,8 +174,8 @@ export default function ScreeningTool() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Search className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="text-sm text-muted-foreground">Enter deal parameters and click "Screen Deal" to assess against fund criteria</p>
+              <Search className="h-12 w-12 text-slate-500/30 mb-4" />
+              <p className="text-sm text-slate-500">Enter deal parameters and click "Screen Deal" to assess against fund criteria</p>
             </div>
           )}
         </div>

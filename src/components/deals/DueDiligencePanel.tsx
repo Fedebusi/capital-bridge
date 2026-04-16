@@ -6,9 +6,9 @@ import { useState } from "react";
 const statusConfig = {
   completed: { icon: CheckCircle2, label: "Completed", className: "text-success" },
   in_progress: { icon: Clock, label: "In Progress", className: "text-accent" },
-  pending: { icon: Clock, label: "Pending", className: "text-muted-foreground" },
+  pending: { icon: Clock, label: "Pending", className: "text-slate-500" },
   flagged: { icon: AlertTriangle, label: "Flagged", className: "text-destructive" },
-  not_applicable: { icon: Minus, label: "N/A", className: "text-muted-foreground" },
+  not_applicable: { icon: Minus, label: "N/A", className: "text-slate-500" },
 };
 
 interface DueDiligencePanelProps {
@@ -25,9 +25,9 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 shadow-card text-center">
-        <FileText className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-        <p className="text-sm text-muted-foreground">No due diligence checklist for this deal yet</p>
+      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+        <FileText className="h-10 w-10 text-slate-500/30 mx-auto mb-3" />
+        <p className="text-sm text-slate-500">No due diligence checklist for this deal yet</p>
       </div>
     );
   }
@@ -38,10 +38,10 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
   return (
     <div className="space-y-4">
       {/* Summary bar */}
-      <div className="flex items-center gap-6 rounded-xl border border-border bg-card p-4 shadow-card">
+      <div className="flex items-center gap-6 rounded-xl border border-slate-100 bg-white p-4 shadow-card">
         <div>
-          <p className="text-xs text-muted-foreground">Progress</p>
-          <p className="font-display text-lg font-bold text-foreground">{totalCompleted}/{items.length}</p>
+          <p className="text-xs text-slate-500">Progress</p>
+          <p className="font-display text-lg font-bold text-primary">{totalCompleted}/{items.length}</p>
         </div>
         <div className="flex-1">
           <div className="h-2 w-full rounded-full bg-muted">
@@ -63,16 +63,16 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
         const catCompleted = catItems.filter(i => i.status === "completed").length;
 
         return (
-          <div key={cat} className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
+          <div key={cat} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
             <button
               onClick={() => toggle(cat)}
-              className="flex w-full items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+              className="flex w-full items-center justify-between p-4 hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-                <h3 className="font-display text-sm font-semibold text-foreground">{ddCategoryLabels[cat]}</h3>
+                {isExpanded ? <ChevronDown className="h-4 w-4 text-slate-500" /> : <ChevronRight className="h-4 w-4 text-slate-500" />}
+                <h3 className="font-display text-sm font-semibold text-primary">{ddCategoryLabels[cat]}</h3>
               </div>
-              <span className="text-xs text-muted-foreground">{catCompleted}/{catItems.length} completed</span>
+              <span className="text-xs text-slate-500">{catCompleted}/{catItems.length} completed</span>
             </button>
             {isExpanded && (
               <div className="border-t border-border">
@@ -80,12 +80,12 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
                   const cfg = statusConfig[item.status];
                   const Icon = cfg.icon;
                   return (
-                    <div key={item.id} className="flex items-center justify-between border-b border-border last:border-0 px-4 py-3">
+                    <div key={item.id} className="flex items-center justify-between border-b border-slate-100 last:border-0 px-4 py-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <Icon className={cn("h-4 w-4 shrink-0", cfg.className)} />
                         <div className="min-w-0">
-                          <p className="text-sm text-foreground truncate">{item.label}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                          <p className="text-sm text-primary truncate">{item.label}</p>
+                          <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                             {item.assignee && <span>{item.assignee}</span>}
                             {item.dueDate && <span>Due: {item.dueDate}</span>}
                             {item.completedDate && <span>Done: {item.completedDate}</span>}
@@ -95,7 +95,7 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {item.documents && item.documents.length > 0 && (
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1 text-xs text-slate-500">
                             <FileText className="h-3 w-3" /> {item.documents.length}
                           </span>
                         )}

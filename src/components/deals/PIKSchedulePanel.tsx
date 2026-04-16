@@ -31,8 +31,8 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
 
   if (!pikSummary) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">No PIK schedule available — deal not yet active</p>
+      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+        <p className="text-sm text-slate-500">No PIK schedule available — deal not yet active</p>
       </div>
     );
   }
@@ -53,11 +53,11 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
 
       {/* Controls */}
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-sm font-semibold text-foreground flex items-center gap-2">
+        <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-accent" />
           Monthly Accrual Schedule
         </h3>
-        <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+        <label className="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
           <input
             type="checkbox"
             checked={showProjected}
@@ -69,19 +69,19 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
       </div>
 
       {/* Schedule Table */}
-      <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
+      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-3 py-2.5 text-left text-[11px] font-medium text-muted-foreground">Month</th>
-                <th className="px-3 py-2.5 text-left text-[11px] font-medium text-muted-foreground">Date</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">Opening Principal</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">Drawdown</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">Cash Interest</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">PIK Accrual</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">Closing PIK</th>
-                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-muted-foreground">Total Exposure</th>
+              <tr className="border-b border-slate-100 bg-slate-50">
+                <th className="px-3 py-2.5 text-left text-[11px] font-medium text-slate-500">Month</th>
+                <th className="px-3 py-2.5 text-left text-[11px] font-medium text-slate-500">Date</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">Opening Principal</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">Drawdown</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">Cash Interest</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">PIK Accrual</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">Closing PIK</th>
+                <th className="px-3 py-2.5 text-right text-[11px] font-medium text-slate-500">Total Exposure</th>
               </tr>
             </thead>
             <tbody>
@@ -92,8 +92,8 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
                   <tr
                     key={entry.month}
                     className={cn(
-                      "border-b border-border last:border-0 transition-colors",
-                      isCurrent ? "bg-accent/5 font-medium" : isPast ? "" : "text-muted-foreground/70"
+                      "border-b border-slate-100 last:border-0 transition-colors",
+                      isCurrent ? "bg-accent/5 font-medium" : isPast ? "" : "text-slate-500/70"
                     )}
                   >
                     <td className="px-3 py-2">{entry.month}</td>
@@ -120,10 +120,10 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
 
 function SummaryCard({ label, value, accent, warn }: { label: string; value: string; accent?: boolean; warn?: boolean }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
-      <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{label}</p>
+    <div className="rounded-lg border border-slate-100 bg-white p-3">
+      <p className="text-[11px] text-slate-500 uppercase tracking-wide">{label}</p>
       <p className={cn("font-display text-lg font-bold mt-0.5",
-        accent ? "text-accent" : warn ? "text-warning" : "text-foreground"
+        accent ? "text-accent" : warn ? "text-warning" : "text-primary"
       )}>{value}</p>
     </div>
   );

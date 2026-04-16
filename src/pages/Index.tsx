@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-slate-400 font-medium mt-0.5">Active Facilities</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-extrabold text-primary">{formatPercent(avgRate)}</span>
+                  <span className="text-4xl font-bold text-primary tracking-tight">{formatPercent(avgRate)}</span>
                   <p className="text-[11px] uppercase font-bold text-slate-400 tracking-widest">Avg Rate</p>
                 </div>
               </div>
