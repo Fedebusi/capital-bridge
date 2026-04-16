@@ -201,7 +201,7 @@ export default function LandingPage() {
               Accedi alla piattaforma <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              to="/investor"
+              to="/investor?standalone"
               className="border border-slate-200 text-slate-700 px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-50 transition-colors"
             >
               Investor access
