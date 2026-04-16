@@ -1,288 +1,66 @@
-import { useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, LogIn, UserPlus, Landmark, ShieldCheck, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-
-type AccessMode = "choose" | "admin" | "investor";
+import { useNavigate, Link } from "react-router-dom";
+import { Building2, ShieldCheck, Landmark, ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
-  const { signIn, signUp, isDemo } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
-
-  // Determine initial mode from URL param
-  const roleParam = searchParams.get("role");
-  const [mode, setMode] = useState<AccessMode>(
-    roleParam === "investor" ? "investor" : "choose"
-  );
-
-  // Login form state
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-
-  // Signup form state
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-
-    if (isDemo) {
-      // Demo mode: go directly to the right page
-      setLoading(false);
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
-      return;
-    }
-
-    const { error } = await signIn(loginEmail, loginPassword);
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-    } else {
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
-    }
-  }
-
-  async function handleSignup(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-
-    if (isDemo) {
-      setLoading(false);
-      toast.success("Demo mode — redirecting...");
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
-      return;
-    }
-
-    const { error } = await signUp(signupEmail, signupPassword, signupName);
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-    } else {
-      toast.success("Account created! You can now sign in.");
-    }
-  }
-
-  // ===== ROLE CHOOSER =====
-  if (mode === "choose") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4">
-        <div className="w-full max-w-lg">
-          <div className="text-center mb-10">
-            <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <Building2 className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold tracking-tight">CapitalBridge</span>
-            </Link>
-            <p className="text-muted-foreground text-sm">
-              How would you like to access the platform?
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Admin / Platform */}
-            <button
-              onClick={() => setMode("admin")}
-              className="group relative rounded-xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/5"
-            >
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-slate-600 flex items-center justify-center mb-5">
-                <ShieldCheck className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-primary mb-2">Platform</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                For deal originators, analysts, and portfolio managers. Full access to pipeline, deals, and operations.
-              </p>
-              <div className="mt-4 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                Continue →
-              </div>
-            </button>
-
-            {/* Investor */}
-            <button
-              onClick={() => setMode("investor")}
-              className="group relative rounded-xl border-2 border-slate-200 bg-white p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/5"
-            >
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mb-5">
-                <Landmark className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-primary mb-2">Investor</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                For limited partners and capital providers. View portfolio performance, returns, and reports.
-              </p>
-              <div className="mt-4 text-xs font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                Continue →
-              </div>
-            </button>
-          </div>
-
-          <div className="text-center mt-8">
-            <Link to="/" className="text-sm text-slate-400 hover:text-primary transition-colors">
-              ← Back to homepage
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ===== LOGIN / SIGNUP FORM =====
-  const isInvestor = mode === "investor";
-  const accentColor = isInvestor ? "emerald" : "primary";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-3">
-            {isInvestor ? (
-              <Landmark className="h-8 w-8 text-emerald-600" />
-            ) : (
-              <Building2 className="h-8 w-8 text-primary" />
-            )}
-            <span className="text-2xl font-bold tracking-tight">CapitalBridge</span>
+      <div className="w-full max-w-2xl">
+        <div className="text-center mb-12">
+          <Link to="/" className="inline-flex items-center gap-3 mb-6">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center">
+              <span className="text-white text-base font-bold">C</span>
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-primary">CapitalBridge</span>
           </Link>
-          <p className="text-muted-foreground text-sm">
-            {isInvestor ? "Investor Portal" : "Portfolio Management Platform"}
-          </p>
+          <h1 className="text-3xl font-bold text-primary tracking-tight">Benvenuto</h1>
+          <p className="text-slate-500 text-base mt-2">Scegli come accedere alla piattaforma</p>
         </div>
 
-        <Tabs defaultValue="login">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Create Account</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="login">
-            <Card>
-              <form onSubmit={handleLogin}>
-                <CardHeader>
-                  <CardTitle>
-                    {isInvestor ? "Investor Sign In" : "Welcome back"}
-                  </CardTitle>
-                  <CardDescription>
-                    {isInvestor
-                      ? "Access your portfolio and reports"
-                      : "Sign in to manage deals and operations"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
-                    <Input
-                      id="login-password"
-                      type="password"
-                      placeholder="Your password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col gap-3">
-                  <Button
-                    type="submit"
-                    className={`w-full ${isInvestor ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
-                    disabled={loading}
-                  >
-                    <LogIn className="mr-2 h-4 w-4" />
-                    {loading ? "Signing in..." : "Sign In"}
-                  </Button>
-                  <Link to="/reset-password" className="text-xs text-slate-400 hover:text-primary transition-colors">
-                    Forgot your password?
-                  </Link>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="signup">
-            <Card>
-              <form onSubmit={handleSignup}>
-                <CardHeader>
-                  <CardTitle>Create account</CardTitle>
-                  <CardDescription>
-                    {isInvestor
-                      ? "Request investor access to CapitalBridge"
-                      : "Request platform access"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
-                    <Input
-                      id="signup-name"
-                      placeholder="Your full name"
-                      value={signupName}
-                      onChange={(e) => setSignupName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={signupEmail}
-                      onChange={(e) => setSignupEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="Min 8 characters"
-                      minLength={8}
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    type="submit"
-                    className={`w-full ${isInvestor ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
-                    disabled={loading}
-                  >
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    {loading ? "Creating..." : "Request Access"}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        <div className="text-center mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Platform access */}
           <button
-            onClick={() => setMode("choose")}
-            className="text-sm text-slate-400 hover:text-primary transition-colors inline-flex items-center gap-1"
+            onClick={() => navigate("/dashboard")}
+            className="group relative rounded-3xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10"
           >
-            <ArrowLeft className="h-3 w-3" />
-            {isInvestor ? "Switch to Platform access" : "Switch to Investor access"}
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center mb-6">
+              <ShieldCheck className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-primary mb-2">Piattaforma</h3>
+            <p className="text-sm text-slate-500 leading-relaxed mb-6">
+              Per analisti, originator e portfolio manager. Accesso completo a deal, pipeline e operazioni.
+            </p>
+            <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+              Accedi alla piattaforma
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </div>
           </button>
+
+          {/* Investor access */}
+          <button
+            onClick={() => navigate("/investor?standalone")}
+            className="group relative rounded-3xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/10"
+          >
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mb-6">
+              <Landmark className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-primary mb-2">Investor</h3>
+            <p className="text-sm text-slate-500 leading-relaxed mb-6">
+              Per limited partner e capital provider. Vista portafoglio, rendimenti e reportistica.
+            </p>
+            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
+              Accedi come investor
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </button>
+        </div>
+
+        <div className="text-center mt-10">
+          <Link to="/" className="text-sm text-slate-400 hover:text-primary transition-colors inline-flex items-center gap-1.5">
+            <Building2 className="h-3.5 w-3.5" />
+            Torna alla homepage
+          </Link>
         </div>
       </div>
     </div>

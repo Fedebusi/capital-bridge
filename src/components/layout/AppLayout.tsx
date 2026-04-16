@@ -59,8 +59,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
     const items = navItems.filter(i => i.group === group);
     return (
       <div>
-        <p className="px-4 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
-        <div className="space-y-1">
+        <p className="px-4 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+        <div className="space-y-0.5">
           {items.map(item => {
             const isActive = location.pathname === item.to || location.pathname.startsWith(item.to + "/");
             return (
@@ -69,7 +69,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 to={item.to}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200",
+                  "flex items-center gap-3 px-4 py-2 rounded-full text-[13px] font-medium transition-all duration-200",
                   isActive
                     ? "bg-accent text-white shadow-sm shadow-accent/20"
                     : "text-slate-500 hover:bg-slate-100 hover:text-primary"
@@ -97,7 +97,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo */}
-        <div className="px-5 pt-6 pb-6">
+        <div className="px-5 pt-5 pb-4 shrink-0">
           <Link to="/dashboard" className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center">
               <span className="text-white text-sm font-bold">C</span>
@@ -114,15 +114,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </button>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 space-y-6 pb-4">
+        <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-4 min-h-0">
           {renderNavGroup("main", "Dashboard")}
           {renderNavGroup("deals", "Deal Management")}
           {renderNavGroup("ops", "Operations")}
         </nav>
 
-        {/* User profile */}
-        <div className="p-3 border-t border-slate-100">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-slate-50 transition-colors">
+        {/* User profile (sempre visibile in basso) */}
+        <div className="px-3 py-3 border-t border-slate-100 shrink-0">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-2xl hover:bg-slate-50 transition-colors">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center shrink-0">
               <span className="text-xs font-bold text-white">
                 {(profile?.full_name || "U").slice(0, 2).toUpperCase()}

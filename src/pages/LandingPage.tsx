@@ -137,14 +137,11 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm text-slate-600 hover:text-primary transition-colors font-medium">
-              Sign in
-            </Link>
             <Link
-              to="/login"
+              to="/dashboard"
               className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-colors"
             >
-              Start creating
+              Accedi alla piattaforma
             </Link>
           </div>
         </div>
@@ -198,13 +195,13 @@ export default function LandingPage() {
           {/* CTAs */}
           <div className="flex items-center gap-4 mt-10">
             <Link
-              to="/login"
+              to="/dashboard"
               className="bg-primary text-white px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
             >
-              Get started <ArrowRight className="h-4 w-4" />
+              Accedi alla piattaforma <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              to="/login?role=investor"
+              to="/investor"
               className="border border-slate-200 text-slate-700 px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-50 transition-colors"
             >
               Investor access
