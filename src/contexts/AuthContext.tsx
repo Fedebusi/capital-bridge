@@ -83,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isDemo]);
 
   async function fetchProfile(userId: string) {
+    setLoading(true);
     const { data, error } = await supabase!
       .from("profiles")
       .select("*")
