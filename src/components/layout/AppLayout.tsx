@@ -22,6 +22,8 @@ import {
   Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDeals } from "@/hooks/useDeals";
+import { stageLabels, stageColors } from "@/data/sampleDeals";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview", group: "main" },
@@ -49,6 +51,16 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const { deals } = useDeals();
+
+  const searchResults = searchQuery.length >= 2
+    ? deals.filter(d =>
+        d.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.borrower.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5)
+    : [];
 
   async function handleLogout() {
     await signOut();
@@ -155,9 +167,38 @@ export default function AppLayout({ children }: AppLayoutProps) {
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 className="w-full bg-slate-50 border-0 rounded-full py-3 pl-12 pr-5 text-sm placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-accent/30 transition-all"
-                placeholder="Search funds, deals, borrowers..."
+                placeholder="Search deals, borrowers..."
                 type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
               />
+              {searchFocused && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-100 shadow-lg overflow-hidden z-50">
+                  {searchResults.map(deal => (
+                    <Link
+                      key={deal.id}
+                      to={`/deals/${deal.id}`}
+                      className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors"
+                      onClick={() => { setSearchQuery(""); setSearchFocused(false); }}
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-primary">{deal.projectName}</p>
+                        <p className="text-xs text-slate-400">{deal.borrower}</p>
+                      </div>
+                      <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase", stageColors[deal.stage])}>
+                        {stageLabels[deal.stage]}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+              {searchFocused && searchQuery.length >= 2 && searchResults.length === 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-100 shadow-lg p-5 text-center z-50">
+                  <p className="text-sm text-slate-400">No results for "{searchQuery}"</p>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <Link
