@@ -52,90 +52,90 @@ export default function InvestorPortalPage() {
     <InvestorLayout>
       <div className="space-y-8">
         {/* Header */}
-        <header className="flex justify-between items-start">
+        <header className="flex justify-between items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Investor Portal</p>
-            <h1 className="text-2xl font-extrabold text-primary">My Portfolio</h1>
-            <p className="text-slate-500 text-sm mt-1">Welcome back. Here's your investment summary.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Investor Portal</p>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">My Portfolio</h1>
+            <p className="text-slate-500 text-base mt-2">Welcome back. Here's your investment summary.</p>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => generateTaxReport(deals)}
-              className="bg-white border border-slate-200 px-4 py-2 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+              className="bg-slate-50 hover:bg-slate-100 px-5 py-3 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
             >
-              <Download className="h-3.5 w-3.5" />
+              <Download className="h-4 w-4" />
               Tax Report
             </button>
-            <button className="bg-primary text-white px-4 py-2 rounded text-xs font-bold hover:bg-slate-800 transition-colors">
+            <button className="bg-accent text-white px-5 py-3 rounded-full text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20">
               Invest Now
             </button>
           </div>
         </header>
 
         {/* Hero Stats */}
-        <section className="grid grid-cols-12 gap-6">
+        <section className="grid grid-cols-12 gap-5">
           {/* Portfolio Value */}
-          <div className="col-span-12 lg:col-span-8 bg-gradient-to-br from-primary to-slate-700 rounded-xl p-8 text-white relative overflow-hidden">
+          <div className="col-span-12 lg:col-span-8 bg-gradient-to-br from-primary to-slate-700 rounded-2xl p-10 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
             <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2" />
             <div className="relative z-10">
-              <span className="text-xs font-bold uppercase tracking-widest text-white/60">Total Portfolio Value</span>
-              <h2 className="text-4xl font-extrabold tracking-tight mt-2">{formatMillions(totalInvested + totalReturns)}</h2>
-              <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Total Portfolio Value</span>
+              <h2 className="text-5xl font-bold tracking-tight mt-3">{formatMillions(totalInvested + totalReturns)}</h2>
+              <div className="flex items-center gap-2 mt-3">
                 <TrendingUp className="h-4 w-4 text-emerald-400" />
-                <span className="text-sm font-bold text-emerald-400">+12.4% all-time return</span>
+                <span className="text-sm font-semibold text-emerald-400">+12.4% all-time return</span>
               </div>
             </div>
-            <div className="relative z-10 flex gap-12 mt-10 pt-6 border-t border-white/10">
+            <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-6 border-t border-white/10">
               <div>
-                <span className="text-[11px] text-white/50 uppercase font-bold tracking-widest">Capital Invested</span>
-                <p className="text-xl font-bold mt-1">{formatMillions(totalInvested)}</p>
+                <span className="text-xs text-white/50 uppercase font-semibold tracking-wider">Capital Invested</span>
+                <p className="text-2xl font-bold mt-2">{formatMillions(totalInvested)}</p>
               </div>
               <div>
-                <span className="text-[11px] text-white/50 uppercase font-bold tracking-widest">Total Returns</span>
-                <p className="text-xl font-bold mt-1 text-emerald-400">{formatMillions(totalReturns)}</p>
+                <span className="text-xs text-white/50 uppercase font-semibold tracking-wider">Total Returns</span>
+                <p className="text-2xl font-bold mt-2 text-emerald-400">{formatMillions(totalReturns)}</p>
               </div>
               <div>
-                <span className="text-[11px] text-white/50 uppercase font-bold tracking-widest">Avg Yield</span>
-                <p className="text-xl font-bold mt-1">{formatPercent(avgYield)}</p>
+                <span className="text-xs text-white/50 uppercase font-semibold tracking-wider">Avg Yield</span>
+                <p className="text-2xl font-bold mt-2">{formatPercent(avgYield)}</p>
               </div>
               <div>
-                <span className="text-[11px] text-white/50 uppercase font-bold tracking-widest">Active Positions</span>
-                <p className="text-xl font-bold mt-1">{activeDeals.length}</p>
+                <span className="text-xs text-white/50 uppercase font-semibold tracking-wider">Active Positions</span>
+                <p className="text-2xl font-bold mt-2">{activeDeals.length}</p>
               </div>
             </div>
           </div>
 
           {/* Quick Stats */}
-          <div className="col-span-12 lg:col-span-4 grid grid-rows-3 gap-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 hover:shadow-sm transition-shadow">
-              <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+          <div className="col-span-12 lg:col-span-4 grid grid-rows-3 gap-5">
+            <div className="bg-slate-50 rounded-2xl p-6 flex items-center gap-4 hover:bg-slate-100/70 transition-colors">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
                 <PiggyBank className="h-6 w-6 text-emerald-600" />
               </div>
-              <div>
-                <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">This Quarter</p>
-                <p className="text-xl font-extrabold text-primary">{formatMillions(totalReturns * 0.35)}</p>
-                <p className="text-xs text-emerald-600 font-bold mt-0.5">+8.2% vs last quarter</p>
+              <div className="flex-1">
+                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">This Quarter</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{formatMillions(totalReturns * 0.35)}</p>
+                <p className="text-xs text-emerald-600 font-semibold mt-1">+8.2% vs last quarter</p>
               </div>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 hover:shadow-sm transition-shadow">
-              <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+            <div className="bg-slate-50 rounded-2xl p-6 flex items-center gap-4 hover:bg-slate-100/70 transition-colors">
+              <div className="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
                 <BarChart3 className="h-6 w-6 text-blue-600" />
               </div>
-              <div>
-                <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Annualized IRR</p>
-                <p className="text-xl font-extrabold text-primary">12.1%</p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">Net of fees</p>
+              <div className="flex-1">
+                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Annualized IRR</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">12.1%</p>
+                <p className="text-xs text-slate-500 mt-1">Net of fees</p>
               </div>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 hover:shadow-sm transition-shadow">
-              <div className="h-12 w-12 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-                <Calendar className="h-6 w-6 text-violet-600" />
+            <div className="bg-slate-50 rounded-2xl p-6 flex items-center gap-4 hover:bg-slate-100/70 transition-colors">
+              <div className="h-12 w-12 rounded-2xl bg-violet-100 flex items-center justify-center shrink-0">
+                <Calendar className="h-6 w-6 text-accent" />
               </div>
-              <div>
-                <p className="text-[11px] text-slate-400 uppercase font-bold tracking-widest">Next Payment</p>
-                <p className="text-xl font-extrabold text-primary">15 Apr</p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">€42,800 — Terrazas del Faro</p>
+              <div className="flex-1">
+                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Next Payment</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">15 Apr</p>
+                <p className="text-xs text-slate-500 mt-1">€42,800 — Terrazas del Faro</p>
               </div>
             </div>
           </div>
