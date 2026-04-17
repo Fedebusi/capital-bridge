@@ -246,7 +246,7 @@ export default function TermSheetPage() {
         <header className="flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold text-primary tracking-tight">Term Sheets & Covenants</h1>
-            <p className="text-slate-500 text-sm mt-1">Term sheet lifecycle, key terms, security packages, and covenant waivers</p>
+            <p className="text-slate-500 text-base mt-2">Term sheet lifecycle, key terms, security packages, and covenant waivers</p>
           </div>
         </header>
 

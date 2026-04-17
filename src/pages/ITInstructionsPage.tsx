@@ -343,7 +343,7 @@ export default function ITInstructionsPage() {
       <div className="space-y-8">
         <header>
           <h1 className="text-4xl font-bold text-primary tracking-tight">Instrucciones para IT</h1>
-          <p className="text-slate-500 text-sm mt-1">Documentación funcional y técnica del proyecto CapitalBridge</p>
+          <p className="text-slate-500 text-base mt-2">Documentación funcional y técnica del proyecto CapitalBridge</p>
         </header>
 
         <div className="grid gap-4">

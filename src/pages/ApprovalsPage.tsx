@@ -35,7 +35,7 @@ function DealApprovalRow({
   const borderClass = variant === "pending" ? "border-warning/30" : "border-slate-100";
 
   return (
-    <div className={cn("rounded-xl border bg-card shadow-card overflow-hidden mb-4", borderClass)}>
+    <div className={cn("rounded-2xl border bg-card shadow-card overflow-hidden mb-4", borderClass)}>
       <div className={cn("p-4 border-b border-slate-100 flex items-center justify-between", headerBg)}>
         <div className="flex items-center gap-3">
           <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
@@ -81,7 +81,7 @@ export default function ApprovalsPage() {
       <div className="space-y-8">
         <div>
           <h1 className="text-4xl font-bold text-primary tracking-tight">Approvals</h1>
-          <p className="text-slate-500 text-sm mt-1">IC voting, capital partner sign-off, and audit trail</p>
+          <p className="text-slate-500 text-base mt-2">IC voting, capital partner sign-off, and audit trail</p>
         </div>
 
         {deals.length === 0 ? (

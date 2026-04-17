@@ -63,7 +63,7 @@ export default function DueDiligencePage() {
       <div className="space-y-8">
         <div>
           <h1 className="text-4xl font-bold text-primary tracking-tight">Due Diligence</h1>
-          <p className="text-slate-500 text-sm mt-1">Track due diligence progress across all active deals</p>
+          <p className="text-slate-500 text-base mt-2">Track due diligence progress across all active deals</p>
         </div>
 
         {activeDeals.length === 0 ? (
