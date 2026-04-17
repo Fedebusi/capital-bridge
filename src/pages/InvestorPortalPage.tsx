@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import InvestorLayout from "@/components/layout/InvestorLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { useDeals } from "@/hooks/useDeals";
-import { formatMillions, formatPercent } from "@/data/sampleDeals";
+import { formatMillions, formatPercent, type Deal } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download, Briefcase } from "lucide-react";
+import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download, Briefcase, FileSpreadsheet } from "lucide-react";
 import { generateTaxReport } from "@/lib/generateTaxReport";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const portfolioHistory = [
   { month: "Jul", value: 820000, returns: 12000 },
@@ -35,9 +36,93 @@ const upcomingPayments = [
   { project: "Palau de Gràcia", type: "Interest", date: "05 May 2026", amount: 31500, status: "scheduled" },
 ];
 
+type Period = "1M" | "3M" | "6M" | "1Y" | "All";
+
+const PERIOD_WINDOW: Record<Period, number> = {
+  "1M": 1,
+  "3M": 3,
+  "6M": 6,
+  "1Y": 12,
+  "All": Infinity,
+};
+
+/**
+ * Exported for testing. Slices the portfolio history to the tail window for a given period.
+ */
+export function sliceHistory<T>(data: T[], period: Period): T[] {
+  const window = PERIOD_WINDOW[period];
+  if (!Number.isFinite(window)) return data;
+  return data.slice(Math.max(0, data.length - window));
+}
+
+/**
+ * Exported for testing. Generates a CSV snapshot of the investor's active positions.
+ */
+export function buildPositionsCsv(deals: Deal[]): string {
+  const header = [
+    "Project",
+    "Borrower",
+    "Location",
+    "Asset Type",
+    "Stage",
+    "Loan Amount (EUR)",
+    "Disbursed (EUR)",
+    "Outstanding (EUR)",
+    "Accrued PIK (EUR)",
+    "Interest Rate (%)",
+    "PIK Spread (%)",
+    "Total Rate (%)",
+    "LTV (%)",
+    "LTC (%)",
+    "Construction Progress (%)",
+    "Maturity",
+  ];
+  const escape = (v: string | number) => {
+    const s = String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = deals.map(d =>
+    [
+      d.projectName,
+      d.borrower,
+      d.location,
+      d.assetType,
+      d.stage,
+      d.loanAmount.toFixed(2),
+      d.disbursedAmount.toFixed(2),
+      d.outstandingPrincipal.toFixed(2),
+      d.accruedPIK.toFixed(2),
+      d.interestRate.toFixed(2),
+      d.pikSpread.toFixed(2),
+      d.totalRate.toFixed(2),
+      d.ltv.toFixed(2),
+      d.ltc.toFixed(2),
+      d.constructionProgress.toFixed(0),
+      d.maturityDate,
+    ].map(escape).join(","),
+  );
+  return [header.join(","), ...rows].join("\n");
+}
+
+function downloadCsv(filename: string, csv: string) {
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export default function InvestorPortalPage() {
-  const [period, setPeriod] = useState("6M");
+  const [period, setPeriod] = useState<Period>("6M");
   const { deals, loading } = useDeals();
+  const location = useLocation();
+  const isReportsView = location.pathname === "/investor/reports";
+
+  const chartData = useMemo(() => sliceHistory(portfolioHistory, period), [period]);
 
   if (loading) {
     return <InvestorLayout><LoadingSkeleton /></InvestorLayout>;
@@ -47,6 +132,117 @@ export default function InvestorPortalPage() {
   const totalInvested = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
   const totalReturns = activeDeals.reduce((s, d) => s + d.accruedPIK, 0);
   const avgYield = activeDeals.length > 0 ? activeDeals.reduce((s, d) => s + d.totalRate, 0) / activeDeals.length : 0;
+
+  function handleExportCsv() {
+    if (activeDeals.length === 0) {
+      toast.error("No active positions to export");
+      return;
+    }
+    const csv = buildPositionsCsv(activeDeals);
+    const today = new Date().toISOString().split("T")[0];
+    downloadCsv(`CapitalBridge_Positions_${today}.csv`, csv);
+    toast.success(`Exported ${activeDeals.length} position${activeDeals.length === 1 ? "" : "s"}`);
+  }
+
+  function handleTaxReport() {
+    if (activeDeals.length === 0) {
+      toast.error("No positions yet — nothing to report");
+      return;
+    }
+    generateTaxReport(deals);
+    toast.success("Tax report downloaded");
+  }
+
+  if (isReportsView) {
+    return (
+      <InvestorLayout>
+        <div className="space-y-8">
+          <header>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Investor Portal</p>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">Reports & Exports</h1>
+            <p className="text-slate-500 text-base mt-2">
+              Download reports and exports covering your positions, returns, and fiscal obligations.
+            </p>
+          </header>
+
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="bg-slate-50 rounded-2xl p-6 flex flex-col gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Download className="h-6 w-6 text-accent" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-primary tracking-tight">Tax Report (PDF)</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Fiscal-year summary of interest, PIK accrual, fees and withholding tax across all positions.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleTaxReport}
+                className="self-start rounded-full bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/90 transition-colors inline-flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download PDF
+              </button>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-6 flex flex-col gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-100 flex items-center justify-center">
+                <FileSpreadsheet className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-primary tracking-tight">Positions Export (CSV)</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Machine-readable snapshot of every active position — loan, rate, LTV, maturity.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                className="self-start rounded-full bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 transition-colors inline-flex items-center gap-2"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+                Download CSV
+              </button>
+            </div>
+          </section>
+
+          <section className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="px-6 py-5 border-b border-slate-200 flex justify-between items-center">
+              <h2 className="text-sm font-bold text-primary uppercase tracking-wider">Recent Activity</h2>
+              <Link
+                to="/investor"
+                className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1"
+              >
+                Back to Portfolio <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {upcomingPayments.map((payment, i) => (
+                <div key={i} className="flex items-center gap-5 px-6 py-4">
+                  <div className={cn(
+                    "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-bold",
+                    payment.type === "Interest" ? "bg-blue-50 text-blue-600" :
+                    payment.type === "Principal" ? "bg-emerald-50 text-emerald-600" :
+                    "bg-violet-50 text-violet-600",
+                  )}>
+                    {payment.type.substring(0, 3).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-sm text-primary">{payment.project}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{payment.type} · {payment.date}</p>
+                  </div>
+                  <p className="text-sm font-bold text-primary">
+                    €{payment.amount.toLocaleString("it-IT")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </InvestorLayout>
+    );
+  }
 
   return (
     <InvestorLayout>
@@ -60,15 +256,30 @@ export default function InvestorPortalPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => generateTaxReport(deals)}
+              type="button"
+              onClick={handleExportCsv}
               className="bg-slate-50 hover:bg-slate-100 px-5 py-3 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
+              title="Export positions as CSV"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              Export CSV
+            </button>
+            <button
+              type="button"
+              onClick={handleTaxReport}
+              className="bg-slate-50 hover:bg-slate-100 px-5 py-3 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
+              title="Download fiscal-year tax report"
             >
               <Download className="h-4 w-4" />
               Tax Report
             </button>
-            <button className="bg-accent text-white px-5 py-3 rounded-full text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20">
+            <Link
+              to="/deals"
+              className="bg-accent text-white px-5 py-3 rounded-full text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20 inline-flex items-center gap-2"
+            >
               Invest Now
-            </button>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </header>
 
@@ -150,10 +361,13 @@ export default function InvestorPortalPage() {
                 <h3 className="text-sm font-bold text-primary uppercase tracking-wider">Portfolio Performance</h3>
                 <p className="text-xs text-slate-400 mt-1">Net asset value over time</p>
               </div>
-              <div className="flex bg-slate-100 rounded p-0.5">
-                {["1M", "3M", "6M", "1Y", "All"].map(p => (
+              <div className="flex bg-slate-100 rounded p-0.5" role="tablist" aria-label="Time period">
+                {(["1M", "3M", "6M", "1Y", "All"] as Period[]).map(p => (
                   <button
                     key={p}
+                    type="button"
+                    role="tab"
+                    aria-selected={period === p}
                     onClick={() => setPeriod(p)}
                     className={cn(
                       "px-3 py-1 rounded text-xs font-bold uppercase tracking-wide transition-all",
@@ -167,7 +381,7 @@ export default function InvestorPortalPage() {
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={portfolioHistory} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#19212E" stopOpacity={0.12} />
@@ -252,7 +466,6 @@ export default function InvestorPortalPage() {
                 </div>
               )}
               {activeDeals.map(deal => {
-                const returnRate = deal.loanAmount > 0 ? (deal.accruedPIK / deal.loanAmount) * 100 : 0;
                 return (
                   <Link
                     key={deal.id}
