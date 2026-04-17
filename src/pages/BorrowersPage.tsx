@@ -1,10 +1,15 @@
 import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { BorrowerFormDialog } from "@/components/borrowers/BorrowerFormDialog";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { sampleBorrowers, ratingColors, type Borrower } from "@/data/borrowers";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { useBorrowersQuery } from "@/hooks/useSupabaseQuery";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
+import { downloadBorrowerTemplateXlsx } from "@/lib/exports/dealTemplate";
+import { borrowerRow } from "@/lib/exports/rowBuilders";
 import type { DbBorrower } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -54,14 +59,27 @@ export default function BorrowersPage() {
             <h1 className="text-4xl font-bold text-primary tracking-tight">Borrower Base</h1>
             <p className="text-slate-500 text-base mt-2">Complete registry of borrowers, sponsors, and counterparties</p>
           </div>
-          <BorrowerFormDialog
-            trigger={
-              <button className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm">
-                <Plus className="h-4 w-4" />
-                New Borrower
-              </button>
-            }
-          />
+          <div className="flex items-center gap-3">
+            <ExportMenu
+              disabled={borrowers.length === 0}
+              onExcel={() =>
+                exportToExcel(stampedFilename("Borrowers"), [
+                  { name: "Borrowers", rows: borrowers.map(borrowerRow) },
+                ])
+              }
+              onCsv={() => exportToCsv(stampedFilename("Borrowers"), borrowers.map(borrowerRow))}
+              onTemplate={downloadBorrowerTemplateXlsx}
+              templateLabel="Download borrower template"
+            />
+            <BorrowerFormDialog
+              trigger={
+                <button className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm">
+                  <Plus className="h-4 w-4" />
+                  New Borrower
+                </button>
+              }
+            />
+          </div>
         </div>
 
         {/* Summary Cards */}
