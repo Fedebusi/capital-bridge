@@ -60,6 +60,8 @@ These files/areas require explicit approval from Federico before any modificatio
 | `feature-builder` | Implements P0/P1 features end-to-end | `feat/*` |
 | `bug-fixer` | Fixes bugs with regression tests | `fix/*` |
 | `ux-polisher` | Visual fixes, empty states, responsive | `polish/*` |
+| `ux-designer` | Emotional/narrative design — flows, microcopy, feedback | `design/ux-*` |
+| `ui-designer` | Pragmatic/visual design — layout, spacing, hierarchy, tokens | `design/ui-*` |
 | `reviewer` | Reviews PRs, produces structured comments | (no branch) |
 | `doc-writer` | Maintains docs and user guides | `docs/*` |
 
