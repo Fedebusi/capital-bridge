@@ -1,8 +1,11 @@
 import { ddCategoryLabels, type DDCategory } from "@/data/dealModules";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Clock, AlertTriangle, FileText, Minus, ChevronDown, ChevronRight } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, FileText, Minus, ChevronDown, ChevronRight, Paperclip } from "lucide-react";
 import { useState } from "react";
 import { useDDItemsForDeal } from "@/hooks/useDealSubdata";
+import FileUploadButton from "@/components/ui/FileUploadButton";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { useCreateDDDocument } from "@/hooks/useSupabaseQuery";
 
 const statusConfig = {
   completed: { icon: CheckCircle2, label: "Completed", className: "text-success" },
@@ -20,6 +23,8 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
   const { data: items, loading } = useDDItemsForDeal(dealId);
   const categories = Object.keys(ddCategoryLabels) as DDCategory[];
   const [expanded, setExpanded] = useState<string[]>(categories);
+  const createDoc = useCreateDDDocument();
+  const canUpload = isSupabaseConfigured();
 
   if (loading) {
     return (
@@ -107,6 +112,24 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
                           <span className="flex items-center gap-1 text-xs text-slate-500">
                             <FileText className="h-3 w-3" /> {item.documents.length}
                           </span>
+                        )}
+                        {canUpload && (
+                          <FileUploadButton
+                            bucket="documents"
+                            pathPrefix={`deals/${dealId}/dd/${item.id}`}
+                            label="Attach"
+                            icon={<Paperclip className="h-3.5 w-3.5" />}
+                            compact
+                            onUploaded={async ({ path, file }) => {
+                              await createDoc.mutateAsync({
+                                dd_item_id: item.id,
+                                name: file.name,
+                                version: 1,
+                                upload_date: new Date().toISOString().slice(0, 10),
+                                storage_path: path,
+                              });
+                            }}
+                          />
                         )}
                         <span className={cn("text-xs font-medium", cfg.className)}>{cfg.label}</span>
                       </div>

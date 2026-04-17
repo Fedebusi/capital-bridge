@@ -8,6 +8,9 @@ import {
   useCertificationsForDeal,
   useMonitoringReportsForDeal,
 } from "@/hooks/useDealSubdata";
+import FileUploadButton from "@/components/ui/FileUploadButton";
+import { useCreateSiteVisitPhoto } from "@/hooks/useSupabaseQuery";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 interface ConstructionMonitoringPanelProps {
   dealId: string;
@@ -18,6 +21,8 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
   const { data: certs, loading: certsLoading } = useCertificationsForDeal(dealId);
   const { data: reports, loading: reportsLoading } = useMonitoringReportsForDeal(dealId);
   const retention = sampleRetentions[dealId];
+  const createPhoto = useCreateSiteVisitPhoto();
+  const canUpload = isSupabaseConfigured();
 
   if (visitsLoading || certsLoading || reportsLoading) {
     return (
@@ -163,18 +168,38 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
                   </li>
                 ))}
               </ul>
-              {v.photos.length > 0 && (
-                <div>
-                  <p className="text-xs font-medium text-slate-500 uppercase mb-1.5 flex items-center gap-1"><Camera className="h-3 w-3" /> Photos ({v.photos.length})</p>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-xs font-medium text-slate-500 uppercase flex items-center gap-1">
+                    <Camera className="h-3 w-3" /> Photos ({v.photos.length})
+                  </p>
+                  {canUpload && (
+                    <FileUploadButton
+                      bucket="site-photos"
+                      pathPrefix={`deals/${dealId}/site-visits/${v.id}`}
+                      label="Upload photo"
+                      icon={<Camera className="h-3.5 w-3.5" />}
+                      accept=".jpg,.jpeg,.png,.webp"
+                      onUploaded={async ({ path, file }) => {
+                        await createPhoto.mutateAsync({
+                          site_visit_id: v.id,
+                          storage_path: path,
+                          caption: file.name,
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+                {v.photos.length > 0 && (
                   <div className="flex gap-2 flex-wrap">
                     {v.photos.map((p, i) => (
                       <div key={i} className="rounded-lg border border-slate-100 bg-slate-50 p-2 text-xs text-slate-500">
-                        📷 {p.caption}
+                        {p.caption}
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         ))}
