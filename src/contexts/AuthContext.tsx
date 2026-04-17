@@ -84,15 +84,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function fetchProfile(userId: string) {
     setLoading(true);
+
+    // Fast path: read existing profile
     const { data, error } = await supabase!
       .from("profiles")
       .select("*")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
 
     if (!error && data) {
       setProfile(data as DbProfile);
+      setLoading(false);
+      return;
     }
+
+    // Self-heal: no profile row (auth trigger may have failed silently).
+    // Call the ensure_my_profile() RPC which creates a viewer profile
+    // under SECURITY DEFINER. See migration 00008_fix_profile_self_heal.
+    if (!error) {
+      const { data: healed, error: healError } = await supabase!.rpc("ensure_my_profile");
+      if (!healError && healed) {
+        setProfile(healed as DbProfile);
+        setLoading(false);
+        return;
+      }
+      console.error("ensure_my_profile failed:", healError);
+    } else {
+      console.error("Profile fetch failed:", error);
+    }
+
+    // Still no profile — bail out cleanly instead of spinning forever
+    await supabase!.auth.signOut();
+    setProfile(null);
+    setUser(null);
+    setSession(null);
     setLoading(false);
   }
 
