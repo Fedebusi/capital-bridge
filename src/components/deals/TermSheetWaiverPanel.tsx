@@ -2,16 +2,25 @@ import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetDa
 import { formatCurrency } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle, Printer } from "lucide-react";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
+import { buildTermSheetFromDeal } from "@/lib/buildTermSheetFromDeal";
+import { useDeals } from "@/hooks/useDeals";
+import TermSheetEditorDialog from "./TermSheetEditorDialog";
 
 interface TermSheetWaiverPanelProps {
   dealId: string;
 }
 
 export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelProps) {
-  const { data: ts, loading: tsLoading } = useTermSheetForDeal(dealId);
+  const { data: tsRow, loading: tsLoading } = useTermSheetForDeal(dealId);
   const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
+  const { deals } = useDeals();
+  const deal = deals.find((d) => d.id === dealId);
+
+  // Fallback: synthesize a term sheet from the deal if no DB row exists yet,
+  // so the preview and the "Print PDF" button always work.
+  const ts = tsRow ?? (tsLoading || !deal ? null : buildTermSheetFromDeal(deal));
 
   if (tsLoading || waiversLoading) {
     return (
@@ -35,10 +44,24 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
 
   return (
     <Tabs defaultValue={ts ? "termsheet" : "waivers"} className="space-y-4">
-      <TabsList className="bg-muted border border-slate-100 flex-wrap h-auto gap-1 p-1">
-        {ts && <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>}
-        {waivers.length > 0 && <TabsTrigger value="waivers">Waivers ({waivers.length})</TabsTrigger>}
-      </TabsList>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <TabsList className="bg-muted border border-slate-100 flex-wrap h-auto gap-1 p-1">
+          {ts && <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>}
+          {waivers.length > 0 && <TabsTrigger value="waivers">Waivers ({waivers.length})</TabsTrigger>}
+        </TabsList>
+        {ts && deal && (
+          <TermSheetEditorDialog
+            deal={deal}
+            baseline={tsRow}
+            trigger={
+              <button className="inline-flex items-center gap-1.5 rounded-full bg-accent hover:bg-accent/90 text-white px-4 py-2 text-xs font-semibold transition-colors">
+                <Printer className="h-3.5 w-3.5" />
+                Preview & download
+              </button>
+            }
+          />
+        )}
+      </div>
 
       {/* Term Sheet */}
       {ts && (
