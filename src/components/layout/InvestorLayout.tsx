@@ -1,5 +1,6 @@
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BarChart3, FileText, HelpCircle, LogOut, ArrowLeft, Bell } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -14,9 +15,22 @@ interface InvestorLayoutProps {
 
 export default function InvestorLayout({ children }: InvestorLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { hasRole, profile } = useAuth();
+  const { hasRole, profile, signOut } = useAuth();
   const showBackLink = hasRole("admin", "analyst", "portfolio_manager") && !searchParams.has("standalone");
+
+  async function handleSignOut() {
+    await signOut();
+    navigate("/login");
+  }
+
+  function handleNotifications() {
+    // Simple toast summary for the demo — upcoming payments live in InvestorPortalPage.
+    toast.info("4 upcoming payments this month", {
+      description: "Next: Terrazas del Faro — €42,800 on 15 Apr 2026",
+    });
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -68,20 +82,33 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
                 Back to Platform
               </Link>
             )}
-            <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all">
+            <a
+              href="mailto:investors@capitalbridge.com?subject=Investor%20Portal%20-%20Support"
+              className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all"
+              title="Contact support"
+              aria-label="Contact support"
+            >
               <HelpCircle className="h-5 w-5" />
-            </button>
-            <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all relative">
+            </a>
+            <button
+              type="button"
+              onClick={handleNotifications}
+              className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all relative"
+              title="Notifications"
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full" />
             </button>
-            <Link
-              to="/"
+            <button
+              type="button"
+              onClick={handleSignOut}
               className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2.5 rounded-full transition-all"
               title="Sign out"
+              aria-label="Sign out"
             >
               <LogOut className="h-5 w-5" />
-            </Link>
+            </button>
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center ml-2">
               <span className="text-xs font-bold text-white">
                 {(profile?.full_name || "LP").slice(0, 2).toUpperCase()}
@@ -103,9 +130,14 @@ export default function InvestorLayout({ children }: InvestorLayoutProps) {
             CapitalBridge Investor Portal — Confidential
           </p>
           <div className="flex gap-5">
-            <a href="#" className="text-xs text-slate-400 hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="text-xs text-slate-400 hover:text-primary transition-colors">Terms</a>
-            <a href="#" className="text-xs text-slate-400 hover:text-primary transition-colors">Contact</a>
+            <Link to="/about" className="text-xs text-slate-400 hover:text-primary transition-colors">Privacy</Link>
+            <Link to="/about" className="text-xs text-slate-400 hover:text-primary transition-colors">Terms</Link>
+            <a
+              href="mailto:investors@capitalbridge.com"
+              className="text-xs text-slate-400 hover:text-primary transition-colors"
+            >
+              Contact
+            </a>
           </div>
         </div>
       </footer>
