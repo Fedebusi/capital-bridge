@@ -99,7 +99,15 @@ export function BorrowerFormDialog({ borrower, trigger, onSuccess }: BorrowerFor
       setOpen(false);
       onSuccess?.();
     } catch (err) {
-      toast.error(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+      const detail = err instanceof Error ? err.message : undefined;
+      toast.error(
+        isEdit ? "We couldn't save this borrower." : "We couldn't create this borrower.",
+        {
+          description: detail
+            ? `Please try again in a moment. Details: ${detail}`
+            : "Please check your connection and try again. If the problem persists, contact support.",
+        },
+      );
     }
   }
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShieldCheck, Landmark, ArrowLeft, LogIn, UserPlus } from "lucide-react";
+import { ShieldCheck, Landmark, ArrowLeft, LogIn, UserPlus, Mail, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 type AccessMode = "choose" | "admin" | "investor";
@@ -26,6 +26,7 @@ export default function LoginPage() {
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [signupSuccessEmail, setSignupSuccessEmail] = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -63,7 +64,8 @@ export default function LoginPage() {
     if (error) {
       toast.error(error);
     } else {
-      toast.success("Account created! Check your email to confirm, then sign in.");
+      setSignupSuccessEmail(signupEmail);
+      setSignupPassword("");
     }
   }
 
@@ -149,6 +151,43 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          {signupSuccessEmail ? (
+            <div className="text-center py-4">
+              <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+              </div>
+              <h2 className="text-lg font-bold text-primary">Check your email</h2>
+              <p className="text-sm text-slate-500 mt-2">
+                We sent a confirmation link to <strong className="text-primary">{signupSuccessEmail}</strong>.
+                Click it to activate your account, then sign in.
+              </p>
+              <div className="mt-6 flex flex-col gap-2">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setLoginEmail(signupSuccessEmail);
+                    setSignupSuccessEmail(null);
+                    setSignupName("");
+                    setSignupEmail("");
+                  }}
+                  className={`w-full rounded-full ${isInvestor ? "bg-emerald-600 hover:bg-emerald-700" : "bg-accent hover:bg-accent/90"}`}
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Go to sign in
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.info("Didn't receive the email? Check your spam folder, or contact support.");
+                  }}
+                  className="text-xs text-slate-400 hover:text-primary transition-colors inline-flex items-center justify-center gap-1.5"
+                >
+                  <Mail className="h-3 w-3" />
+                  Didn't get the email?
+                </button>
+              </div>
+            </div>
+          ) : (
           <Tabs defaultValue="login">
             <TabsList className="grid w-full grid-cols-2 rounded-full bg-slate-100 p-1">
               <TabsTrigger value="login" className="rounded-full">Sign In</TabsTrigger>
@@ -247,6 +286,7 @@ export default function LoginPage() {
               </form>
             </TabsContent>
           </Tabs>
+          )}
         </div>
 
         <div className="text-center mt-6">
