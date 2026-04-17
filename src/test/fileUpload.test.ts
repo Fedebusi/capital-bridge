@@ -77,7 +77,7 @@ describe("buildUploadPath", () => {
     const path = buildUploadPath("deals/x", "../../../etc/passwd");
     expect(path).not.toContain("..");
     expect(path).not.toContain("/etc/passwd");
-    expect(path).toMatch(/^deals\/x\/\d+-[_a-zA-Z0-9.\-]+$/);
+    expect(path).toMatch(/^deals\/x\/\d+-[_a-zA-Z0-9.-]+$/);
   });
 
   it("preserves underscores, dots and dashes in filename", () => {

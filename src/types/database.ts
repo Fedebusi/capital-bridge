@@ -30,6 +30,7 @@ export type SiteVisitRecommendation = "proceed" | "hold" | "review";
 export type ScheduleStatus = "on_track" | "minor_delay" | "major_delay" | "ahead";
 export type CostStatus = "within_budget" | "minor_overrun" | "major_overrun" | "under_budget";
 export type QualityAssessment = "satisfactory" | "needs_improvement" | "unsatisfactory";
+export type PhaseStatus = "not_started" | "in_progress" | "completed" | "blocked" | "skipped";
 
 // ===== ROW TYPES (what comes from the DB) =====
 
@@ -423,6 +424,62 @@ export interface DbAuditLog {
   created_at: string;
 }
 
+// ===== LIFECYCLE =====
+
+export interface DbDealLifecycle {
+  id: string;
+  deal_id: string;
+  current_phase: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbLifecyclePhaseAgent {
+  name: string;
+  role: string;
+  organization: "internal" | "external" | "borrower" | "capital_partner";
+}
+
+export interface DbLifecyclePhase {
+  id: string;
+  lifecycle_id: string;
+  phase_id: string;
+  number: number;
+  name: string;
+  description: string;
+  status: PhaseStatus;
+  start_date: string | null;
+  completed_date: string | null;
+  estimated_duration: string | null;
+  depends_on: string[];
+  notes: string | null;
+  agents: DbLifecyclePhaseAgent[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbPhaseSubstep {
+  id: string;
+  phase_id: string;
+  label: string;
+  description: string;
+  status: PhaseStatus;
+  completed_date: string | null;
+  assignee: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface DbPhaseMilestone {
+  id: string;
+  phase_id: string;
+  description: string;
+  achieved: boolean;
+  achieved_date: string | null;
+  evidence: string | null;
+  created_at: string;
+}
+
 // ===== SUPABASE DATABASE TYPE MAP =====
 
 export interface Database {
@@ -558,6 +615,26 @@ export interface Database {
         Insert: Omit<DbAuditLog, "id" | "created_at">;
         Update: never;
       };
+      deal_lifecycles: {
+        Row: DbDealLifecycle;
+        Insert: Omit<DbDealLifecycle, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<DbDealLifecycle, "id" | "created_at">>;
+      };
+      lifecycle_phases: {
+        Row: DbLifecyclePhase;
+        Insert: Omit<DbLifecyclePhase, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<DbLifecyclePhase, "id" | "created_at">>;
+      };
+      phase_substeps: {
+        Row: DbPhaseSubstep;
+        Insert: Omit<DbPhaseSubstep, "id" | "created_at">;
+        Update: Partial<Omit<DbPhaseSubstep, "id" | "created_at">>;
+      };
+      phase_milestones: {
+        Row: DbPhaseMilestone;
+        Insert: Omit<DbPhaseMilestone, "id" | "created_at">;
+        Update: Partial<Omit<DbPhaseMilestone, "id" | "created_at">>;
+      };
     };
     Functions: Record<string, never>;
     Enums: {
@@ -577,6 +654,7 @@ export interface Database {
       kyc_status: KYCStatus;
       borrower_rating: BorrowerRating;
       user_role: UserRole;
+      phase_status: PhaseStatus;
     };
   };
 }

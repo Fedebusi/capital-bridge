@@ -45,7 +45,7 @@ export function validateFile(file: File): string | null {
 export function buildUploadPath(prefix: string, fileName: string): string {
   const trimmedPrefix = prefix.replace(/^\/+|\/+$/g, "");
   const safeName = fileName
-    .replace(/[^a-zA-Z0-9_.\-]/g, "_")
+    .replace(/[^a-zA-Z0-9_.-]/g, "_")
     .replace(/\.{2,}/g, "_");
   const timestamp = Date.now();
   return `${trimmedPrefix}/${timestamp}-${safeName}`;

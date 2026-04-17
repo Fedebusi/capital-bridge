@@ -23,14 +23,15 @@ import WaterfallPanel from "./WaterfallPanel";
 import TermSheetWaiverPanel from "./TermSheetWaiverPanel";
 import LifecycleTracker from "./LifecycleTracker";
 import LifecycleProgressBar from "./LifecycleProgressBar";
-import { sampleLifecycles, getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
+import { getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
+import { useLifecycleForDeal } from "@/hooks/useDealSubdata";
 
 interface DealDetailProps {
   deal: Deal;
 }
 
 export default function DealDetail({ deal }: DealDetailProps) {
-  const lifecycle = sampleLifecycles[deal.id];
+  const { data: lifecycle } = useLifecycleForDeal(deal.id);
   const navigate = useNavigate();
   const updateDeal = useUpdateDeal();
   const deleteDeal = useDeleteDeal();

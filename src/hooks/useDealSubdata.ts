@@ -1,4 +1,5 @@
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import {
   useDueDiligenceItems,
   useApprovalRecord,
@@ -13,6 +14,8 @@ import {
   useConstructionCertifications,
   useMonitoringReports,
   useAuditLogs,
+  useDealLifecycle,
+  useLifecyclePhases,
 } from "@/hooks/useSupabaseQuery";
 import {
   sampleDueDiligence,
@@ -27,9 +30,12 @@ import {
   sampleCertifications,
   sampleMonitoringReports,
 } from "@/data/constructionMonitoring";
+import { sampleLifecycles } from "@/data/lifecyclePhases";
 import type { DDItem, ApprovalRecord, LegalDocument, ConditionPrecedent, SecurityItem } from "@/data/dealModules";
 import type { TermSheet, EnhancedWaiver } from "@/data/termSheetData";
 import type { SiteVisit, ConstructionCertification, MonitoringReport } from "@/data/constructionMonitoring";
+import type { DealLifecycle } from "@/data/lifecyclePhases";
+import type { DbPhaseSubstep, DbPhaseMilestone } from "@/types/database";
 import {
   dbDDItemToFrontend,
   dbApprovalToFrontend,
@@ -41,6 +47,7 @@ import {
   dbSiteVisitToFrontend,
   dbCertificationToFrontend,
   dbMonitoringReportToFrontend,
+  dbLifecycleToFrontend,
 } from "@/lib/dbConverters";
 
 type DualResult<T> = { data: T; loading: boolean; isLive: boolean };
@@ -182,6 +189,76 @@ export function useCertificationsForDeal(dealId: string): DualResult<Constructio
     };
   }
   return { data: sampleCertifications[dealId] ?? [], loading: false, isLive: false };
+}
+
+export function useLifecycleForDeal(dealId: string): DualResult<DealLifecycle | null> {
+  const isLive = isSupabaseConfigured();
+  const lifecycleQuery = useDealLifecycle(dealId);
+  const lifecycleId = lifecycleQuery.data?.id ?? "";
+  const phasesQuery = useLifecyclePhases(lifecycleId);
+  const phases = phasesQuery.data ?? [];
+  const phaseIds = phases.map((p) => p.id);
+  const phaseIdsKey = phaseIds.join(",");
+
+  // Batch-fetch substeps and milestones for all phases in a single query each.
+  const substepsQuery = useQuery({
+    queryKey: ["phase_substeps_bulk", lifecycleId, phaseIdsKey],
+    queryFn: async (): Promise<DbPhaseSubstep[]> => {
+      if (!isSupabaseConfigured() || phaseIds.length === 0) return [];
+      const { data, error } = await supabase!
+        .from("phase_substeps")
+        .select("*")
+        .in("phase_id", phaseIds)
+        .order("created_at");
+      if (error) throw error;
+      return data as DbPhaseSubstep[];
+    },
+    enabled: isSupabaseConfigured() && phaseIds.length > 0,
+  });
+
+  const milestonesQuery = useQuery({
+    queryKey: ["phase_milestones_bulk", lifecycleId, phaseIdsKey],
+    queryFn: async (): Promise<DbPhaseMilestone[]> => {
+      if (!isSupabaseConfigured() || phaseIds.length === 0) return [];
+      const { data, error } = await supabase!
+        .from("phase_milestones")
+        .select("*")
+        .in("phase_id", phaseIds)
+        .order("created_at");
+      if (error) throw error;
+      return data as DbPhaseMilestone[];
+    },
+    enabled: isSupabaseConfigured() && phaseIds.length > 0,
+  });
+
+  if (isLive) {
+    if (!lifecycleQuery.data) {
+      return { data: null, loading: lifecycleQuery.isLoading, isLive: true };
+    }
+    const substepsByPhase: Record<string, DbPhaseSubstep[]> = {};
+    for (const s of substepsQuery.data ?? []) {
+      (substepsByPhase[s.phase_id] ??= []).push(s);
+    }
+    const milestonesByPhase: Record<string, DbPhaseMilestone[]> = {};
+    for (const m of milestonesQuery.data ?? []) {
+      (milestonesByPhase[m.phase_id] ??= []).push(m);
+    }
+    return {
+      data: dbLifecycleToFrontend(
+        lifecycleQuery.data,
+        phases,
+        substepsByPhase,
+        milestonesByPhase,
+      ),
+      loading:
+        lifecycleQuery.isLoading ||
+        phasesQuery.isLoading ||
+        substepsQuery.isLoading ||
+        milestonesQuery.isLoading,
+      isLive: true,
+    };
+  }
+  return { data: sampleLifecycles[dealId] ?? null, loading: false, isLive: false };
 }
 
 export function useMonitoringReportsForDeal(dealId: string): DualResult<MonitoringReport[]> {
