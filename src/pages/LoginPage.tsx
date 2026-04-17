@@ -88,7 +88,7 @@ export default function LoginPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <button
               onClick={() => setMode("admin")}
-              className="group relative rounded-3xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10"
+              className="group relative rounded-2xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10"
             >
               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center mb-6">
                 <ShieldCheck className="h-6 w-6 text-white" />
@@ -101,7 +101,7 @@ export default function LoginPage() {
 
             <button
               onClick={() => setMode("investor")}
-              className="group relative rounded-3xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/10"
+              className="group relative rounded-2xl bg-white border border-slate-200 p-8 text-left transition-all hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/10"
             >
               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mb-6">
                 <Landmark className="h-6 w-6 text-white" />
@@ -150,7 +150,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
           {signupSuccessEmail ? (
             <div className="text-center py-4">
               <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center">
