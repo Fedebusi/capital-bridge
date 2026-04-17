@@ -70,61 +70,75 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - **URL**: `https://slexqygrfyvfqikopmwm.supabase.co`
 - **Ref ID**: `slexqygrfyvfqikopmwm`
 - **Anon key**: configured in `.env` (not committed)
-- **Migrations** (auto-deploy on merge to `main`):
-  - `00001_initial_schema.sql` — all tables, RLS, storage buckets (already executed)
+- **Migrations**:
+  - `00001_initial_schema.sql` — all tables, RLS, storage buckets
   - `00002_seed_data.sql` — sample deals, borrowers, contacts, KYC, drawdowns etc.
   - `00003_fix_auth_trigger.sql` — fixed `handle_new_user` with safe defaults + error handling
+  - `00004_fix_audit_logs_policy.sql` — RLS fix for audit log inserts
+  - `00005_first_user_admin.sql` — first signup becomes admin
+  - `00006_lifecycle_tables.sql` — 4 lifecycle tables (`deal_lifecycles`, `lifecycle_phases`, `phase_substeps`, `phase_milestones`) + RLS + `phase_status` enum
+- **Auto-deploy**: `.github/workflows/supabase-deploy.yml` runs `supabase db push --include-all` on every push to `main` touching `supabase/migrations/**`. Requires two repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`. See issue #31.
 - **Auth trigger**: fixed in migration 00003 — everyone starts as `viewer`, admin promotes.
 
-## Current Status (Last Updated: 2026-04-09)
+## Current Status (Last Updated: 2026-04-17)
 
-### Completed
-- [x] Full frontend UI (19 pages, 67+ components)
-- [x] Supabase client setup with demo/live dual mode (`src/lib/supabase.ts`)
-- [x] `.env` file configured with Supabase URL + anon key
-- [x] `.env` added to `.gitignore`
-- [x] Complete database schema with RLS and audit triggers (migration run on Supabase)
-- [x] Authentication system code (login page, AuthContext, ProtectedRoute)
-- [x] Auth enforcement enabled — login redirect + role-based access active
-- [x] Separate Platform / Investor portals with role-based access
-- [x] React Query API hooks for all entities (`src/hooks/useSupabaseQuery.ts`)
-- [x] CRUD forms: deals (Pipeline) + borrowers (BorrowersPage) with dialog-based forms
-- [x] Real-time notifications (covenant breaches, stage changes, approvals)
-- [x] Error boundary component
-- [x] Audit trail logging (automatic on create/update via mutations)
-- [x] Document/photo storage hooks
-- [x] Tests: 22 passing (PIK engine + deal screening logic)
-- [x] Seed data deployed to Supabase (migration 00002)
-- [x] Auth trigger fix deployed (migration 00003)
-- [x] User profile + logout in sidebar
-- [x] Dashboard, Borrowers, DealDetail wired to Supabase (live/demo dual mode)
-- [x] Branding fixed — "APEX CAPITAL" replaced with "CapitalBridge" in PDFs
+### P0 — DONE (in-session PRs)
 
-### In Progress
-- [ ] Wire remaining pages to Supabase (Approvals, DD, TermSheets, Construction, Lifecycle)
-- [ ] Add "Edit" / stage change buttons on deal and borrower detail pages
+- [x] **P0.1** Edit/Delete UI for deals + borrowers (pre-existing, commit `17474c8`)
+- [x] **P0.2** Stage change button on deal detail (pre-existing)
+- [x] **P0.3** Sub-data wired to Supabase with dual-mode fallback — PR #26 (DD, approvals, IC votes, term sheets, waivers, construction, legal) + PR #29 (lifecycle tables + wiring)
+- [x] **P0.4** Searchbar (pre-existing)
+- [x] **P0.5** File upload UI for DD documents and site-visit photos — PR #27
+- [x] **Infra** Lint fix 7 pre-existing errors — PR #28
+- [x] **Infra** Auto-apply migrations workflow — PR #30
+- [x] Tests: 64 passing (22 original + 16 converter + 13 file upload + 13 lifecycle converter)
 
-### Pending
-- [ ] Design polish pass
-- [ ] CI/CD pipeline (GitHub Actions for lint + test + build)
-- [ ] Mobile optimizations for forms
+### Blocked on Federico (tracked in issue #31)
+
+- [ ] Add `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` secrets to GitHub repo
+- [ ] Trigger `Supabase Deploy Migrations` workflow to apply `00006` (lifecycle tables) on prod DB
+- [ ] Manual QA end-to-end in live mode: file upload on DD item + site visit, RLS checks, lifecycle page rendering real data
+
+### P1 — In progress (3 background agents launched 2026-04-17)
+
+- [ ] Empty states + CTA across all list pages (`ux-polisher`)
+- [ ] Lifecycle seed migration `00007_lifecycle_seed.sql` (1 lifecycle per deal, 12 phase stubs)
+- [ ] User guides for the 4 roles (`doc-writer` → `docs/guides/*.md`)
+
+### P1 — Remaining
+
+- [ ] User management UI (invite users, change role) — requires auth review
+- [ ] Transactional email (covenant breach, stage change, waiver decisions) — requires Resend/SendGrid config
+- [ ] Mobile optimization pass
+
+### P2 — Pending
+
+- [ ] Chatbot AI for data queries
+- [ ] Business Central integration
+- [ ] Dark mode
+- [ ] Custom domain
+- [ ] Automatic Supabase backup
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
 | `src/lib/supabase.ts` | Supabase client (with demo mode fallback) |
+| `src/lib/dbConverters.ts` | DB row → frontend type converters (pure, unit-tested) |
 | `src/types/database.ts` | Full TypeScript types for all DB tables |
 | `src/contexts/AuthContext.tsx` | Auth state, login/signup, role checking |
 | `src/hooks/useDeals.tsx` | Deals context (demo data + live Supabase) |
 | `src/hooks/useSupabaseQuery.ts` | All React Query hooks for Supabase |
+| `src/hooks/useDealSubdata.ts` | Dual-mode wrappers (live → Supabase, demo → sample data) |
 | `src/hooks/useRealtimeNotifications.ts` | Real-time toast notifications |
 | `src/components/auth/ProtectedRoute.tsx` | Route-level auth guard |
 | `src/components/deals/DealFormDialog.tsx` | Create/edit deal form |
 | `src/components/borrowers/BorrowerFormDialog.tsx` | Create/edit borrower form |
+| `src/components/ui/FileUploadButton.tsx` | Reusable upload button wrapping `useUploadDocument` |
 | `src/components/ErrorBoundary.tsx` | Global error boundary |
-| `supabase/migrations/00001_initial_schema.sql` | Complete DB schema |
-| `supabase/seed.sql` | Sample data (6 deals, 5 borrowers + sub-entities) |
+| `.github/workflows/ci.yml` | CI: lint + typecheck + test + build |
+| `.github/workflows/supabase-deploy.yml` | Auto-apply migrations on merge to `main` |
+| `supabase/migrations/*.sql` | DB schema + RLS (00001..00006) |
 
 ## Business Logic Notes
 
