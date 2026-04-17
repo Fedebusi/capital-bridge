@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import LifecycleProgressBar from "@/components/deals/LifecycleProgressBar";
 import { useDeals } from "@/hooks/useDeals";
 import { useLifecycleForDeal } from "@/hooks/useDealSubdata";
@@ -9,16 +9,22 @@ import {
   getCurrentPhaseNumber,
   getLifecycleProgress,
 } from "@/data/lifecyclePhases";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Flag, Users, ArrowRight } from "lucide-react";
+import { Flag, Users, ArrowRight, GitBranch } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function LifecyclePage() {
   const { deals, loading } = useDeals();
+  const navigate = useNavigate();
+  const [rendered, setRendered] = useState<Record<string, boolean>>({});
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
   }
+
+  const firstDealId = deals[0]?.id;
+  const renderedCount = Object.values(rendered).filter(Boolean).length;
 
   return (
     <AppLayout>
@@ -28,27 +34,78 @@ export default function LifecyclePage() {
           <p className="text-slate-500 text-sm mt-1">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
         </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap gap-4 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Completed</span>
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-accent" /> In Progress</span>
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-destructive" /> Blocked</span>
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/20" /> Not Started</span>
-        </div>
+        {deals.length === 0 ? (
+          <EmptyState
+            icon={GitBranch}
+            title="No deals to track yet"
+            description="Create a deal to start tracking lifecycle phases, agents, milestones, and blockers."
+            action={
+              <button
+                onClick={() => navigate("/pipeline")}
+                className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Go to Pipeline
+              </button>
+            }
+          />
+        ) : (
+          <>
+            {/* Legend */}
+            <div className="flex flex-wrap gap-4 text-xs text-slate-500">
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Completed</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-accent" /> In Progress</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-destructive" /> Blocked</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/20" /> Not Started</span>
+            </div>
 
-        {/* Deal Cards with Lifecycle */}
-        <div className="space-y-4">
-          {deals.map((deal) => (
-            <DealLifecycleCard key={deal.id} deal={deal} />
-          ))}
-        </div>
+            {/* Deal Cards with Lifecycle */}
+            <div className="space-y-4">
+              {deals.map((deal) => (
+                <DealLifecycleCard
+                  key={deal.id}
+                  deal={deal}
+                  onRender={(id, r) =>
+                    setRendered((prev) => (prev[id] === r ? prev : { ...prev, [id]: r }))
+                  }
+                />
+              ))}
+            </div>
+            {renderedCount === 0 && (
+              <EmptyState
+                icon={GitBranch}
+                title="No lifecycle data yet"
+                description="Lifecycle phases are populated automatically once a deal has an assigned workflow. Open a deal to initialize its lifecycle."
+                action={
+                  <button
+                    onClick={() => firstDealId && navigate(`/deals/${firstDealId}`)}
+                    className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+                  >
+                    Go to deal
+                  </button>
+                }
+              />
+            )}
+          </>
+        )}
       </div>
     </AppLayout>
   );
 }
 
-function DealLifecycleCard({ deal }: { deal: Deal }) {
+function DealLifecycleCard({
+  deal,
+  onRender,
+}: {
+  deal: Deal;
+  onRender: (id: string, rendered: boolean) => void;
+}) {
   const { data: lifecycle } = useLifecycleForDeal(deal.id);
+  const rendered = !!lifecycle;
+
+  useEffect(() => {
+    onRender(deal.id, rendered);
+  }, [deal.id, rendered, onRender]);
+
   if (!lifecycle) return null;
   return <DealLifecycleCardContent deal={deal} lifecycle={lifecycle} />;
 }

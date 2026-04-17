@@ -34,14 +34,23 @@ export function LoadingSkeleton() {
   );
 }
 
-export function EmptyState({ icon: Icon, title, description }: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }) {
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center mb-4">
-        <Icon className="h-6 w-6 text-slate-400" />
-      </div>
-      <h3 className="text-sm font-semibold text-primary">{title}</h3>
-      <p className="text-xs text-slate-400 mt-1 max-w-xs">{description}</p>
+    <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center justify-center text-center">
+      <Icon className="h-12 w-12 text-slate-400 mb-4" />
+      <h3 className="text-lg font-semibold text-primary">{title}</h3>
+      <p className="text-sm text-slate-500 mt-1 max-w-md">{description}</p>
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }

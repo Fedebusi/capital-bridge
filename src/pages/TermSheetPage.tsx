@@ -1,17 +1,29 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { useDeals } from "@/hooks/useDeals";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 import { formatCurrency, stageLabels, stageColors, type Deal } from "@/data/sampleDeals";
 import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer } from "lucide-react";
+import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer, FileText } from "lucide-react";
 import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
+import { useEffect, useState } from "react";
 
-function TermSheetCard({ deal }: { deal: Deal }) {
+function TermSheetCard({
+  deal,
+  onRender,
+}: {
+  deal: Deal;
+  onRender: (id: string, rendered: boolean) => void;
+}) {
   const { data: ts, loading: tsLoading } = useTermSheetForDeal(deal.id);
   const { data: waivers } = useWaiversForDeal(deal.id);
+  const rendered = !tsLoading && !!ts;
+
+  useEffect(() => {
+    onRender(deal.id, rendered);
+  }, [deal.id, rendered, onRender]);
 
   if (tsLoading) return null;
   if (!ts) return null;
@@ -218,10 +230,15 @@ function TermSheetCard({ deal }: { deal: Deal }) {
 
 export default function TermSheetPage() {
   const { deals, loading } = useDeals();
+  const navigate = useNavigate();
+  const [rendered, setRendered] = useState<Record<string, boolean>>({});
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
   }
+
+  const firstDealId = deals[0]?.id;
+  const renderedCount = Object.values(rendered).filter(Boolean).length;
 
   return (
     <AppLayout>
@@ -233,9 +250,48 @@ export default function TermSheetPage() {
           </div>
         </header>
 
-        {deals.map((deal) => (
-          <TermSheetCard key={deal.id} deal={deal} />
-        ))}
+        {deals.length === 0 ? (
+          <EmptyState
+            icon={FileText}
+            title="No term sheets yet"
+            description="Term sheets appear here once deals reach documentation. Start by adding a deal to the pipeline."
+            action={
+              <button
+                onClick={() => navigate("/pipeline")}
+                className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Go to Pipeline
+              </button>
+            }
+          />
+        ) : (
+          <>
+            {deals.map((deal) => (
+              <TermSheetCard
+                key={deal.id}
+                deal={deal}
+                onRender={(id, r) =>
+                  setRendered((prev) => (prev[id] === r ? prev : { ...prev, [id]: r }))
+                }
+              />
+            ))}
+            {renderedCount === 0 && (
+              <EmptyState
+                icon={FileText}
+                title="No term sheets drafted yet"
+                description="Term sheets are drafted from the deal detail page once a deal reaches the documentation stage."
+                action={
+                  <button
+                    onClick={() => firstDealId && navigate(`/deals/${firstDealId}`)}
+                    className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+                  >
+                    Go to deal
+                  </button>
+                }
+              />
+            )}
+          </>
+        )}
       </div>
     </AppLayout>
   );

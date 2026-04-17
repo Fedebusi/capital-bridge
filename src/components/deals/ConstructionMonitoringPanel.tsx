@@ -36,9 +36,12 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
 
   if (!hasData) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
-        <HardHat className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-        <p className="text-sm text-slate-500">No construction monitoring data available for this deal</p>
+      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
+        <HardHat className="h-12 w-12 text-slate-400 mb-4" />
+        <h3 className="text-lg font-semibold text-primary">No construction monitoring data yet</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-md">
+          Once the deal draws down, log site visits, upload photos, and record certifications to track construction progress and retentions.
+        </p>
       </div>
     );
   }

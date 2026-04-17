@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { BorrowerFormDialog } from "@/components/borrowers/BorrowerFormDialog";
 import { sampleBorrowers, ratingColors, type Borrower } from "@/data/borrowers";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
@@ -8,7 +8,7 @@ import { useBorrowersQuery } from "@/hooks/useSupabaseQuery";
 import type { DbBorrower } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, XCircle, Plus } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Plus, Users } from "lucide-react";
 
 function dbBorrowerToFrontend(b: DbBorrower): Borrower {
   return {
@@ -89,6 +89,23 @@ export default function BorrowersPage() {
         </div>
 
         {/* Borrower Table */}
+        {borrowers.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No borrowers yet"
+            description="Add your first borrower or sponsor to start tracking exposures, KYC, and track record across the portfolio."
+            action={
+              <BorrowerFormDialog
+                trigger={
+                  <button className="flex items-center gap-2 rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm">
+                    <Plus className="h-4 w-4" />
+                    New Borrower
+                  </button>
+                }
+              />
+            }
+          />
+        ) : (
         <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -141,6 +158,7 @@ export default function BorrowersPage() {
             </table>
           </div>
         </div>
+        )}
       </div>
     </AppLayout>
   );

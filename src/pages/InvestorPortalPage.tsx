@@ -1,10 +1,10 @@
 import { useState } from "react";
 import InvestorLayout from "@/components/layout/InvestorLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { useDeals } from "@/hooks/useDeals";
 import { formatMillions, formatPercent } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download } from "lucide-react";
+import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download, Briefcase } from "lucide-react";
 import { generateTaxReport } from "@/lib/generateTaxReport";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -234,6 +234,23 @@ export default function InvestorPortalPage() {
               </Link>
             </div>
             <div className="divide-y divide-slate-100">
+              {activeDeals.length === 0 && (
+                <div className="p-6">
+                  <EmptyState
+                    icon={Briefcase}
+                    title="No active investments yet"
+                    description="Your active positions will show here once deals go live. Browse available opportunities to place capital."
+                    action={
+                      <Link
+                        to="/deals"
+                        className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors inline-flex items-center gap-2"
+                      >
+                        Browse deals <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    }
+                  />
+                </div>
+              )}
               {activeDeals.map(deal => {
                 const returnRate = deal.loanAmount > 0 ? (deal.accruedPIK / deal.loanAmount) * 100 : 0;
                 return (

@@ -51,9 +51,12 @@ export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) 
 
   if (!hasData) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
-        <Lock className="h-10 w-10 text-slate-500/30 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">No legal or security data for this deal yet</p>
+      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
+        <Lock className="h-12 w-12 text-slate-400 mb-4" />
+        <h3 className="text-lg font-semibold text-primary">No legal or security data yet</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-md">
+          Legal documents, conditions precedent, and the security package will appear here once the deal reaches the documentation stage.
+        </p>
       </div>
     );
   }
