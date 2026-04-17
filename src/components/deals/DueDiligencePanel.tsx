@@ -39,9 +39,12 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
-        <FileText className="h-10 w-10 text-slate-500/30 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">No due diligence checklist for this deal yet</p>
+      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
+        <FileText className="h-12 w-12 text-slate-400 mb-4" />
+        <h3 className="text-lg font-semibold text-primary">No due diligence items yet</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-md">
+          Due diligence checklists are generated when a deal advances to the DD stage. Move the deal forward to start tracking findings.
+        </p>
       </div>
     );
   }

@@ -23,8 +23,12 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
 
   if (!ts && waivers.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
-        <p className="text-sm text-slate-500">No term sheet or waiver data available for this deal</p>
+      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
+        <FileText className="h-12 w-12 text-slate-400 mb-4" />
+        <h3 className="text-lg font-semibold text-primary">No term sheet drafted yet</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-md">
+          Term sheets are created once the deal passes screening. Draft a term sheet to capture the facility, fees, and security package.
+        </p>
       </div>
     );
   }

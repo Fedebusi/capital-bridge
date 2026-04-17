@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import ConstructionMonitoringPanel from "@/components/deals/ConstructionMonitoringPanel";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors, formatMillions, type Deal } from "@/data/sampleDeals";
@@ -8,15 +8,28 @@ import {
   useCertificationsForDeal,
   useMonitoringReportsForDeal,
 } from "@/hooks/useDealSubdata";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { HardHat } from "lucide-react";
+import { useEffect, useState } from "react";
 
-function DealMonitoringRow({ deal }: { deal: Deal }) {
+function DealMonitoringRow({
+  deal,
+  onRender,
+}: {
+  deal: Deal;
+  onRender: (id: string, rendered: boolean) => void;
+}) {
   const { data: visits } = useSiteVisitsForDeal(deal.id);
   const { data: certs } = useCertificationsForDeal(deal.id);
   const { data: reports } = useMonitoringReportsForDeal(deal.id);
 
   const hasData = visits.length > 0 || certs.length > 0 || reports.length > 0;
+
+  useEffect(() => {
+    onRender(deal.id, hasData);
+  }, [deal.id, hasData, onRender]);
+
   if (!hasData) return null;
 
   return (
@@ -42,10 +55,15 @@ function DealMonitoringRow({ deal }: { deal: Deal }) {
 
 export default function ConstructionMonitoringPage() {
   const { deals, loading } = useDeals();
+  const navigate = useNavigate();
+  const [rendered, setRendered] = useState<Record<string, boolean>>({});
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
   }
+
+  const firstDealId = deals[0]?.id;
+  const renderedCount = Object.values(rendered).filter(Boolean).length;
 
   return (
     <AppLayout>
@@ -55,9 +73,48 @@ export default function ConstructionMonitoringPage() {
           <p className="text-slate-500 text-sm mt-1">Site visits, certifications, monitoring reports, and retention tracking</p>
         </div>
 
-        {deals.map((deal) => (
-          <DealMonitoringRow key={deal.id} deal={deal} />
-        ))}
+        {deals.length === 0 ? (
+          <EmptyState
+            icon={HardHat}
+            title="No deals to monitor yet"
+            description="Site visits, certifications, and monitoring reports appear here once a deal has drawn funds and construction begins."
+            action={
+              <button
+                onClick={() => navigate("/pipeline")}
+                className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Go to Pipeline
+              </button>
+            }
+          />
+        ) : (
+          <>
+            {deals.map((deal) => (
+              <DealMonitoringRow
+                key={deal.id}
+                deal={deal}
+                onRender={(id, r) =>
+                  setRendered((prev) => (prev[id] === r ? prev : { ...prev, [id]: r }))
+                }
+              />
+            ))}
+            {renderedCount === 0 && (
+              <EmptyState
+                icon={HardHat}
+                title="No construction data yet"
+                description="Log site visits, upload photos, and record certifications from each deal's detail page to populate this view."
+                action={
+                  <button
+                    onClick={() => firstDealId && navigate(`/deals/${firstDealId}`)}
+                    className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+                  >
+                    Go to deal
+                  </button>
+                }
+              />
+            )}
+          </>
+        )}
       </div>
     </AppLayout>
   );

@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import DealCard from "@/components/dashboard/DealCard";
 import DealImportDialog from "@/components/dashboard/DealImportDialog";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";
@@ -8,7 +8,7 @@ import { exportDealsToExcel } from "@/lib/excelDealImport";
 import { useDeals } from "@/hooks/useDeals";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Download } from "lucide-react";
+import { Download, Briefcase, Plus } from "lucide-react";
 
 const stages: DealStage[] = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"];
 
@@ -72,11 +72,45 @@ export default function PipelinePage() {
         </div>
 
         {/* Deal Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredDeals.map((deal, i) => (
-            <DealCard key={deal.id} deal={deal} index={i} />
-          ))}
-        </div>
+        {filteredDeals.length === 0 ? (
+          deals.length === 0 ? (
+            <EmptyState
+              icon={Briefcase}
+              title="No deals in the pipeline yet"
+              description="Start tracking your first deal — originate a new opportunity or import an existing pipeline from Excel."
+              action={
+                <DealFormDialog
+                  trigger={
+                    <button className="flex items-center gap-2 rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20">
+                      <Plus className="h-4 w-4" />
+                      New Deal
+                    </button>
+                  }
+                />
+              }
+            />
+          ) : (
+            <EmptyState
+              icon={Briefcase}
+              title={`No deals in ${stageLabels[filter as DealStage]}`}
+              description="No deals match this stage filter. Try a different stage or create a new deal to get started."
+              action={
+                <button
+                  onClick={() => setFilter("all")}
+                  className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+                >
+                  Show all deals
+                </button>
+              }
+            />
+          )
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredDeals.map((deal, i) => (
+              <DealCard key={deal.id} deal={deal} index={i} />
+            ))}
+          </div>
+        )}
       </div>
     </AppLayout>
   );

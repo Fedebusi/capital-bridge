@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { formatMillions, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
 import { useDeals } from "@/hooks/useDeals";
 import { exportDealsToExcel } from "@/lib/excelDealImport";
+import { DealFormDialog } from "@/components/deals/DealFormDialog";
 import { cn } from "@/lib/utils";
-import { Search, ArrowUpDown, TrendingUp, Wallet, ShieldCheck, Building2, Download } from "lucide-react";
+import { Search, ArrowUpDown, Download, Wallet, Plus } from "lucide-react";
 
 const filterStages: { label: string; value: DealStage | "all" }[] = [
   { label: "All", value: "all" },
@@ -116,6 +117,39 @@ export default function LoanBookPage() {
         </div>
 
         {/* Table */}
+        {filtered.length === 0 ? (
+          allDeals.length === 0 ? (
+            <EmptyState
+              icon={Wallet}
+              title="No loans in the book yet"
+              description="Your loan book will show all deals from screening to repayment. Create your first deal to get started."
+              action={
+                <DealFormDialog
+                  trigger={
+                    <button className="flex items-center gap-2 rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20">
+                      <Plus className="h-4 w-4" />
+                      New Deal
+                    </button>
+                  }
+                />
+              }
+            />
+          ) : (
+            <EmptyState
+              icon={Wallet}
+              title="No loans match your filters"
+              description="Try adjusting the stage filter or clearing the search to see more deals."
+              action={
+                <button
+                  onClick={() => { setActiveFilter("all"); setSearchQuery(""); }}
+                  className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+                >
+                  Clear filters
+                </button>
+              }
+            />
+          )
+        ) : (
         <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -181,6 +215,7 @@ export default function LoanBookPage() {
             Showing {filtered.length} of {allDeals.length} deals
           </div>
         </div>
+        )}
       </div>
     </AppLayout>
   );

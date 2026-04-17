@@ -28,9 +28,12 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
 
   if (!approval && waivers.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
-        <Shield className="h-10 w-10 text-slate-500/30 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">No approval records for this deal</p>
+      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
+        <Shield className="h-12 w-12 text-slate-400 mb-4" />
+        <h3 className="text-lg font-semibold text-primary">No approval records yet</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-md">
+          Investment Committee votes and Capital Partner sign-offs will appear here once the deal is submitted for approval.
+        </p>
       </div>
     );
   }

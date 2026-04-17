@@ -1,13 +1,13 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import DueDiligencePanel from "@/components/deals/DueDiligencePanel";
 import { useDeals } from "@/hooks/useDeals";
 import { useDDItemsForDeal } from "@/hooks/useDealSubdata";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { stageLabels, stageColors, formatMillions, type Deal } from "@/data/sampleDeals";
 import { generateDDReport } from "@/lib/generateDDReport";
-import { FileDown } from "lucide-react";
+import { FileDown, ClipboardList } from "lucide-react";
 
 function DealDDRow({ deal }: { deal: Deal }) {
   const { data: items } = useDDItemsForDeal(deal.id);
@@ -50,6 +50,7 @@ function DealDDRow({ deal }: { deal: Deal }) {
 
 export default function DueDiligencePage() {
   const { deals, loading } = useDeals();
+  const navigate = useNavigate();
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
@@ -65,9 +66,23 @@ export default function DueDiligencePage() {
           <p className="text-slate-500 text-sm mt-1">Track due diligence progress across all active deals</p>
         </div>
 
-        {activeDeals.map((deal) => (
-          <DealDDRow key={deal.id} deal={deal} />
-        ))}
+        {activeDeals.length === 0 ? (
+          <EmptyState
+            icon={ClipboardList}
+            title="No active deals to diligence"
+            description="Due diligence checklists appear here for deals in screening, DD, IC approval, or documentation. Add a deal to the pipeline to get started."
+            action={
+              <button
+                onClick={() => navigate("/pipeline")}
+                className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Go to Pipeline
+              </button>
+            }
+          />
+        ) : (
+          activeDeals.map((deal) => <DealDDRow key={deal.id} deal={deal} />)
+        )}
       </div>
     </AppLayout>
   );
