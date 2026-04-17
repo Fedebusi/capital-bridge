@@ -154,13 +154,13 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <div className="relative min-h-screen flex items-center overflow-hidden">
+      <div className="relative min-h-[85vh] overflow-hidden">
         {/* Globe */}
         <div className="absolute right-[-150px] top-1/2 -translate-y-1/2 opacity-50 pointer-events-none select-none">
           <Globe />
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-8 pt-32 pb-20 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-8 pt-16 pb-20 relative z-10">
           {/* Subtitle */}
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-px bg-slate-300" />
