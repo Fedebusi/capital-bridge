@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import InvestorLayout from "@/components/layout/InvestorLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { formatMillions, formatPercent, type Deal } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -9,6 +10,7 @@ import { generateTaxReport } from "@/lib/generateTaxReport";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
 
 const portfolioHistory = [
   { month: "Jul", value: 820000, returns: 12000 },
@@ -133,6 +135,24 @@ export default function InvestorPortalPage() {
   const totalReturns = activeDeals.reduce((s, d) => s + d.accruedPIK, 0);
   const avgYield = activeDeals.length > 0 ? activeDeals.reduce((s, d) => s + d.totalRate, 0) / activeDeals.length : 0;
 
+  function buildPositionRows(): Record<string, unknown>[] {
+    return activeDeals.map((d) => ({
+      Project: d.projectName,
+      Borrower: d.borrower,
+      Location: d.location,
+      "Asset Type": d.assetType,
+      Stage: d.stage,
+      "Loan Amount (EUR)": d.loanAmount,
+      "Disbursed (EUR)": d.disbursedAmount,
+      "Outstanding (EUR)": d.outstandingPrincipal,
+      "Accrued PIK (EUR)": d.accruedPIK,
+      "Total Rate (%)": d.totalRate,
+      "LTV (%)": d.ltv,
+      "Construction Progress (%)": d.constructionProgress,
+      Maturity: d.maturityDate,
+    }));
+  }
+
   function handleExportCsv() {
     if (activeDeals.length === 0) {
       toast.error("No active positions to export");
@@ -142,6 +162,36 @@ export default function InvestorPortalPage() {
     const today = new Date().toISOString().split("T")[0];
     downloadCsv(`CapitalBridge_Positions_${today}.csv`, csv);
     toast.success(`Exported ${activeDeals.length} position${activeDeals.length === 1 ? "" : "s"}`);
+  }
+
+  function handleExportExcel() {
+    if (activeDeals.length === 0) {
+      toast.error("No active positions to export");
+      return;
+    }
+    const returnsRows = portfolioHistory.map((h) => ({
+      Month: h.month,
+      "NAV (EUR)": h.value,
+      "Returns (EUR)": h.returns,
+    }));
+    const allocationRows = allocationData.map((a) => ({
+      Tranche: a.name,
+      "Allocation (%)": a.value,
+    }));
+    const upcomingRows = upcomingPayments.map((p) => ({
+      Project: p.project,
+      Type: p.type,
+      Date: p.date,
+      "Amount (EUR)": p.amount,
+      Status: p.status,
+    }));
+    exportToExcel(stampedFilename("InvestorPortal"), [
+      { name: "Positions", rows: buildPositionRows() },
+      { name: "Returns", rows: returnsRows },
+      { name: "Allocation", rows: allocationRows },
+      { name: "Upcoming Payments", rows: upcomingRows },
+    ]);
+    toast.success(`Exported ${activeDeals.length} position${activeDeals.length === 1 ? "" : "s"} to Excel`);
   }
 
   function handleTaxReport() {
@@ -165,7 +215,7 @@ export default function InvestorPortalPage() {
             </p>
           </header>
 
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="bg-slate-50 rounded-2xl p-6 flex flex-col gap-4">
               <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center">
                 <Download className="h-6 w-6 text-accent" />
@@ -191,6 +241,26 @@ export default function InvestorPortalPage() {
                 <FileSpreadsheet className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
+                <h3 className="text-lg font-bold text-primary tracking-tight">Portfolio Export (Excel)</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Multi-sheet workbook with positions, returns, allocation and upcoming payments.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                className="self-start rounded-full bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 transition-colors inline-flex items-center gap-2"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+                Download Excel
+              </button>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-6 flex flex-col gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-slate-200 flex items-center justify-center">
+                <FileSpreadsheet className="h-6 w-6 text-slate-600" />
+              </div>
+              <div>
                 <h3 className="text-lg font-bold text-primary tracking-tight">Positions Export (CSV)</h3>
                 <p className="text-sm text-slate-500 mt-1">
                   Machine-readable snapshot of every active position — loan, rate, LTV, maturity.
@@ -199,7 +269,7 @@ export default function InvestorPortalPage() {
               <button
                 type="button"
                 onClick={handleExportCsv}
-                className="self-start rounded-full bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 transition-colors inline-flex items-center gap-2"
+                className="self-start rounded-full bg-slate-700 text-white px-5 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors inline-flex items-center gap-2"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Download CSV
@@ -255,15 +325,11 @@ export default function InvestorPortalPage() {
             <p className="text-slate-500 text-base mt-2">Welcome back. Here's your investment summary.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              className="bg-slate-50 hover:bg-slate-100 px-5 py-3 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
-              title="Export positions as CSV"
-            >
-              <FileSpreadsheet className="h-4 w-4" />
-              Export CSV
-            </button>
+            <ExportMenu
+              disabled={activeDeals.length === 0}
+              onExcel={handleExportExcel}
+              onCsv={handleExportCsv}
+            />
             <button
               type="button"
               onClick={handleTaxReport}

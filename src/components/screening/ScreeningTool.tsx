@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { CheckCircle2, XCircle, Search, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
 
 interface ScreeningResult {
   label: string;
@@ -67,8 +70,59 @@ export default function ScreeningTool() {
     setResults(null);
   };
 
+  const buildExportRows = () => {
+    const inputRows = [
+      { Field: "Project Name", Value: formData.projectName },
+      { Field: "Borrower / Sponsor", Value: formData.borrower },
+      { Field: "Asset Type", Value: formData.assetType },
+      { Field: "Location", Value: formData.location },
+      { Field: "Loan Amount (EUR)", Value: formData.loanAmount },
+      { Field: "GDV (EUR)", Value: formData.gdv },
+      { Field: "Total Cost (EUR)", Value: formData.totalCost },
+      { Field: "Pre-Sales (%)", Value: formData.preSales },
+      { Field: "Developer Projects", Value: formData.developerProjects },
+    ];
+    const resultRows = (results ?? []).map((r) => ({
+      Criterion: r.label,
+      Value: r.value,
+      Threshold: r.threshold,
+      Pass: r.pass ? "Yes" : "No",
+    }));
+    const criteriaRows = [
+      { Criterion: "Max LTV", Threshold: `${defaultCriteria.maxLTV}%` },
+      { Criterion: "Max LTC", Threshold: `${defaultCriteria.maxLTC}%` },
+      { Criterion: "Min Ticket", Threshold: `€${defaultCriteria.minTicket.toLocaleString()}` },
+      { Criterion: "Max Ticket", Threshold: `€${defaultCriteria.maxTicket.toLocaleString()}` },
+      { Criterion: "Min Developer Projects", Threshold: `${defaultCriteria.minDeveloperProjects}` },
+      { Criterion: "Min Pre-Sales", Threshold: `${defaultCriteria.minPreSales}%` },
+      { Criterion: "Accepted Asset Types", Threshold: defaultCriteria.acceptedAssetTypes.join("; ") },
+    ];
+    return { inputRows, resultRows, criteriaRows };
+  };
+
+  const handleExportExcel = () => {
+    const { inputRows, resultRows, criteriaRows } = buildExportRows();
+    exportToExcel(stampedFilename("Screening"), [
+      { name: "Inputs", rows: inputRows },
+      { name: "Results", rows: resultRows.length > 0 ? resultRows : [{ Criterion: "(no results yet)", Value: "", Threshold: "", Pass: "" }] },
+      { name: "Fund Criteria", rows: criteriaRows },
+    ]);
+  };
+
+  const handleExportCsv = () => {
+    const { resultRows, criteriaRows } = buildExportRows();
+    const rows = resultRows.length > 0 ? resultRows : criteriaRows;
+    exportToCsv(stampedFilename("Screening"), rows);
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <ExportMenu
+          onExcel={handleExportExcel}
+          onCsv={handleExportCsv}
+        />
+      </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-card">
           <h2 className="font-display text-lg font-semibold text-primary mb-4">Quick Deal Screening</h2>

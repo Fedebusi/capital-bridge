@@ -1,11 +1,14 @@
 import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { formatCurrency } from "@/data/sampleDeals";
 import { generatePIKSchedule } from "@/data/pikEngine";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { TrendingUp } from "lucide-react";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
 
 export default function PIKEnginePage() {
   const { deals, loading } = useDeals();
@@ -37,9 +40,60 @@ export default function PIKEnginePage() {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-primary tracking-tight">PIK Engine & Interest Accrual</h1>
-          <p className="text-slate-500 text-base mt-2">Monthly interest calculation, PIK capitalization, and exposure projection across active deals</p>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">PIK Engine & Interest Accrual</h1>
+            <p className="text-slate-500 text-base mt-2">Monthly interest calculation, PIK capitalization, and exposure projection across active deals</p>
+          </div>
+          <ExportMenu
+            disabled={summaries.length === 0}
+            onExcel={() => {
+              const summaryRows = summaries.map(({ deal, pik, current }) => ({
+                Project: deal.projectName,
+                "Cash Rate (%)": deal.interestRate,
+                "PIK Spread (%)": deal.pikSpread,
+                "Principal (EUR)": current?.closingPrincipal ?? 0,
+                "PIK Accrued (EUR)": current?.closingPIK ?? 0,
+                "Total Exposure (EUR)": current?.closingExposure ?? 0,
+                "Monthly Accrual (EUR)": (current?.cashInterest ?? 0) + (current?.pikAccrual ?? 0),
+                "Projected PIK at Maturity (EUR)": pik.projectedPIKAtMaturity,
+                "Projected Exposure at Maturity (EUR)": pik.projectedTotalExposureAtMaturity,
+                "Month": `${pik.currentMonthIndex + 1}/${deal.tenor}`,
+              }));
+              const scheduleRows = summaries.flatMap(({ deal, pik }) =>
+                pik.schedule.map((e) => ({
+                  Deal: deal.projectName,
+                  Month: e.month,
+                  Date: e.date,
+                  "Opening Principal (EUR)": e.openingPrincipal,
+                  "Opening PIK (EUR)": e.openingPIK,
+                  "Drawdown (EUR)": e.drawdown,
+                  "Repayment (EUR)": e.repayment,
+                  "Cash Interest (EUR)": e.cashInterest,
+                  "PIK Accrual (EUR)": e.pikAccrual,
+                  "Closing Principal (EUR)": e.closingPrincipal,
+                  "Closing PIK (EUR)": e.closingPIK,
+                  "Closing Exposure (EUR)": e.closingExposure,
+                })),
+              );
+              exportToExcel(stampedFilename("PIKEngine"), [
+                { name: "Summary", rows: summaryRows },
+                { name: "Schedule", rows: scheduleRows },
+              ]);
+            }}
+            onCsv={() =>
+              exportToCsv(
+                stampedFilename("PIKEngine"),
+                summaries.map(({ deal, pik, current }) => ({
+                  Project: deal.projectName,
+                  "Principal (EUR)": current?.closingPrincipal ?? 0,
+                  "PIK Accrued (EUR)": current?.closingPIK ?? 0,
+                  "Total Exposure (EUR)": current?.closingExposure ?? 0,
+                  "Projected Exposure at Maturity (EUR)": pik.projectedTotalExposureAtMaturity,
+                })),
+              )
+            }
+          />
         </div>
 
         {/* Portfolio Summary */}
