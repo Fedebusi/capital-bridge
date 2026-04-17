@@ -30,20 +30,25 @@ export default function PipelineDealDot({
 
   const isRejected = deal.stage === "rejected";
 
+  // Stack deals with overlap instead of gaps so they always fit the column.
+  // Negative margin-top pulls each successive dot up by 18px so a 3-dot stack
+  // occupies ~72px total (36 + 18 + 18) rather than 120px.
+  const overlapMarginTop = stackIndex === 0 ? 0 : -18;
+
   return (
     <Link
       to={`/deals/${deal.id}`}
       className={cn(
         "group/dot relative flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-bold",
         "shadow-sm ring-2 ring-white transition-all duration-200",
-        "hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent",
+        "hover:scale-110 hover:shadow-md hover:z-10 focus:outline-none focus:ring-2 focus:ring-accent",
         isRejected
           ? "bg-red-100 text-red-700"
           : highlighted
             ? "bg-accent text-white"
             : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200",
       )}
-      style={{ marginTop: stackIndex > 0 ? stackIndex * 6 : 0 }}
+      style={{ marginTop: overlapMarginTop, zIndex: 10 - stackIndex }}
       aria-label={`${deal.projectName} — ${stageLabels[deal.stage]}`}
     >
       {initials || "D"}

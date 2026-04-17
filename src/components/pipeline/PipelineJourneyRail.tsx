@@ -127,8 +127,9 @@ function HorizontalRail({
   return (
     <div className="overflow-x-auto pb-4 -mx-2 px-2">
       <div className="relative min-w-[1100px]">
-        {/* The continuous rail line */}
-        <div className="absolute left-0 right-0 top-[76px] h-0.5 flex">
+        {/* The continuous rail line — sits at the vertical center of the phase
+            nodes (stack is h-[72px], nodes are h-8 so center is at 72 + 16). */}
+        <div className="pointer-events-none absolute left-0 right-0 top-[86px] h-0.5 flex">
           {phaseDefinitions.map((phase, i) => {
             if (i === phaseDefinitions.length - 1) return null;
             const isCompleted = phase.number < furthestActive;
@@ -268,8 +269,9 @@ function PhaseColumn({
       onMouseEnter={() => onHover(phaseId)}
       onMouseLeave={() => onHover(null)}
     >
-      {/* Deals stacked above the node */}
-      <div className="flex h-16 flex-col items-center justify-end gap-1">
+      {/* Deals stacked above the node — fixed height keeps the rail line aligned.
+          Dots overlap (see PipelineDealDot) so 1-3 deals never exceed the box. */}
+      <div className="relative flex h-[72px] flex-col-reverse items-center justify-start">
         {phaseDeals.slice(0, 3).map((deal, i) => (
           <PipelineDealDot
             key={deal.id}
@@ -279,7 +281,10 @@ function PhaseColumn({
           />
         ))}
         {phaseDeals.length > 3 && (
-          <span className="rounded-full bg-slate-200 px-1.5 py-0.5 text-[9px] font-bold text-slate-600">
+          <span
+            className="absolute -top-1 right-0 translate-x-1/2 rounded-full bg-slate-900 px-1.5 py-0.5 text-[9px] font-bold text-white shadow-sm"
+            aria-label={`${phaseDeals.length - 3} more deals at this phase`}
+          >
             +{phaseDeals.length - 3}
           </span>
         )}
@@ -340,14 +345,16 @@ function PhaseNode({
   return (
     <div
       className={cn(
-        "relative z-10 flex items-center justify-center rounded-full font-bold transition-all duration-200",
+        // All nodes share the same box (h-8 w-8) so the rail passes through
+        // their centers at the same Y across every column.
+        "relative z-10 flex h-8 w-8 items-center justify-center rounded-full font-bold text-[11px] transition-all duration-200",
         isCurrent
-          ? "h-9 w-9 bg-accent text-white text-xs shadow-md shadow-accent/30 ring-4 ring-accent/15"
+          ? "bg-accent text-white shadow-md shadow-accent/30 ring-4 ring-accent/15"
           : isCompleted
-            ? "h-7 w-7 bg-emerald-500 text-white text-[11px]"
+            ? "bg-emerald-500 text-white"
             : hasDeals
-              ? "h-7 w-7 bg-amber-100 text-amber-700 text-[11px] ring-2 ring-amber-200"
-              : "h-6 w-6 bg-white text-slate-400 text-[10px] ring-2 ring-slate-200",
+              ? "bg-amber-100 text-amber-700 ring-2 ring-amber-200"
+              : "bg-white text-slate-400 ring-2 ring-slate-200",
         isHighlighted && !isCurrent && "scale-110",
         className,
       )}
