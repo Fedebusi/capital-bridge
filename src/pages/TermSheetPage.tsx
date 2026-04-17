@@ -1,21 +1,27 @@
 import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 import { formatCurrency, stageLabels, stageColors, type Deal } from "@/data/sampleDeals";
-import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
+import { termSheetStatusLabels, termSheetStatusColors, type TermSheet, type EnhancedWaiver } from "@/data/termSheetData";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer, FileText } from "lucide-react";
 import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
+import { termSheetRow, waiverRow } from "@/lib/exports/rowBuilders";
 
 function TermSheetCard({
   deal,
   onRender,
+  onTermSheet,
 }: {
   deal: Deal;
   onRender: (id: string, rendered: boolean) => void;
+  onTermSheet: (dealId: string, dealName: string, ts: TermSheet | null, waivers: EnhancedWaiver[]) => void;
 }) {
   const { data: ts, loading: tsLoading } = useTermSheetForDeal(deal.id);
   const { data: waivers } = useWaiversForDeal(deal.id);
@@ -24,6 +30,10 @@ function TermSheetCard({
   useEffect(() => {
     onRender(deal.id, rendered);
   }, [deal.id, rendered, onRender]);
+
+  useEffect(() => {
+    if (!tsLoading) onTermSheet(deal.id, deal.projectName, ts ?? null, waivers);
+  }, [deal.id, deal.projectName, ts, waivers, tsLoading, onTermSheet]);
 
   if (tsLoading) return null;
   if (!ts) return null;
@@ -232,6 +242,23 @@ export default function TermSheetPage() {
   const { deals, loading } = useDeals();
   const navigate = useNavigate();
   const [rendered, setRendered] = useState<Record<string, boolean>>({});
+  const [tsByDeal, setTsByDeal] = useState<Record<string, { name: string; ts: TermSheet | null; waivers: EnhancedWaiver[] }>>({});
+
+  const registerTermSheet = useCallback(
+    (dealId: string, dealName: string, ts: TermSheet | null, waivers: EnhancedWaiver[]) => {
+      setTsByDeal((prev) => {
+        const existing = prev[dealId];
+        if (existing && existing.ts === ts && existing.waivers === waivers && existing.name === dealName) return prev;
+        return { ...prev, [dealId]: { name: dealName, ts, waivers } };
+      });
+    },
+    [],
+  );
+
+  const termSheetRows = Object.values(tsByDeal)
+    .filter((v) => v.ts)
+    .map((v) => termSheetRow(v.name, v.ts as TermSheet));
+  const waiverRows = Object.values(tsByDeal).flatMap((v) => v.waivers.map((w) => waiverRow(v.name, w)));
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
@@ -243,11 +270,22 @@ export default function TermSheetPage() {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <header className="flex justify-between items-start">
+        <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-primary tracking-tight">Term Sheets & Covenants</h1>
             <p className="text-slate-500 text-base mt-2">Term sheet lifecycle, key terms, security packages, and covenant waivers</p>
           </div>
+          <ExportMenu
+            disabled={termSheetRows.length === 0}
+            label="Export all"
+            onExcel={() =>
+              exportToExcel(stampedFilename("TermSheets"), [
+                { name: "Term Sheets", rows: termSheetRows },
+                { name: "Waivers", rows: waiverRows },
+              ])
+            }
+            onCsv={() => exportToCsv(stampedFilename("TermSheets"), termSheetRows)}
+          />
         </header>
 
         {deals.length === 0 ? (
@@ -273,6 +311,7 @@ export default function TermSheetPage() {
                 onRender={(id, r) =>
                   setRendered((prev) => (prev[id] === r ? prev : { ...prev, [id]: r }))
                 }
+                onTermSheet={registerTermSheet}
               />
             ))}
             {renderedCount === 0 && (
