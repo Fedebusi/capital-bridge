@@ -8,7 +8,7 @@ import type {
   DbSecurityItem, DbTermSheet, DbTermSheetVersion, DbWaiver,
   DbSiteVisit, DbConstructionCertification, DbMonitoringReport,
   DbBorrowerContact, DbCorporateEntity, DbKYCRecord, DbCompletedProject,
-  DbAuditLog,
+  DbAuditLog, DbDealLifecycle, DbLifecyclePhase, DbPhaseSubstep, DbPhaseMilestone,
 } from "@/types/database";
 
 // ===== DEALS =====
@@ -592,6 +592,76 @@ export function useMonitoringReports(dealId: string) {
       return data as DbMonitoringReport[];
     },
     enabled: isSupabaseConfigured() && !!dealId,
+  });
+}
+
+// ===== LIFECYCLE =====
+
+export function useDealLifecycle(dealId: string) {
+  return useQuery({
+    queryKey: ["deal_lifecycles", dealId],
+    queryFn: async (): Promise<DbDealLifecycle | null> => {
+      if (!isSupabaseConfigured()) return null;
+      const { data, error } = await supabase!
+        .from("deal_lifecycles")
+        .select("*")
+        .eq("deal_id", dealId)
+        .maybeSingle();
+      if (error) throw error;
+      return data as DbDealLifecycle | null;
+    },
+    enabled: isSupabaseConfigured() && !!dealId,
+  });
+}
+
+export function useLifecyclePhases(lifecycleId: string) {
+  return useQuery({
+    queryKey: ["lifecycle_phases", lifecycleId],
+    queryFn: async (): Promise<DbLifecyclePhase[]> => {
+      if (!isSupabaseConfigured()) return [];
+      const { data, error } = await supabase!
+        .from("lifecycle_phases")
+        .select("*")
+        .eq("lifecycle_id", lifecycleId)
+        .order("number");
+      if (error) throw error;
+      return data as DbLifecyclePhase[];
+    },
+    enabled: isSupabaseConfigured() && !!lifecycleId,
+  });
+}
+
+export function usePhaseSubsteps(phaseId: string) {
+  return useQuery({
+    queryKey: ["phase_substeps", phaseId],
+    queryFn: async (): Promise<DbPhaseSubstep[]> => {
+      if (!isSupabaseConfigured()) return [];
+      const { data, error } = await supabase!
+        .from("phase_substeps")
+        .select("*")
+        .eq("phase_id", phaseId)
+        .order("created_at");
+      if (error) throw error;
+      return data as DbPhaseSubstep[];
+    },
+    enabled: isSupabaseConfigured() && !!phaseId,
+  });
+}
+
+export function usePhaseMilestones(phaseId: string) {
+  return useQuery({
+    queryKey: ["phase_milestones", phaseId],
+    queryFn: async (): Promise<DbPhaseMilestone[]> => {
+      if (!isSupabaseConfigured()) return [];
+      const { data, error } = await supabase!
+        .from("phase_milestones")
+        .select("*")
+        .eq("phase_id", phaseId)
+        .order("created_at");
+      if (error) throw error;
+      return data as DbPhaseMilestone[];
+    },
+    enabled: isSupabaseConfigured() && !!phaseId,
   });
 }
 

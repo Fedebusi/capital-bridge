@@ -12,10 +12,22 @@ import type {
   DbConstructionCertification,
   DbMonitoringReport,
   DbAuditLog,
+  DbDealLifecycle,
+  DbLifecyclePhase,
+  DbPhaseSubstep,
+  DbPhaseMilestone,
 } from "@/types/database";
 import type { DDItem, ApprovalRecord, ICVote, LegalDocument, ConditionPrecedent, SecurityItem } from "@/data/dealModules";
 import type { TermSheet, EnhancedWaiver } from "@/data/termSheetData";
 import type { SiteVisit, ConstructionCertification, MonitoringReport } from "@/data/constructionMonitoring";
+import type {
+  DealLifecycle,
+  LifecyclePhase,
+  PhaseSubstep,
+  PhaseMilestone,
+  PhaseId,
+  PhaseAgent,
+} from "@/data/lifecyclePhases";
 
 export function dbDDItemToFrontend(row: DbDueDiligenceItem): DDItem {
   return {
@@ -230,6 +242,69 @@ export function dbCertificationToFrontend(row: DbConstructionCertification): Con
     approvedDate: row.approved_date ?? undefined,
     linkedDrawdownId: row.linked_drawdown_id ?? undefined,
     notes: row.notes ?? undefined,
+  };
+}
+
+export function dbPhaseSubstepToFrontend(row: DbPhaseSubstep): PhaseSubstep {
+  return {
+    id: row.id,
+    label: row.label,
+    description: row.description,
+    status: row.status,
+    completedDate: row.completed_date ?? undefined,
+    assignee: row.assignee ?? undefined,
+    notes: row.notes ?? undefined,
+  };
+}
+
+export function dbPhaseMilestoneToFrontend(row: DbPhaseMilestone): PhaseMilestone {
+  return {
+    description: row.description,
+    achieved: row.achieved,
+    achievedDate: row.achieved_date ?? undefined,
+    evidence: row.evidence ?? undefined,
+  };
+}
+
+export function dbLifecyclePhaseToFrontend(
+  row: DbLifecyclePhase,
+  substeps: DbPhaseSubstep[] = [],
+  milestones: DbPhaseMilestone[] = [],
+): LifecyclePhase {
+  return {
+    id: row.phase_id as PhaseId,
+    number: row.number,
+    name: row.name,
+    description: row.description,
+    agents: (row.agents ?? []) as PhaseAgent[],
+    milestones: milestones.map(dbPhaseMilestoneToFrontend),
+    substeps: substeps.map(dbPhaseSubstepToFrontend),
+    status: row.status,
+    startDate: row.start_date ?? undefined,
+    completedDate: row.completed_date ?? undefined,
+    estimatedDuration: row.estimated_duration ?? undefined,
+    dependsOn: (row.depends_on ?? []) as PhaseId[],
+    notes: row.notes ?? undefined,
+  };
+}
+
+export function dbLifecycleToFrontend(
+  lifecycle: DbDealLifecycle,
+  phases: DbLifecyclePhase[],
+  substepsByPhase: Record<string, DbPhaseSubstep[]> = {},
+  milestonesByPhase: Record<string, DbPhaseMilestone[]> = {},
+): DealLifecycle {
+  const sortedPhases = [...phases].sort((a, b) => a.number - b.number);
+  return {
+    dealId: lifecycle.deal_id,
+    currentPhase: lifecycle.current_phase as PhaseId,
+    phases: sortedPhases.map((p) =>
+      dbLifecyclePhaseToFrontend(
+        p,
+        substepsByPhase[p.id] ?? [],
+        milestonesByPhase[p.id] ?? [],
+      ),
+    ),
   };
 }
 
