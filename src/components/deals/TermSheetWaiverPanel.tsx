@@ -1,16 +1,25 @@
-import { sampleTermSheets, sampleEnhancedWaivers, termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
+import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
 import { formatCurrency } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle } from "lucide-react";
+import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 
 interface TermSheetWaiverPanelProps {
   dealId: string;
 }
 
 export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelProps) {
-  const ts = sampleTermSheets[dealId];
-  const waivers = sampleEnhancedWaivers[dealId] || [];
+  const { data: ts, loading: tsLoading } = useTermSheetForDeal(dealId);
+  const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
+
+  if (tsLoading || waiversLoading) {
+    return (
+      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
+      </div>
+    );
+  }
 
   if (!ts && waivers.length === 0) {
     return (

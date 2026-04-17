@@ -1,6 +1,11 @@
-import { sampleLegalDocs, sampleConditionsPrecedent, sampleSecurityPackages, type LegalDocStatus } from "@/data/dealModules";
+import { type LegalDocStatus } from "@/data/dealModules";
 import { cn } from "@/lib/utils";
 import { FileText, CheckCircle2, Clock, AlertTriangle, Shield, Lock } from "lucide-react";
+import {
+  useLegalDocsForDeal,
+  useConditionsPrecedentForDeal,
+  useSecurityItemsForDeal,
+} from "@/hooks/useDealSubdata";
 
 const docStatusConfig: Record<LegalDocStatus, { label: string; className: string }> = {
   not_started: { label: "Not Started", className: "text-slate-500 bg-muted" },
@@ -30,9 +35,17 @@ interface LegalSecurityPanelProps {
 }
 
 export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) {
-  const legalDocs = sampleLegalDocs[dealId] || [];
-  const cps = sampleConditionsPrecedent[dealId] || [];
-  const security = sampleSecurityPackages[dealId] || [];
+  const { data: legalDocs, loading: legalLoading } = useLegalDocsForDeal(dealId);
+  const { data: cps, loading: cpsLoading } = useConditionsPrecedentForDeal(dealId);
+  const { data: security, loading: securityLoading } = useSecurityItemsForDeal(dealId);
+
+  if (legalLoading || cpsLoading || securityLoading) {
+    return (
+      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
+      </div>
+    );
+  }
 
   const hasData = legalDocs.length > 0 || cps.length > 0 || security.length > 0;
 

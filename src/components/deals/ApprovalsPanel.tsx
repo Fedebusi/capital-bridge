@@ -1,7 +1,8 @@
-import { sampleApprovals, sampleWaivers, type VoteDecision } from "@/data/dealModules";
+import { type VoteDecision } from "@/data/dealModules";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, AlertTriangle, Clock, Shield, FileText } from "lucide-react";
 import { formatCurrency } from "@/data/sampleDeals";
+import { useApprovalForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 
 const voteLabels: Record<VoteDecision, { label: string; className: string }> = {
   approve: { label: "Approved", className: "text-success bg-success/10" },
@@ -14,8 +15,16 @@ interface ApprovalsPanelProps {
 }
 
 export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
-  const approval = sampleApprovals[dealId];
-  const waivers = sampleWaivers[dealId] || [];
+  const { data: approval, loading: approvalLoading } = useApprovalForDeal(dealId);
+  const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
+
+  if (approvalLoading || waiversLoading) {
+    return (
+      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
+      </div>
+    );
+  }
 
   if (!approval && waivers.length === 0) {
     return (
@@ -83,23 +92,25 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
           </div>
 
           {/* Audit Trail */}
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
-            <div className="p-4 border-b border-slate-100">
-              <h3 className="font-display text-sm font-semibold text-primary">Audit Trail</h3>
-            </div>
-            <div className="p-4">
-              <div className="relative space-y-0 border-l-2 border-border ml-3">
-                {approval.auditTrail.map((entry, i) => (
-                  <div key={i} className="relative pl-6 pb-4 last:pb-0">
-                    <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-primary" />
-                    <p className="text-sm text-primary">{entry.action}</p>
-                    <p className="text-xs text-slate-500">{entry.user} • {entry.date}</p>
-                    {entry.detail && <p className="text-xs text-slate-500 italic">{entry.detail}</p>}
-                  </div>
-                ))}
+          {approval.auditTrail.length > 0 && (
+            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+              <div className="p-4 border-b border-slate-100">
+                <h3 className="font-display text-sm font-semibold text-primary">Audit Trail</h3>
+              </div>
+              <div className="p-4">
+                <div className="relative space-y-0 border-l-2 border-border ml-3">
+                  {approval.auditTrail.map((entry, i) => (
+                    <div key={i} className="relative pl-6 pb-4 last:pb-0">
+                      <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-primary" />
+                      <p className="text-sm text-primary">{entry.action}</p>
+                      <p className="text-xs text-slate-500">{entry.user} • {entry.date}</p>
+                      {entry.detail && <p className="text-xs text-slate-500 italic">{entry.detail}</p>}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </>
       )}
 
@@ -114,7 +125,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
               <div key={w.id} className="rounded-lg border border-warning/20 bg-warning/5 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-semibold text-primary">{w.covenantName} Waiver</p>
-                  <span className="rounded-md bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning">{w.status.replace("_", " ").toUpperCase()}</span>
+                  <span className="rounded-md bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning">{w.status.replace(/_/g, " ").toUpperCase()}</span>
                 </div>
                 <p className="text-xs text-slate-500">{w.reason}</p>
                 <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
