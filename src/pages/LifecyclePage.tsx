@@ -1,6 +1,7 @@
 import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import LifecycleProgressBar from "@/components/deals/LifecycleProgressBar";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { useLifecycleForDeal } from "@/hooks/useDealSubdata";
 import { stageLabels, stageColors, formatMillions, type Deal } from "@/data/sampleDeals";
@@ -12,12 +13,31 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Flag, Users, ArrowRight, GitBranch } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
+import { lifecyclePhaseRow } from "@/lib/exports/rowBuilders";
 
 export default function LifecyclePage() {
   const { deals, loading } = useDeals();
   const navigate = useNavigate();
   const [rendered, setRendered] = useState<Record<string, boolean>>({});
+  const [lifecycleByDeal, setLifecycleByDeal] = useState<Record<string, { name: string; lifecycle: DealLifecycle }>>({});
+
+  const registerLifecycle = useCallback((dealId: string, dealName: string, lifecycle: DealLifecycle | null) => {
+    setLifecycleByDeal((prev) => {
+      if (!lifecycle) {
+        if (!prev[dealId]) return prev;
+        const { [dealId]: _removed, ...rest } = prev;
+        return rest;
+      }
+      const existing = prev[dealId];
+      if (existing && existing.lifecycle === lifecycle && existing.name === dealName) return prev;
+      return { ...prev, [dealId]: { name: dealName, lifecycle } };
+    });
+  }, []);
+
+  const phaseRows = Object.values(lifecycleByDeal).flatMap((v) => lifecyclePhaseRow(v.name, v.lifecycle));
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
@@ -29,9 +49,20 @@ export default function LifecyclePage() {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-primary tracking-tight">Deal Lifecycle</h1>
-          <p className="text-slate-500 text-base mt-2">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">Deal Lifecycle</h1>
+            <p className="text-slate-500 text-base mt-2">12-phase workflow from origination to close-out — agents, milestones, and progress tracking</p>
+          </div>
+          <ExportMenu
+            disabled={phaseRows.length === 0}
+            onExcel={() =>
+              exportToExcel(stampedFilename("Lifecycle"), [
+                { name: "Phases", rows: phaseRows },
+              ])
+            }
+            onCsv={() => exportToCsv(stampedFilename("Lifecycle"), phaseRows)}
+          />
         </div>
 
         {deals.length === 0 ? (
@@ -67,6 +98,7 @@ export default function LifecyclePage() {
                   onRender={(id, r) =>
                     setRendered((prev) => (prev[id] === r ? prev : { ...prev, [id]: r }))
                   }
+                  onLifecycle={registerLifecycle}
                 />
               ))}
             </div>
@@ -95,9 +127,11 @@ export default function LifecyclePage() {
 function DealLifecycleCard({
   deal,
   onRender,
+  onLifecycle,
 }: {
   deal: Deal;
   onRender: (id: string, rendered: boolean) => void;
+  onLifecycle: (dealId: string, dealName: string, lifecycle: DealLifecycle | null) => void;
 }) {
   const { data: lifecycle } = useLifecycleForDeal(deal.id);
   const rendered = !!lifecycle;
@@ -105,6 +139,10 @@ function DealLifecycleCard({
   useEffect(() => {
     onRender(deal.id, rendered);
   }, [deal.id, rendered, onRender]);
+
+  useEffect(() => {
+    onLifecycle(deal.id, deal.projectName, lifecycle ?? null);
+  }, [deal.id, deal.projectName, lifecycle, onLifecycle]);
 
   if (!lifecycle) return null;
   return <DealLifecycleCardContent deal={deal} lifecycle={lifecycle} />;

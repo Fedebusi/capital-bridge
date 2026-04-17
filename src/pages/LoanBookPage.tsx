@@ -4,10 +4,13 @@ import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import { formatMillions, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
 import { useDeals } from "@/hooks/useDeals";
-import { exportDealsToExcel } from "@/lib/excelDealImport";
+import { ExportMenu } from "@/components/ui/ExportMenu";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
+import { dealRow } from "@/lib/exports/rowBuilders";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";
 import { cn } from "@/lib/utils";
-import { Search, ArrowUpDown, Download, Wallet, Plus } from "lucide-react";
+import { Search, ArrowUpDown, Wallet, Plus } from "lucide-react";
 
 const filterStages: { label: string; value: DealStage | "all" }[] = [
   { label: "All", value: "all" },
@@ -53,13 +56,15 @@ export default function LoanBookPage() {
             <h1 className="text-4xl font-bold text-primary tracking-tight">Loan Book</h1>
             <p className="text-slate-500 text-base mt-2">Active and historical loan positions</p>
           </div>
-          <button
-            onClick={() => exportDealsToExcel(filtered)}
-            className="bg-slate-50 hover:bg-slate-100 px-5 py-2.5 rounded-full text-sm font-semibold text-slate-700 transition-colors flex items-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Export to Excel
-          </button>
+          <ExportMenu
+            disabled={filtered.length === 0}
+            onExcel={() =>
+              exportToExcel(stampedFilename("LoanBook"), [
+                { name: "Loan Book", rows: filtered.map(dealRow) },
+              ])
+            }
+            onCsv={() => exportToCsv(stampedFilename("LoanBook"), filtered.map(dealRow))}
+          />
         </header>
 
         {/* Summary Cards */}

@@ -1,22 +1,29 @@
 import AppLayout from "@/components/layout/AppLayout";
 import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
 import ApprovalsPanel from "@/components/deals/ApprovalsPanel";
+import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { useApprovalForDeal } from "@/hooks/useDealSubdata";
 import { stageLabels, stageColors, formatMillions, type Deal } from "@/data/sampleDeals";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
+import { exportToCsv } from "@/lib/exports/exportToCsv";
+import { approvalRow, icVoteRow } from "@/lib/exports/rowBuilders";
+import type { ApprovalRecord } from "@/data/dealModules";
 
 function DealApprovalRow({
   deal,
   variant,
   onRender,
+  onApproval,
 }: {
   deal: Deal;
   variant: "pending" | "completed";
   onRender: (id: string, rendered: boolean) => void;
+  onApproval?: (dealId: string, dealName: string, approval: ApprovalRecord | null) => void;
 }) {
   const { data: approval } = useApprovalForDeal(deal.id);
   const isPending = approval?.status === "pending_ic" || approval?.status === "pending_capital_partner";
@@ -25,6 +32,10 @@ function DealApprovalRow({
   useEffect(() => {
     onRender(deal.id, shouldRender);
   }, [deal.id, shouldRender, onRender]);
+
+  useEffect(() => {
+    if (variant === "pending" && onApproval) onApproval(deal.id, deal.projectName, approval);
+  }, [deal.id, deal.projectName, approval, variant, onApproval]);
 
   if (!shouldRender || !approval) return null;
 
@@ -62,6 +73,23 @@ export default function ApprovalsPage() {
   const navigate = useNavigate();
   const [pendingRendered, setPendingRendered] = useState<Record<string, boolean>>({});
   const [completedRendered, setCompletedRendered] = useState<Record<string, boolean>>({});
+  const [approvalsByDeal, setApprovalsByDeal] = useState<Record<string, { name: string; approval: ApprovalRecord }>>({});
+
+  const registerApproval = useCallback((dealId: string, dealName: string, approval: ApprovalRecord | null) => {
+    setApprovalsByDeal((prev) => {
+      if (!approval) {
+        if (!prev[dealId]) return prev;
+        const { [dealId]: _removed, ...rest } = prev;
+        return rest;
+      }
+      const existing = prev[dealId];
+      if (existing && existing.approval === approval && existing.name === dealName) return prev;
+      return { ...prev, [dealId]: { name: dealName, approval } };
+    });
+  }, []);
+
+  const approvalsExport = Object.values(approvalsByDeal).map(({ name, approval }) => approvalRow(name, approval));
+  const votesExport = Object.values(approvalsByDeal).flatMap(({ name, approval }) => icVoteRow(name, approval));
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
@@ -79,9 +107,21 @@ export default function ApprovalsPage() {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-primary tracking-tight">Approvals</h1>
-          <p className="text-slate-500 text-base mt-2">IC voting, capital partner sign-off, and audit trail</p>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-primary tracking-tight">Approvals</h1>
+            <p className="text-slate-500 text-base mt-2">IC voting, capital partner sign-off, and audit trail</p>
+          </div>
+          <ExportMenu
+            disabled={approvalsExport.length === 0}
+            onExcel={() =>
+              exportToExcel(stampedFilename("Approvals"), [
+                { name: "Approvals", rows: approvalsExport },
+                { name: "IC Votes", rows: votesExport },
+              ])
+            }
+            onCsv={() => exportToCsv(stampedFilename("Approvals"), approvalsExport)}
+          />
         </div>
 
         {deals.length === 0 ? (
@@ -112,6 +152,7 @@ export default function ApprovalsPage() {
                   onRender={(id, rendered) =>
                     setPendingRendered((prev) => (prev[id] === rendered ? prev : { ...prev, [id]: rendered }))
                   }
+                  onApproval={registerApproval}
                 />
               ))}
               {pendingCount === 0 && (
