@@ -666,6 +666,53 @@ export function useUpdateDrawdown() {
   });
 }
 
+export function useCreateDDDocument() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (doc: Omit<DbDDDocument, "id">) => {
+      if (!isSupabaseConfigured()) throw new Error("Supabase not configured");
+      const { data, error } = await supabase!.from("dd_documents").insert(doc).select().single();
+      if (error) throw error;
+      return data as DbDDDocument;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["dd_documents", data.dd_item_id] });
+    },
+  });
+}
+
+export function useCreateSiteVisitPhoto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (photo: { site_visit_id: string; storage_path: string; caption: string }) => {
+      if (!isSupabaseConfigured()) throw new Error("Supabase not configured");
+      const { data, error } = await supabase!.from("site_visit_photos").insert(photo).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["site_visits"] });
+      queryClient.invalidateQueries({ queryKey: ["site_visit_photos", variables.site_visit_id] });
+    },
+  });
+}
+
+export function useSiteVisitPhotos(siteVisitId: string) {
+  return useQuery({
+    queryKey: ["site_visit_photos", siteVisitId],
+    queryFn: async () => {
+      if (!isSupabaseConfigured()) return [];
+      const { data, error } = await supabase!
+        .from("site_visit_photos")
+        .select("*")
+        .eq("site_visit_id", siteVisitId);
+      if (error) throw error;
+      return data as { id: string; site_visit_id: string; storage_path: string; caption: string }[];
+    },
+    enabled: isSupabaseConfigured() && !!siteVisitId,
+  });
+}
+
 // ===== FILE STORAGE =====
 
 const ALLOWED_FILE_TYPES = [
