@@ -1,7 +1,8 @@
-import { sampleDueDiligence, ddCategoryLabels, type DDCategory, type DDItem } from "@/data/dealModules";
+import { ddCategoryLabels, type DDCategory } from "@/data/dealModules";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Clock, AlertTriangle, FileText, Minus, ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useDDItemsForDeal } from "@/hooks/useDealSubdata";
 
 const statusConfig = {
   completed: { icon: CheckCircle2, label: "Completed", className: "text-success" },
@@ -16,9 +17,17 @@ interface DueDiligencePanelProps {
 }
 
 export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
-  const items = sampleDueDiligence[dealId] || [];
+  const { data: items, loading } = useDDItemsForDeal(dealId);
   const categories = Object.keys(ddCategoryLabels) as DDCategory[];
   const [expanded, setExpanded] = useState<string[]>(categories);
+
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
+      </div>
+    );
+  }
 
   const toggle = (cat: string) =>
     setExpanded(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);

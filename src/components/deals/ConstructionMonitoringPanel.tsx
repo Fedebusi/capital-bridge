@@ -1,18 +1,31 @@
-import { sampleSiteVisits, sampleCertifications, sampleMonitoringReports, sampleRetentions } from "@/data/constructionMonitoring";
+import { sampleRetentions } from "@/data/constructionMonitoring";
 import { formatCurrency } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Clock, AlertTriangle, Camera, FileText, HardHat, Banknote } from "lucide-react";
+import {
+  useSiteVisitsForDeal,
+  useCertificationsForDeal,
+  useMonitoringReportsForDeal,
+} from "@/hooks/useDealSubdata";
 
 interface ConstructionMonitoringPanelProps {
   dealId: string;
 }
 
 export default function ConstructionMonitoringPanel({ dealId }: ConstructionMonitoringPanelProps) {
-  const visits = sampleSiteVisits[dealId] || [];
-  const certs = sampleCertifications[dealId] || [];
-  const reports = sampleMonitoringReports[dealId] || [];
+  const { data: visits, loading: visitsLoading } = useSiteVisitsForDeal(dealId);
+  const { data: certs, loading: certsLoading } = useCertificationsForDeal(dealId);
+  const { data: reports, loading: reportsLoading } = useMonitoringReportsForDeal(dealId);
   const retention = sampleRetentions[dealId];
+
+  if (visitsLoading || certsLoading || reportsLoading) {
+    return (
+      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
+      </div>
+    );
+  }
 
   const hasData = visits.length > 0 || certs.length > 0 || reports.length > 0;
 
