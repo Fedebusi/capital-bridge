@@ -17,6 +17,9 @@ dist-ssr
 .env.local
 .env.production
 
+# Claude Code agent worktrees (isolation dir)
+.claude/worktrees/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
