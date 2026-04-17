@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer, FileText } from "lucide-react";
 import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
+import { buildTermSheetFromDeal } from "@/lib/buildTermSheetFromDeal";
 import { useCallback, useEffect, useState } from "react";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
 import { exportToCsv } from "@/lib/exports/exportToCsv";
@@ -23,8 +24,13 @@ function TermSheetCard({
   onRender: (id: string, rendered: boolean) => void;
   onTermSheet: (dealId: string, dealName: string, ts: TermSheet | null, waivers: EnhancedWaiver[]) => void;
 }) {
-  const { data: ts, loading: tsLoading } = useTermSheetForDeal(deal.id);
+  const { data: tsRow, loading: tsLoading } = useTermSheetForDeal(deal.id);
   const { data: waivers } = useWaiversForDeal(deal.id);
+
+  // If no term_sheets row exists yet, synthesize one from the deal so the
+  // download / preview always works (used heavily in live-mode demos before
+  // the term sheets table is seeded).
+  const ts = tsRow ?? (tsLoading ? null : buildTermSheetFromDeal(deal));
   const rendered = !tsLoading && !!ts;
 
   useEffect(() => {

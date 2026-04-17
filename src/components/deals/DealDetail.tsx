@@ -3,8 +3,10 @@ import { cn } from "@/lib/utils";
 import {
   ArrowLeft, Building, TrendingUp, AlertTriangle,
   CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature, Route,
-  Pencil, Trash2
+  Pencil, Trash2, Printer
 } from "lucide-react";
+import { useTermSheetForDeal } from "@/hooks/useDealSubdata";
+import TermSheetEditorDialog from "./TermSheetEditorDialog";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,6 +51,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showStageChange, setShowStageChange] = useState(false);
   const isLive = isSupabaseConfigured();
+  const { data: termSheet } = useTermSheetForDeal(deal.id);
 
   const stageOrder = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"] as const;
   const currentIdx = stageOrder.indexOf(deal.stage as typeof stageOrder[number]);
@@ -116,6 +119,20 @@ export default function DealDetail({ deal }: DealDetailProps) {
               Advance to {stageLabels[nextStage as keyof typeof stageLabels]}
             </button>
           )}
+          <TermSheetEditorDialog
+            deal={deal}
+            baseline={termSheet}
+            trigger={
+              <button
+                className="flex items-center gap-2 rounded-full bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors"
+                title="Preview, edit, and download term sheet"
+              >
+                <Printer className="h-4 w-4" />
+                Term sheet
+              </button>
+            }
+          />
+
           <DealFormDialog
             deal={deal}
             trigger={
