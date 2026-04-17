@@ -40,7 +40,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
   const isLive = isSupabaseConfigured();
 
   const stageOrder = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"] as const;
-  const currentIdx = stageOrder.indexOf(deal.stage as any);
+  const currentIdx = stageOrder.indexOf(deal.stage as typeof stageOrder[number]);
   const nextStage = currentIdx >= 0 && currentIdx < stageOrder.length - 1 ? stageOrder[currentIdx + 1] : null;
 
   async function handleStageChange(newStage: string) {
@@ -48,7 +48,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
       if (isLive) {
         await updateDeal.mutateAsync({ id: deal.id, stage: newStage });
       } else {
-        updateDealInContext(deal.id, { stage: newStage as any });
+        updateDealInContext(deal.id, { stage: newStage as Deal["stage"] });
       }
       toast.success(`Stage changed to ${stageLabels[newStage as keyof typeof stageLabels] || newStage}`);
       setShowStageChange(false);

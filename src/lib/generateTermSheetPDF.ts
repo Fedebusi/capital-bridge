@@ -101,7 +101,7 @@ export function generateTermSheetPDF(deal: Deal, ts: TermSheet) {
   // ============ SECTION 1: PARTIES ============
   addSection("PARTIES", [
     ["Lender", "CapitalBridge Fund I, S.C.A. SICAV-SIF (the \"Senior Lender\")"],
-    ["Borrower", `${deal.borrower} (the \"Borrower\")`],
+    ["Borrower", `${deal.borrower} (the "Borrower")`],
     ["Sponsor / Guarantor", deal.sponsor],
     ["Project Company (SPV)", `${deal.projectName} S.L.`],
     ["Project", `${deal.projectName} — ${deal.description.substring(0, 120)}...`],
@@ -123,7 +123,7 @@ export function generateTermSheetPDF(deal: Deal, ts: TermSheet) {
   // ============ SECTION 3: INTEREST & FEES ============
   addSection("INTEREST AND FEES", [
     ["Interest Rate", `${totalRate}% per annum, comprised of:\n• Cash Interest: ${kt.cashRate}% p.a., payable monthly in arrears\n• PIK Interest: ${kt.pikSpread}% p.a., capitalised monthly to outstanding principal`],
-    ["Senior Secured Facility\nInterest Rate", `${totalRate}%\nInterest shall be paid to the Senior Lender in accordance with the \"Payment of Interest\" paragraph above.`],
+    ["Senior Secured Facility\nInterest Rate", `${totalRate}%\nInterest shall be paid to the Senior Lender in accordance with the "Payment of Interest" paragraph above.`],
     ["Default Interest", "Additional 2.0% per annum on all overdue amounts, payable on demand"],
     ["Origination Fee", `${kt.originationFee}% of the Facility Amount (€${Math.round(kt.facility * kt.originationFee / 100).toLocaleString("es-ES")}), payable at first drawdown`],
     ["Exit Fee", `${kt.exitFee}% of the Facility Amount (€${Math.round(kt.facility * kt.exitFee / 100).toLocaleString("es-ES")}), payable upon repayment or maturity`],
