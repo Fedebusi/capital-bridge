@@ -1,18 +1,58 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { Users, Trophy, Target, Heart, MapPin, Mail, Globe, Sparkles } from "lucide-react";
+import { Trophy, Target, Handshake, Sparkles, MapPin, Mail, Globe } from "lucide-react";
 
 const team = [
-  { name: "Federico Busi", role: "Founder & CEO", bio: "Ex investment banker con passione per il real estate lending e il Milan. Sogna di finanziare il nuovo stadio rossonero.", funFact: "Forza AC Milan! 🔴⚫" },
-  { name: "Marco Rivera", role: "Head of Origination", bio: "15 anni di esperienza nel credito immobiliare. Ha originato oltre €500M di deals in Spagna e Italia.", funFact: "Tifoso del Milan anche lui, ovviamente." },
-  { name: "Ana Delgado", role: "Senior Analyst", bio: "Specializzata in due diligence e valutazione del rischio. CFA Charterholder.", funFact: "L'unica che non tifa Milan nel team. Nessuno è perfetto." },
-  { name: "Pablo Serrano", role: "Head of Risk", bio: "Ex KPMG, responsabile del monitoraggio covenants e costruzione. Parla 4 lingue.", funFact: "Ha convertito la moglie al tifo rossonero." },
+  {
+    name: "Federico Busi",
+    role: "Founder & CEO",
+    bio: "Former investment banker with over a decade of real estate finance experience across Southern Europe.",
+  },
+  {
+    name: "Marco Rivera",
+    role: "Head of Origination",
+    bio: "Fifteen years in real estate credit. Originated more than €500M of facilities across Spain and Italy.",
+  },
+  {
+    name: "Ana Delgado",
+    role: "Senior Analyst",
+    bio: "Specialist in due diligence and risk assessment. CFA Charterholder, former M&A advisory.",
+  },
+  {
+    name: "Pablo Serrano",
+    role: "Head of Risk",
+    bio: "Ex-KPMG. Leads covenant monitoring and construction oversight across the portfolio.",
+  },
 ];
 
 const values = [
-  { icon: Target, title: "Disciplina", description: "Criteri di investimento rigorosi. Non facciamo deals solo per fare volume. Come il Milan di Sacchi: sistema prima di tutto." },
-  { icon: Trophy, title: "Track Record", description: "Zero default, 12%+ IRR medio. I numeri parlano, come le 7 Champions del Milan." },
-  { icon: Heart, title: "Relazioni", description: "Trattiamo i borrower come partner, non come numeri. Rapporti a lungo termine." },
-  { icon: Sparkles, title: "Innovazione", description: "Tecnologia al servizio del lending. CapitalBridge è la prova che si può innovare anche nella finanza tradizionale." },
+  {
+    icon: Target,
+    title: "Discipline",
+    description: "Rigorous investment criteria. We pass on deals that do not fit the mandate — volume is never the goal.",
+  },
+  {
+    icon: Trophy,
+    title: "Track record",
+    description: "Zero defaults since inception and a 12%+ weighted average IRR across the book.",
+  },
+  {
+    icon: Handshake,
+    title: "Partnership",
+    description: "We treat borrowers as long-term counterparties, not transactions. Repeat business reflects it.",
+  },
+  {
+    icon: Sparkles,
+    title: "Technology",
+    description: "CapitalBridge is our in-house workflow, reporting, and monitoring platform, built for institutional scale.",
+  },
+];
+
+const stats = [
+  { value: "€2.4B", label: "Assets under management" },
+  { value: "142", label: "Facilities originated" },
+  { value: "12.1%", label: "Weighted average IRR" },
+  { value: "0", label: "Defaults to date" },
+  { value: "4.2yr", label: "Weighted average life" },
 ];
 
 export default function AboutPage() {
@@ -21,58 +61,61 @@ export default function AboutPage() {
       <div className="space-y-8">
         {/* Header */}
         <header>
-          <h1 className="text-4xl font-bold text-primary tracking-tight">About Us</h1>
-          <p className="text-slate-500 text-sm mt-1">Chi siamo, cosa facciamo, e perché il Milan vincerà la Champions</p>
+          <h1 className="text-4xl font-bold text-primary tracking-tight">About CapitalBridge</h1>
+          <p className="text-slate-500 text-base mt-2">Institutional real estate debt, managed with discipline.</p>
         </header>
 
         {/* Mission */}
-        <div className="bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-xl p-8 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full -translate-y-1/3 translate-x-1/4" />
-          <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-red-500/5 rounded-full translate-y-1/2" />
-          <div className="relative z-10 max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">La nostra missione</p>
+        <div className="bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-xl p-10 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/4" />
+          <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-white/5 rounded-full translate-y-1/2" />
+          <div className="relative z-10 max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">Our mission</p>
             <h2 className="text-3xl font-extrabold tracking-tight leading-tight">
-              Finanziare lo sviluppo immobiliare con disciplina istituzionale e passione rossonera.
+              Financing Spanish residential development with institutional discipline.
             </h2>
-            <p className="mt-4 text-white/60 leading-relaxed">
-              CapitalBridge è un fondo di debito istituzionale specializzato nel finanziamento di sviluppo immobiliare
-              in Spagna. Prestiamo a promotori selezionati per progetti residenziali, commerciali e di riqualificazione.
-              Il nostro approccio combina analisi rigorosa, tecnologia avanzata, e una cultura di squadra ispirata
-              ai valori del grande Milan di Berlusconi. Perché nel lending come nel calcio, servono visione,
-              disciplina e il coraggio di puntare in alto.
+            <p className="mt-5 text-white/70 leading-relaxed">
+              CapitalBridge is an institutional debt fund focused on residential, commercial, and
+              refurbishment projects across Spain. We lend to selected developers with strong track
+              records, delivering senior, mezzanine, and bridge facilities structured around rigorous
+              risk controls.
             </p>
-            <p className="mt-4 text-2xl">🔴⚫ Forza Milan, sempre! ⚫🔴</p>
+            <p className="mt-4 text-white/70 leading-relaxed">
+              Our approach combines disciplined underwriting, active portfolio monitoring, and a
+              proprietary workflow platform. Every facility is actively managed from origination
+              through close-out, with full transparency for our capital partners.
+            </p>
           </div>
         </div>
 
         {/* Values */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {values.map(v => (
-            <div key={v.title} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition-all">
-              <div className="h-10 w-10 rounded-xl bg-red-50 flex items-center justify-center mb-3">
-                <v.icon className="h-5 w-5 text-red-600" />
+            <div key={v.title} className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all">
+              <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center mb-3">
+                <v.icon className="h-5 w-5 text-accent" />
               </div>
               <h3 className="text-sm font-extrabold text-primary">{v.title}</h3>
-              <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">{v.description}</p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">{v.description}</p>
             </div>
           ))}
         </div>
 
         {/* Team */}
         <div>
-          <h2 className="text-lg font-extrabold text-primary mb-4">Il Team</h2>
+          <h2 className="text-lg font-extrabold text-primary mb-4">The team</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {team.map(member => (
-              <div key={member.name} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all group">
-                {/* Avatar placeholder */}
-                <div className="h-32 bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
-                  <span className="text-4xl font-extrabold text-white/20">{member.name.split(" ").map(n => n[0]).join("")}</span>
+              <div key={member.name} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
+                <div className="h-32 bg-gradient-to-br from-primary to-slate-700 flex items-center justify-center">
+                  <span className="text-4xl font-extrabold text-white/20">
+                    {member.name.split(" ").map(n => n[0]).join("")}
+                  </span>
                 </div>
                 <div className="p-4">
                   <h3 className="text-sm font-extrabold text-primary">{member.name}</h3>
-                  <p className="text-xs text-red-600 font-bold uppercase tracking-wide mt-0.5">{member.role}</p>
-                  <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{member.bio}</p>
-                  <p className="text-[11px] text-red-600 font-medium mt-2 italic">{member.funFact}</p>
+                  <p className="text-xs text-accent font-bold uppercase tracking-wide mt-0.5">{member.role}</p>
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">{member.bio}</p>
                 </div>
               </div>
             ))}
@@ -81,15 +124,9 @@ export default function AboutPage() {
 
         {/* Stats */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-          <h2 className="text-lg font-extrabold text-primary mb-5">Numeri chiave</h2>
+          <h2 className="text-lg font-extrabold text-primary mb-5">By the numbers</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
-            {[
-              { value: "€2.4B", label: "AUM" },
-              { value: "142", label: "Deals finanziati" },
-              { value: "12.1%", label: "IRR medio" },
-              { value: "0", label: "Default" },
-              { value: "7", label: "Champions del Milan" },
-            ].map(s => (
+            {stats.map(s => (
               <div key={s.label}>
                 <p className="text-3xl font-extrabold text-primary">{s.value}</p>
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{s.label}</p>
@@ -99,21 +136,21 @@ export default function AboutPage() {
         </div>
 
         {/* Contact */}
-        <div className="bg-gradient-to-br from-red-50 to-red-100/30 rounded-xl border border-red-200/30 p-6">
-          <h2 className="text-lg font-extrabold text-primary mb-4">Contatti</h2>
+        <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+          <h2 className="text-lg font-extrabold text-primary mb-4">Contact</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <MapPin className="h-4 w-4 text-red-600" />
+                <MapPin className="h-4 w-4 text-accent" />
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-bold uppercase">Sede</p>
-                <p className="text-sm text-primary font-medium">Madrid, España</p>
+                <p className="text-xs text-slate-400 font-bold uppercase">Office</p>
+                <p className="text-sm text-primary font-medium">Madrid, Spain</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <Mail className="h-4 w-4 text-red-600" />
+                <Mail className="h-4 w-4 text-accent" />
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-bold uppercase">Email</p>
@@ -122,11 +159,11 @@ export default function AboutPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <Globe className="h-4 w-4 text-red-600" />
+                <Globe className="h-4 w-4 text-accent" />
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-bold uppercase">Stadio preferito</p>
-                <p className="text-sm text-primary font-medium">San Siro, Milano 🏟️</p>
+                <p className="text-xs text-slate-400 font-bold uppercase">Website</p>
+                <p className="text-sm text-primary font-medium">capitalbridge.com</p>
               </div>
             </div>
           </div>

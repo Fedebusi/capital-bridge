@@ -8,6 +8,16 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";
 import { useUpdateDeal, useDeleteDeal } from "@/hooks/useSupabaseQuery";
@@ -125,50 +135,68 @@ export default function DealDetail({ deal }: DealDetailProps) {
       </div>
 
       {/* Stage change confirmation */}
-      {showStageChange && nextStage && (
-        <div className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between">
-          <p className="text-sm text-primary font-medium">
-            Move "{deal.projectName}" from <strong>{stageLabels[deal.stage as keyof typeof stageLabels]}</strong> to <strong>{stageLabels[nextStage as keyof typeof stageLabels]}</strong>?
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowStageChange(false)}
-              className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 transition-colors"
+      <AlertDialog open={showStageChange} onOpenChange={setShowStageChange}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Advance to {nextStage ? stageLabels[nextStage as keyof typeof stageLabels] : ""}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  This will move <strong>{deal.projectName}</strong> from{" "}
+                  <strong>{stageLabels[deal.stage as keyof typeof stageLabels]}</strong> to{" "}
+                  <strong>{nextStage ? stageLabels[nextStage as keyof typeof stageLabels] : ""}</strong>.
+                </p>
+                <p className="text-xs text-slate-500">
+                  The stage change will be recorded in the audit trail and visible to the Capital Partner.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => nextStage && handleStageChange(nextStage)}
+              className="rounded-full bg-accent hover:bg-accent/90"
+              disabled={updateDeal.isPending}
             >
-              Cancel
-            </button>
-            <button
-              onClick={() => handleStageChange(nextStage)}
-              className="px-4 py-2 rounded-full text-sm font-semibold text-white bg-accent hover:bg-accent/90 transition-colors"
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
-      )}
+              {updateDeal.isPending ? "Advancing…" : `Advance to ${nextStage ? stageLabels[nextStage as keyof typeof stageLabels] : ""}`}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete confirmation */}
-      {showDeleteConfirm && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 flex items-center justify-between">
-          <p className="text-sm text-red-700 font-medium">
-            Are you sure you want to delete "{deal.projectName}"? This cannot be undone.
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this deal?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  <strong>{deal.projectName}</strong> and all its sub-records (due diligence
+                  items, approvals, term sheets, waivers, construction monitoring) will be
+                  permanently removed.
+                </p>
+                <p className="text-xs text-destructive font-medium">
+                  This action cannot be undone.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Keep deal</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleDelete}
-              className="px-4 py-2 rounded-full text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors"
+              className="rounded-full bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              disabled={deleteDeal.isPending}
             >
-              Delete
-            </button>
-          </div>
-        </div>
-      )}
+              {deleteDeal.isPending ? "Deleting…" : "Delete permanently"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Lifecycle Progress Bar */}
       {lifecycle && (

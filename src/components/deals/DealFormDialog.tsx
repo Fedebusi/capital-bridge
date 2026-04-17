@@ -17,27 +17,27 @@ import { useDeals } from "@/hooks/useDeals";
 import type { Deal, DealStage } from "@/data/sampleDeals";
 
 const dealSchema = z.object({
-  projectName: z.string().min(1, "Project name is required"),
-  borrower: z.string().min(1, "Borrower is required"),
-  sponsor: z.string().min(1, "Sponsor is required"),
-  location: z.string().min(1, "Location is required"),
-  city: z.string().min(1, "City is required"),
+  projectName: z.string().min(1, "Please enter a project name"),
+  borrower: z.string().min(1, "Please enter the borrower's legal name"),
+  sponsor: z.string().min(1, "Please enter the sponsor or parent group"),
+  location: z.string().min(1, "Please enter the location (e.g. Marbella, Malaga)"),
+  city: z.string().min(1, "Please enter the city"),
   stage: z.string(),
-  assetType: z.string().min(1, "Asset type is required"),
+  assetType: z.string().min(1, "Please specify the asset type"),
   description: z.string(),
-  loanAmount: z.coerce.number().positive("Must be positive"),
+  loanAmount: z.coerce.number().positive("Loan amount must be greater than €0"),
   currency: z.string().default("EUR"),
-  interestRate: z.coerce.number().min(0).max(100),
-  pikSpread: z.coerce.number().min(0).max(100),
-  originationFee: z.coerce.number().min(0).max(100),
-  exitFee: z.coerce.number().min(0).max(100),
-  tenor: z.coerce.number().int().positive(),
-  gdv: z.coerce.number().min(0),
-  constructionBudget: z.coerce.number().min(0),
-  landCost: z.coerce.number().min(0),
+  interestRate: z.coerce.number().min(0, "Cash rate cannot be negative").max(100, "Cash rate must be below 100%"),
+  pikSpread: z.coerce.number().min(0, "PIK spread cannot be negative").max(100, "PIK spread must be below 100%"),
+  originationFee: z.coerce.number().min(0, "Origination fee cannot be negative").max(100),
+  exitFee: z.coerce.number().min(0, "Exit fee cannot be negative").max(100),
+  tenor: z.coerce.number().int().positive("Tenor must be at least 1 month"),
+  gdv: z.coerce.number().min(0, "GDV cannot be negative"),
+  constructionBudget: z.coerce.number().min(0, "Construction budget cannot be negative"),
+  landCost: z.coerce.number().min(0, "Land cost cannot be negative"),
   totalUnits: z.coerce.number().int().min(0),
   totalArea: z.coerce.number().min(0),
-  preSalesPercent: z.coerce.number().min(0).max(100),
+  preSalesPercent: z.coerce.number().min(0, "Pre-sales cannot be negative").max(100, "Pre-sales cannot exceed 100%"),
   developerExperience: z.string(),
   developerTrackRecord: z.coerce.number().int().min(0),
 });
@@ -266,7 +266,15 @@ export function DealFormDialog({ deal, trigger }: DealFormDialogProps) {
       }
       setOpen(false);
     } catch (err) {
-      toast.error(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+      const detail = err instanceof Error ? err.message : undefined;
+      toast.error(
+        isEdit ? "We couldn't save this deal." : "We couldn't create this deal.",
+        {
+          description: detail
+            ? `Please try again in a moment. Details: ${detail}`
+            : "Please check your connection and try again. If the problem persists, contact support.",
+        },
+      );
     }
   }
 
