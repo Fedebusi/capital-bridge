@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import InvestorLayout from "@/components/layout/InvestorLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { formatMillions, formatPercent, type Deal } from "@/data/sampleDeals";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { TrendingUp, PiggyBank, BarChart3, Calendar, ArrowRight, Download, Briefcase, FileSpreadsheet } from "lucide-react";
-import { generateTaxReport } from "@/lib/generateTaxReport";
+import { generateTaxReport } from "@/lib/pdf/generateTaxReport";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -131,9 +131,17 @@ export default function InvestorPortalPage() {
   }
 
   const activeDeals = deals.filter(d => d.stage === "active");
+  // Returns include BOTH accrued (active) and realized (repaid) to reflect true portfolio performance.
+  const repaidDeals = deals.filter(d => d.stage === "repaid");
   const totalInvested = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
-  const totalReturns = activeDeals.reduce((s, d) => s + d.accruedPIK, 0);
-  const avgYield = activeDeals.length > 0 ? activeDeals.reduce((s, d) => s + d.totalRate, 0) / activeDeals.length : 0;
+  const totalReturns =
+    activeDeals.reduce((s, d) => s + d.accruedPIK, 0) +
+    repaidDeals.reduce((s, d) => s + d.accruedPIK, 0);
+  // Position-weighted yield (not arithmetic mean)
+  const yieldWeight = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
+  const avgYield = yieldWeight > 0
+    ? activeDeals.reduce((s, d) => s + d.disbursedAmount * d.totalRate, 0) / yieldWeight
+    : 0;
 
   function buildPositionRows(): Record<string, unknown>[] {
     return activeDeals.map((d) => ({
@@ -353,8 +361,8 @@ export default function InvestorPortalPage() {
         <section className="grid grid-cols-12 gap-5">
           {/* Portfolio Value */}
           <div className="col-span-12 lg:col-span-8 bg-gradient-to-br from-primary to-slate-700 rounded-2xl p-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2" />
+            <div className="absolute -top-20 -right-20 w-48 h-48 bg-white/5 rounded-full" />
+            <div className="absolute -bottom-16 left-12 w-40 h-40 bg-white/5 rounded-full" />
             <div className="relative z-10">
               <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Total Portfolio Value</span>
               <h2 className="text-5xl font-bold tracking-tight mt-3">{formatMillions(totalInvested + totalReturns)}</h2>

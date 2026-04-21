@@ -484,13 +484,29 @@ export const getPortfolioMetrics = (deals?: Deal[]) => {
   const source = deals ?? sampleDeals;
   const activeDeals = source.filter(d => d.stage === "active");
   const allDeals = source.filter(d => d.stage !== "rejected");
-  const totalCommitments = allDeals.reduce((sum, d) => sum + d.loanAmount, 0);
+
+  // Committed capital = only post-IC deals (documentation + active + repaid).
+  // Pre-closing deals (screening/DD/IC approval) are pipeline, NOT commitments.
+  const committedDeals = source.filter(d => ["documentation", "active", "repaid"].includes(d.stage));
+  const totalCommitments = committedDeals.reduce((sum, d) => sum + d.loanAmount, 0);
+
   const totalExposure = allDeals.reduce((sum, d) => sum + d.totalExposure, 0);
   const totalGDV = allDeals.reduce((sum, d) => sum + d.gdv, 0);
   const totalDisbursed = allDeals.reduce((sum, d) => sum + d.disbursedAmount, 0);
-  const avgLTV = activeDeals.length > 0 ? activeDeals.reduce((sum, d) => sum + d.ltv, 0) / activeDeals.length : 0;
-  const avgLTC = activeDeals.length > 0 ? activeDeals.reduce((sum, d) => sum + d.ltc, 0) / activeDeals.length : 0;
-  const pipelineDeals = source.filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage)).length;
+
+  // NAV = actually invested capital + accrued returns (NOT undrawn commitments).
   const totalAccruedPIK = allDeals.reduce((sum, d) => sum + d.accruedPIK, 0);
-  return { totalCommitments, totalExposure, totalGDV, totalDisbursed, avgLTV, avgLTC, activeDeals: activeDeals.length, pipelineDeals, totalDeals: allDeals.length, totalAccruedPIK };
+  const nav = totalDisbursed + totalAccruedPIK;
+
+  // Loan-weighted averages (not arithmetic mean) — industry standard for portfolio metrics.
+  const activeWeight = activeDeals.reduce((s, d) => s + d.loanAmount, 0);
+  const avgLTV = activeWeight > 0
+    ? activeDeals.reduce((s, d) => s + d.loanAmount * d.ltv, 0) / activeWeight
+    : 0;
+  const avgLTC = activeWeight > 0
+    ? activeDeals.reduce((s, d) => s + d.loanAmount * d.ltc, 0) / activeWeight
+    : 0;
+
+  const pipelineDeals = source.filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage)).length;
+  return { totalCommitments, totalExposure, totalGDV, totalDisbursed, nav, avgLTV, avgLTC, activeDeals: activeDeals.length, pipelineDeals, totalDeals: allDeals.length, totalAccruedPIK };
 };

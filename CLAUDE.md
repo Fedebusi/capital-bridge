@@ -80,7 +80,24 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - **Auto-deploy**: `.github/workflows/supabase-deploy.yml` runs `supabase db push --include-all` on every push to `main` touching `supabase/migrations/**`. Requires two repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`. See issue #31.
 - **Auth trigger**: fixed in migration 00003 — everyone starts as `viewer`, admin promotes.
 
-## Current Status (Last Updated: 2026-04-17)
+## Current Status (Last Updated: 2026-04-21)
+
+### Latest session (2026-04-21) — PR #49
+- 3 parallel audits (finance, design, file org) completed
+- **Finance fixes (critical)**: NAV calculation (was 7× overstated), weighted avgLTV/LTC/Rate, totalReturns now includes repaid, totalCommitments excludes pre-closing
+- **Design fixes**: landing responsive + headline breakpoints, hero circles constrained (no overlap), button shadows softened
+- **File org**: `src/components/shared/`, `src/lib/pdf/`, dead test removed
+- **Agent system**: `finance-auditor` agent added
+
+### Pending finance items (not in PR #49)
+- PIK engine: day-count convention (1/12 vs ACT/360) — needs deal-level config
+- PIK engine: cash-interest capitalization mode (today always capitalized, should be configurable)
+- PIK engine: interest accrued on non-disbursed tranches (should be disbursed-only)
+- Screening LTV uses GDV instead of current appraisal
+- Covenant statuses hardcoded (should auto-recompute from current values)
+- InvestorPortal hardcoded `portfolioHistory`, `allocationData`, `upcomingPayments`, tile magic numbers (committed/realized/distributions = × arbitrary)
+
+
 
 ### P0 — DONE (in-session PRs)
 

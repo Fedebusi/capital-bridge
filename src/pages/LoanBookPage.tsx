@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import { formatMillions, formatPercent, stageLabels, stageColors, type DealStage } from "@/data/sampleDeals";
 import { useDeals } from "@/hooks/useDeals";
 import { ExportMenu } from "@/components/ui/ExportMenu";

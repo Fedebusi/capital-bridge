@@ -62,6 +62,7 @@ These files/areas require explicit approval from Federico before any modificatio
 | `ux-polisher` | Visual fixes, empty states, responsive | `polish/*` |
 | `ux-designer` | Emotional/narrative design — flows, microcopy, feedback | `design/ux-*` |
 | `ui-designer` | Pragmatic/visual design — layout, spacing, hierarchy, tokens | `design/ui-*` |
+| `finance-auditor` | Audits financial calculations (PIK, covenants, waterfall, returns) for accuracy and regulatory soundness | `finance/*` |
 | `reviewer` | Reviews PRs, produces structured comments | (no branch) |
 | `doc-writer` | Maintains docs and user guides | `docs/*` |
 

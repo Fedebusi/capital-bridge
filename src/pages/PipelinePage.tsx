@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import DealCard from "@/components/dashboard/DealCard";
 import DealImportDialog from "@/components/dashboard/DealImportDialog";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";

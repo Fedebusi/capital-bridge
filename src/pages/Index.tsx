@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import QuickScreenDialog from "@/components/dashboard/QuickScreenDialog";
 import { useDeals } from "@/hooks/useDeals";
 import { getPortfolioMetrics, formatMillions, formatPercent, stageLabels, type DealStage } from "@/data/sampleDeals";
@@ -44,9 +44,12 @@ export default function DashboardPage() {
     .filter(d => ["screening", "due_diligence", "ic_approval", "documentation"].includes(d.stage))
     .reduce((s, d) => s + d.loanAmount, 0);
 
-  const totalNAV = metrics.totalCommitments + metrics.totalAccruedPIK;
-  const avgRate = activeDeals.length > 0
-    ? activeDeals.reduce((s, d) => s + d.totalRate, 0) / activeDeals.length
+  // NAV = actually invested + accrued returns (not undrawn commitments)
+  const totalNAV = metrics.nav;
+  // Exposure-weighted portfolio yield (arithmetic mean misleads when deal sizes differ)
+  const weight = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
+  const avgRate = weight > 0
+    ? activeDeals.reduce((s, d) => s + d.disbursedAmount * d.totalRate, 0) / weight
     : 0;
 
   return (
@@ -70,8 +73,8 @@ export default function DashboardPage() {
         <section className="grid grid-cols-12 gap-4">
           {/* NAV Hero Card */}
           <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-2xl p-8 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/4" />
-            <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-emerald-500/10 rounded-full translate-y-1/2" />
+            <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/5 rounded-full" />
+            <div className="absolute -bottom-12 left-8 w-32 h-32 bg-emerald-500/10 rounded-full" />
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold uppercase tracking-widest text-white/50">Net Asset Value</span>
@@ -88,7 +91,7 @@ export default function DashboardPage() {
             </div>
             <div className="relative z-10 flex gap-10 mt-8 pt-5 border-t border-white/10">
               <div>
-                <span className="text-[11px] text-white/40 uppercase font-bold tracking-widest">Dry Powder</span>
+                <span className="text-[11px] text-white/40 uppercase font-bold tracking-widest">Pipeline Volume</span>
                 <p className="text-lg font-bold mt-0.5">{formatMillions(pipelineVolume)}</p>
               </div>
               <div>

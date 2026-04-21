@@ -155,12 +155,12 @@ export default function LandingPage() {
 
       {/* Hero */}
       <div className="relative min-h-[85vh] overflow-hidden">
-        {/* Globe */}
-        <div className="absolute right-[-150px] top-1/2 -translate-y-1/2 opacity-50 pointer-events-none select-none">
+        {/* Globe — hidden on small, constrained on tablet+ */}
+        <div className="hidden md:block absolute right-[-200px] lg:right-[-100px] xl:right-[-50px] top-1/2 -translate-y-1/2 opacity-30 pointer-events-none select-none">
           <Globe />
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-8 pt-16 pb-20 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8 pt-28 pb-20 relative z-10">
           {/* Subtitle */}
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-px bg-slate-300" />
@@ -168,7 +168,7 @@ export default function LandingPage() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-[clamp(3rem,8vw,7rem)] font-extrabold leading-[0.95] tracking-tight max-w-[900px] font-headline">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-[6rem] font-extrabold leading-[1.02] tracking-tight max-w-[900px] font-headline">
             The platform
             <br />
             to{" "}
@@ -202,7 +202,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-4 mt-10">
             <Link
               to="/login"
-              className="bg-primary text-white px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
+              className="bg-primary text-white px-7 py-4 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm"
             >
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
