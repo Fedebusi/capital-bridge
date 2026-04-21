@@ -1,82 +1,114 @@
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import type { Deal } from "@/data/sampleDeals";
 
 /**
- * Loads the UW_v2 template from /public and writes deal-specific values into
- * Cover + Inputs, then triggers a browser download. Formulas in the template
- * propagate automatically when the user opens the file in Excel.
+ * Loads the original UW_v1 template (preserving all styles, colors, merged
+ * cells, column widths, images) and writes deal-specific values into the
+ * input cells ONLY. All formulas in the workbook are preserved and will
+ * recalculate automatically when the user opens the file in Excel.
+ *
+ * We use exceljs (not SheetJS community) because SheetJS drops styling on
+ * write. exceljs preserves the full workbook structure.
  */
 export async function downloadUWForDeal(deal: Deal): Promise<void> {
-  // Fetch the template
-  const res = await fetch("/templates/UW_v2.xlsx");
+  // Fetch the original UW_v1 template
+  const res = await fetch("/templates/UW_v1.xlsx");
   if (!res.ok) throw new Error(`Could not load UW template: ${res.status}`);
   const buf = await res.arrayBuffer();
-  const wb = XLSX.read(buf, { type: "array", cellFormula: true });
 
-  // ===== Cover sheet — Deal identification =====
-  const cover = wb.Sheets["Cover"];
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(buf);
+
+  // Force Excel to recalculate formulas on open
+  wb.calcProperties.fullCalcOnLoad = true;
+
+  // ===== Cover sheet =====
+  const cover = wb.getWorksheet("Cover");
   if (cover) {
-    // Info block
-    cover["C6"] = { t: "s", v: deal.projectName };
-    cover["C7"] = { t: "s", v: deal.sponsor };
-    cover["C8"] = { t: "s", v: deal.borrower };
-    cover["C9"] = { t: "s", v: `${deal.location}, ${deal.city}` };
-    cover["C10"] = { t: "s", v: deal.assetType };
-    cover["C11"] = { t: "n", v: deal.totalArea };
-    cover["C12"] = { t: "n", v: deal.totalUnits };
-    // Deal date stays as TODAY() formula
-    cover["C15"] = { t: "s", v: "CapitalBridge" };
+    // Deal identification block (rows 6-14)
+    cover.getCell("C6").value = deal.projectName;
+    cover.getCell("C7").value = deal.sponsor;
+    cover.getCell("C8").value = deal.borrower;
+    cover.getCell("C9").value = `${deal.location}, ${deal.city}`;
+    cover.getCell("C10").value = deal.assetType;
+    cover.getCell("C11").value = deal.totalArea;
+    cover.getCell("C12").value = deal.totalUnits;
+    // C13 Deal Date — leave TODAY() formula
+    cover.getCell("C14").value = "CapitalBridge";
+
+    // Loan Headline (rows 18-25) — write formulas that reference Inputs so
+    // everything stays live. These cells were hardcoded 0 in the template.
+    setFormulaCell(cover.getCell("C18"), "Inputs!D55");
+    setFormulaCell(
+      cover.getCell("C19"),
+      "IFERROR(Inputs!D55/(Inputs!C23+Inputs!C24+Inputs!C28+Inputs!C29+Inputs!C30+Inputs!C31),0)"
+    );
+    setFormulaCell(cover.getCell("C20"), "IFERROR(Inputs!D55/Inputs!C18,0)");
+    setFormulaCell(cover.getCell("C21"), "'Cash Flow'!C7");
+    setFormulaCell(cover.getCell("C22"), "Inputs!D56");
+    setFormulaCell(cover.getCell("C23"), "Inputs!D58");
+    setFormulaCell(cover.getCell("C24"), "Inputs!D7");
   }
 
-  // ===== Inputs sheet — populate the key inputs =====
-  const inputs = wb.Sheets["Inputs"];
+  // ===== Inputs sheet =====
+  const inputs = wb.getWorksheet("Inputs");
   if (inputs) {
     // Sales plan
-    inputs["C15"] = { t: "n", v: deal.totalArea };
-    inputs["C16"] = { t: "n", v: deal.totalUnits };
-    if (deal.totalArea > 0) {
-      inputs["C17"] = { t: "n", v: deal.gdv / deal.totalArea };
+    inputs.getCell("C15").value = deal.totalArea || 0;
+    inputs.getCell("C16").value = deal.totalUnits || 0;
+    if (deal.totalArea && deal.totalArea > 0) {
+      inputs.getCell("C17").value = deal.gdv / deal.totalArea;
     }
 
-    // Costs
-    if (deal.totalArea > 0) {
-      // Hard costs €/sqm — estimate from construction budget
-      inputs["D28"] = { t: "n", v: deal.constructionBudget * 0.7 / deal.totalArea };
-      // Soft costs €/sqm — estimate 30% of construction
-      inputs["D29"] = { t: "n", v: deal.constructionBudget * 0.2 / deal.totalArea };
-      // Project management as % of hard + soft
-      inputs["E30"] = { t: "n", v: 0.05 };
+    // Costs — acquisition
+    inputs.getCell("D23").value = deal.landCost;
+    inputs.getCell("E24").value = 0.08; // Related acq costs (8% Spain)
+
+    // Costs — construction (split from constructionBudget)
+    if (deal.totalArea && deal.totalArea > 0) {
+      inputs.getCell("D28").value = (deal.constructionBudget * 0.7) / deal.totalArea; // Hard €/sqm
+      inputs.getCell("D29").value = (deal.constructionBudget * 0.2) / deal.totalArea; // Soft €/sqm
+      inputs.getCell("E30").value = 0.05; // PM 5%
     }
-    // Acquisition price
-    inputs["D23"] = { t: "n", v: deal.landCost };
-    // Related acquisition costs (% of acq price) — default 8% Spain
-    inputs["E24"] = { t: "n", v: 0.08 };
 
-    // Financing
-    inputs["D55"] = { t: "n", v: deal.loanAmount };
-    // PIK rate (from deal — expressed as decimal 0.045 for 4.5%)
-    inputs["D56"] = { t: "n", v: deal.pikSpread / 100 };
-    // Cash interest rate
-    inputs["D57"] = { t: "n", v: deal.interestRate / 100 };
-    // Opening fee
-    inputs["D58"] = { t: "n", v: deal.originationFee / 100 };
+    // Financing terms
+    inputs.getCell("D55").value = deal.loanAmount;
+    inputs.getCell("D56").value = deal.pikSpread / 100;
+    inputs.getCell("D57").value = deal.interestRate / 100;
+    inputs.getCell("D58").value = deal.originationFee / 100;
 
-    // Duration (months)
-    inputs["D7"] = { t: "n", v: deal.tenor };
+    // Duration
+    inputs.getCell("D7").value = deal.tenor;
   }
 
-  // ===== Write and trigger download =====
-  const outBuf = XLSX.write(wb, { type: "array", bookType: "xlsx" });
+  // ===== Cash Flow sheet — patch the broken summary cells =====
+  // These were literal "23" in the template. Fix without altering any other formula.
+  const cf = wb.getWorksheet("Cash Flow");
+  if (cf) {
+    setFormulaCell(cf.getCell("C7"), "MAX(H76:BO76)");
+    setFormulaCell(cf.getCell("C8"), "IFERROR(MATCH(C7,H76:BO76,0),0)");
+    setFormulaCell(cf.getCell("C10"), "SUM(H75:BO75)");
+    setFormulaCell(cf.getCell("C11"), "SUM(H74:BO74)");
+    setFormulaCell(cf.getCell("C27"), "SUM(H27:BO27)");
+    setFormulaCell(cf.getCell("C30"), "SUM(H30:BO30)");
+  }
+
+  // ===== Write out =====
+  const outBuf = await wb.xlsx.writeBuffer();
   const blob = new Blob([outBuf], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const safeName = deal.projectName.replace(/[^a-zA-Z0-9-]/g, "_");
+  const safe = deal.projectName.replace(/[^a-zA-Z0-9-]/g, "_");
   a.href = url;
-  a.download = `UW_${safeName}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  a.download = `UW_${safe}_${new Date().toISOString().slice(0, 10)}.xlsx`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function setFormulaCell(cell: ExcelJS.Cell, formula: string): void {
+  cell.value = { formula, date1904: false } as ExcelJS.CellFormulaValue;
 }
