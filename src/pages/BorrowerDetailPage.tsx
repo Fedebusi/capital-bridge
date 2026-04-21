@@ -42,7 +42,7 @@ export default function BorrowerDetailPage() {
   const linkedDeals = deals.filter(d => borrower.activeDealIds.includes(d.id) || d.borrower === borrower.name);
   const kycValid = borrower.kyc.filter(k => k.status === "valid").length;
   const kycTotal = borrower.kyc.length;
-  const allKycValid = kycValid === kycTotal;
+  const allKycValid = kycTotal > 0 && kycValid === kycTotal;
 
   return (
     <AppLayout>
@@ -70,8 +70,8 @@ export default function BorrowerDetailPage() {
             { label: "Total Exposure", value: formatMillions(borrower.totalExposure), accent: false },
             { label: "Commitments", value: formatMillions(borrower.totalCommitments), accent: false },
             { label: "Active Deals", value: `${borrower.numberOfActiveDeals}`, accent: false },
-            { label: "Avg IRR", value: borrower.avgIRR ? formatPercent(borrower.avgIRR) : "N/A", accent: true },
-            { label: "Avg Multiple", value: borrower.avgMultiple ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A", accent: false },
+            { label: "Avg IRR", value: borrower.avgIRR !== undefined ? formatPercent(borrower.avgIRR) : "N/A", accent: true },
+            { label: "Avg Multiple", value: borrower.avgMultiple !== undefined ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A", accent: false },
             { label: "KYC Status", value: allKycValid ? "Valid" : `${kycValid}/${kycTotal}`, accent: false },
           ].map((m) => (
             <div key={m.label} className="rounded-2xl bg-slate-50 p-6 hover:bg-slate-100/70 transition-colors">
@@ -195,15 +195,15 @@ export default function BorrowerDetailPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Projects Completed</p>
-                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.completedProjects.length}</p>
+                <p className="font-display text-3xl font-bold text-primary mt-1">{(borrower.completedProjects ?? []).length}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Avg IRR</p>
-                <p className="font-display text-3xl font-bold text-accent mt-1">{borrower.avgIRR ? formatPercent(borrower.avgIRR) : "N/A"}</p>
+                <p className="font-display text-3xl font-bold text-accent mt-1">{borrower.avgIRR !== undefined ? formatPercent(borrower.avgIRR) : "N/A"}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Avg Multiple</p>
-                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.avgMultiple ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A"}</p>
+                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.avgMultiple !== undefined ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A"}</p>
               </div>
             </div>
 

@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors } from "@/data/sampleDeals";
+import { toast } from "sonner";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview", group: "main" },
@@ -208,7 +209,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <Plus className="h-4 w-4" />
                 Add New Deal
               </Link>
-              <button className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all relative">
+              <button
+                onClick={() => toast.info("Notifications coming soon. For now, covenant breaches surface on deal detail pages.")}
+                className="text-slate-400 hover:text-primary hover:bg-slate-100 p-2.5 rounded-full transition-all relative"
+                title="Notifications"
+              >
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full" />
               </button>

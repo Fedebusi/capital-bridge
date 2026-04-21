@@ -104,7 +104,7 @@ export function generateTermSheetPDF(deal: Deal, ts: TermSheet) {
     ["Borrower", `${deal.borrower} (the "Borrower")`],
     ["Sponsor / Guarantor", deal.sponsor],
     ["Project Company (SPV)", `${deal.projectName} S.L.`],
-    ["Project", `${deal.projectName} — ${deal.description.substring(0, 120)}...`],
+    ["Project", `${deal.projectName} — ${(deal.description ?? "").substring(0, 120)}...`],
     ["Location", deal.location],
     ["Asset Type", deal.assetType],
   ]);

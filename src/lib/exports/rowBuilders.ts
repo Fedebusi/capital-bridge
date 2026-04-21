@@ -57,7 +57,7 @@ export function borrowerRow(b: Borrower): Record<string, unknown> {
     "Total Commitments (EUR)": b.totalCommitments,
     "Total Exposure (EUR)": b.totalExposure,
     "Avg IRR (%)": b.avgIRR !== undefined ? round(b.avgIRR, 2) : "",
-    "Completed Projects": b.completedProjects.length,
+    "Completed Projects": (b.completedProjects ?? []).length,
     "KYC Status": kycStatus,
   };
 }
