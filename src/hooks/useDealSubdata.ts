@@ -55,14 +55,17 @@ type DualResult<T> = { data: T; loading: boolean; isLive: boolean };
 export function useDDItemsForDeal(dealId: string): DualResult<DDItem[]> {
   const isLive = isSupabaseConfigured();
   const query = useDueDiligenceItems(dealId);
+  const sample = sampleDueDiligence[dealId] ?? [];
   if (isLive) {
+    const live = (query.data ?? []).map(dbDDItemToFrontend);
+    // Fallback to sample data when live DB is empty but demo has content
     return {
-      data: (query.data ?? []).map(dbDDItemToFrontend),
+      data: live.length > 0 ? live : sample,
       loading: query.isLoading,
       isLive: true,
     };
   }
-  return { data: sampleDueDiligence[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useApprovalForDeal(dealId: string): DualResult<ApprovalRecord | null> {
@@ -72,9 +75,11 @@ export function useApprovalForDeal(dealId: string): DualResult<ApprovalRecord | 
   const votesQuery = useICVotes(approvalId);
   const auditQuery = useAuditLogs("approval", approvalId);
 
+  const sample = sampleApprovals[dealId] ?? null;
   if (isLive) {
     if (!approvalQuery.data) {
-      return { data: null, loading: approvalQuery.isLoading, isLive: true };
+      // Fallback to sample when live DB has no approval record
+      return { data: sample, loading: approvalQuery.isLoading, isLive: true };
     }
     return {
       data: dbApprovalToFrontend(
@@ -86,46 +91,40 @@ export function useApprovalForDeal(dealId: string): DualResult<ApprovalRecord | 
       isLive: true,
     };
   }
-  return { data: sampleApprovals[dealId] ?? null, loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useLegalDocsForDeal(dealId: string): DualResult<LegalDocument[]> {
   const isLive = isSupabaseConfigured();
   const query = useLegalDocuments(dealId);
+  const sample = sampleLegalDocs[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbLegalDocToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbLegalDocToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleLegalDocs[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useConditionsPrecedentForDeal(dealId: string): DualResult<ConditionPrecedent[]> {
   const isLive = isSupabaseConfigured();
   const query = useConditionsPrecedent(dealId);
+  const sample = sampleConditionsPrecedent[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbConditionPrecedentToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbConditionPrecedentToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleConditionsPrecedent[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useSecurityItemsForDeal(dealId: string): DualResult<SecurityItem[]> {
   const isLive = isSupabaseConfigured();
   const query = useSecurityItems(dealId);
+  const sample = sampleSecurityPackages[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbSecurityItemToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbSecurityItemToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleSecurityPackages[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useTermSheetForDeal(dealId: string): DualResult<TermSheet | null> {
@@ -134,10 +133,12 @@ export function useTermSheetForDeal(dealId: string): DualResult<TermSheet | null
   const termSheetId = tsQuery.data?.id ?? "";
   const versionsQuery = useTermSheetVersions(termSheetId);
   const auditQuery = useAuditLogs("term_sheet", termSheetId);
+  const sample = sampleTermSheets[dealId] ?? null;
 
   if (isLive) {
     if (!tsQuery.data) {
-      return { data: null, loading: tsQuery.isLoading, isLive: true };
+      // Fallback to sample term sheet when live DB has none
+      return { data: sample, loading: tsQuery.isLoading, isLive: true };
     }
     return {
       data: dbTermSheetToFrontend(
@@ -149,46 +150,40 @@ export function useTermSheetForDeal(dealId: string): DualResult<TermSheet | null
       isLive: true,
     };
   }
-  return { data: sampleTermSheets[dealId] ?? null, loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useWaiversForDeal(dealId: string): DualResult<EnhancedWaiver[]> {
   const isLive = isSupabaseConfigured();
   const query = useWaivers(dealId);
+  const sample = sampleEnhancedWaivers[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbWaiverToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbWaiverToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleEnhancedWaivers[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useSiteVisitsForDeal(dealId: string): DualResult<SiteVisit[]> {
   const isLive = isSupabaseConfigured();
   const query = useSiteVisits(dealId);
+  const sample = sampleSiteVisits[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map((v) => dbSiteVisitToFrontend(v)),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map((v) => dbSiteVisitToFrontend(v));
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleSiteVisits[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useCertificationsForDeal(dealId: string): DualResult<ConstructionCertification[]> {
   const isLive = isSupabaseConfigured();
   const query = useConstructionCertifications(dealId);
+  const sample = sampleCertifications[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbCertificationToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbCertificationToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleCertifications[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
 
 export function useLifecycleForDeal(dealId: string): DualResult<DealLifecycle | null> {
@@ -231,9 +226,11 @@ export function useLifecycleForDeal(dealId: string): DualResult<DealLifecycle | 
     enabled: isSupabaseConfigured() && phaseIds.length > 0,
   });
 
+  const sampleLifecycle = sampleLifecycles[dealId] ?? null;
   if (isLive) {
     if (!lifecycleQuery.data) {
-      return { data: null, loading: lifecycleQuery.isLoading, isLive: true };
+      // Fallback to sample lifecycle when live DB has none
+      return { data: sampleLifecycle, loading: lifecycleQuery.isLoading, isLive: true };
     }
     const substepsByPhase: Record<string, DbPhaseSubstep[]> = {};
     for (const s of substepsQuery.data ?? []) {
@@ -258,18 +255,16 @@ export function useLifecycleForDeal(dealId: string): DualResult<DealLifecycle | 
       isLive: true,
     };
   }
-  return { data: sampleLifecycles[dealId] ?? null, loading: false, isLive: false };
+  return { data: sampleLifecycle, loading: false, isLive: false };
 }
 
 export function useMonitoringReportsForDeal(dealId: string): DualResult<MonitoringReport[]> {
   const isLive = isSupabaseConfigured();
   const query = useMonitoringReports(dealId);
+  const sample = sampleMonitoringReports[dealId] ?? [];
   if (isLive) {
-    return {
-      data: (query.data ?? []).map(dbMonitoringReportToFrontend),
-      loading: query.isLoading,
-      isLive: true,
-    };
+    const live = (query.data ?? []).map(dbMonitoringReportToFrontend);
+    return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
-  return { data: sampleMonitoringReports[dealId] ?? [], loading: false, isLive: false };
+  return { data: sample, loading: false, isLive: false };
 }
