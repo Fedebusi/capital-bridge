@@ -124,7 +124,7 @@ export default function BorrowersPage() {
             }
           />
         ) : (
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+        <div className="rounded-2xl bg-slate-50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

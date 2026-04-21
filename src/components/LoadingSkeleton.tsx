@@ -10,7 +10,7 @@ export function LoadingSkeleton() {
       {/* Cards skeleton */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div key={i} className="rounded-2xl bg-slate-50 p-6">
             <div className="h-3 w-20 bg-slate-100 rounded" />
             <div className="h-7 w-24 bg-slate-200 rounded mt-3" />
           </div>
@@ -18,7 +18,7 @@ export function LoadingSkeleton() {
       </div>
 
       {/* Table skeleton */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <div className="rounded-2xl bg-slate-50 overflow-hidden">
         <div className="bg-slate-50 px-5 py-3">
           <div className="h-3 w-full bg-slate-100 rounded" />
         </div>

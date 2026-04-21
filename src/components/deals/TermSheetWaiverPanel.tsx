@@ -15,7 +15,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
 
   if (tsLoading || waiversLoading) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 text-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
       </div>
     );

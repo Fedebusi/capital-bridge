@@ -277,7 +277,7 @@ export default function InvestorPortalPage() {
             </div>
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <section className="bg-slate-50 rounded-2xl overflow-hidden shadow-sm">
             <div className="px-6 py-5 border-b border-slate-200 flex justify-between items-center">
               <h2 className="text-sm font-bold text-primary uppercase tracking-wider">Recent Activity</h2>
               <Link
@@ -421,7 +421,7 @@ export default function InvestorPortalPage() {
         {/* Charts */}
         <section className="grid grid-cols-12 gap-6">
           {/* Performance Chart */}
-          <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <div className="col-span-12 lg:col-span-8 bg-slate-50 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-sm font-bold text-primary uppercase tracking-wider">Portfolio Performance</h3>
@@ -467,7 +467,7 @@ export default function InvestorPortalPage() {
           </div>
 
           {/* Allocation */}
-          <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <div className="col-span-12 lg:col-span-4 bg-slate-50 rounded-2xl p-6 shadow-sm">
             <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Asset Allocation</h3>
             <p className="text-xs text-slate-400 mb-4">By investment type</p>
             <div className="flex items-center justify-center h-44">
@@ -506,7 +506,7 @@ export default function InvestorPortalPage() {
         {/* Active Investments + Upcoming Payments */}
         <section className="grid grid-cols-12 gap-6">
           {/* Active Investments */}
-          <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="col-span-12 lg:col-span-8 bg-slate-50 rounded-2xl overflow-hidden shadow-sm">
             <div className="px-6 py-5 border-b border-slate-200 flex justify-between items-center">
               <h2 className="text-sm font-bold text-primary uppercase tracking-wider">My Investments</h2>
               <Link to="/deals" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1">
@@ -574,11 +574,11 @@ export default function InvestorPortalPage() {
 
           {/* Upcoming Payments */}
           <div className="col-span-12 lg:col-span-4 space-y-8">
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-6 shadow-sm">
               <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">Upcoming Payments</h3>
               <div className="space-y-3">
                 {upcomingPayments.map((payment, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
                     <div className={cn(
                       "h-9 w-9 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-bold",
                       payment.type === "Interest" ? "bg-blue-50 text-blue-600" :

@@ -158,7 +158,7 @@ function DealLifecycleCardContent({ deal, lifecycle }: { deal: Deal; lifecycle: 
     .slice(0, 3);
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+    <div className="rounded-2xl bg-slate-50 overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-slate-100">
         <div className="flex items-center justify-between mb-3">

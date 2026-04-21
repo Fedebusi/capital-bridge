@@ -69,7 +69,7 @@ function TermSheetCard({
       <div className="p-6 grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">
           <h3 className="text-sm font-bold text-primary flex items-center gap-2">
-            <Banknote className="h-4 w-4 text-emerald-600" /> Key Terms
+            <Banknote className="h-4 w-4 text-accent" /> Key Terms
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
@@ -82,7 +82,7 @@ function TermSheetCard({
               { icon: Building2, label: "Max LTC", value: `${kt.ltc}%`, color: "bg-orange-50 text-orange-600" },
               { icon: Percent, label: "Min Pre-Sales", value: `${kt.minPresales}%`, color: "bg-cyan-50 text-cyan-600" },
             ].map((term) => (
-              <div key={term.label} className="rounded-xl border border-slate-200 p-3 hover:shadow-sm transition-all">
+              <div key={term.label} className="rounded-2xl bg-white/60 p-4">
                 <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center mb-2", term.color)}>
                   <term.icon className="h-3.5 w-3.5" />
                 </div>

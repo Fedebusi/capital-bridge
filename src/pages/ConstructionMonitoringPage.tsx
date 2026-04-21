@@ -48,7 +48,7 @@ function DealMonitoringRow({
   if (!hasData) return null;
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+    <div className="rounded-2xl bg-slate-50 overflow-hidden">
       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[deal.stage])}>

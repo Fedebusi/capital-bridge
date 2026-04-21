@@ -105,7 +105,7 @@ export default function PIKEnginePage() {
         </div>
 
         {/* Per-Deal Table */}
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+        <div className="rounded-2xl bg-slate-50 overflow-hidden">
           <div className="p-4 border-b border-slate-100">
             <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-accent" /> Interest Accrual by Deal

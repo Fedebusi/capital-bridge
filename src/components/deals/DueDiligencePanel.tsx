@@ -28,7 +28,7 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 shadow-card text-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
       </div>
     );
@@ -55,7 +55,7 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
   return (
     <div className="space-y-4">
       {/* Summary bar */}
-      <div className="flex items-center gap-6 rounded-xl border border-slate-100 bg-white p-4 shadow-card">
+      <div className="flex items-center gap-6 rounded-2xl bg-slate-50 p-4 shadow-card">
         <div>
           <p className="text-xs text-slate-500">Progress</p>
           <p className="font-display text-lg font-bold text-primary">{totalCompleted}/{items.length}</p>
@@ -80,7 +80,7 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
         const catCompleted = catItems.filter(i => i.status === "completed").length;
 
         return (
-          <div key={cat} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div key={cat} className="rounded-2xl bg-slate-50 overflow-hidden">
             <button
               onClick={() => toggle(cat)}
               className="flex w-full items-center justify-between p-4 hover:bg-slate-50 transition-colors"
