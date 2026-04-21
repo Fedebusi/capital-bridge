@@ -169,10 +169,11 @@ STAGES (ciclo de vida):
 screening → due_diligence → ic_approval → documentation → active → repaid/rejected
 
 DÓNDE ESTÁN LOS DATOS:
-• Backend: Supabase PostgreSQL (24 tablas con RLS, foreign keys, triggers)
-• Frontend: useDeals() context que switcha automáticamente entre datos Supabase (live) y datos demo (cuando Supabase no está configurado)
+• Backend: Supabase PostgreSQL (28 tablas con RLS, foreign keys, triggers)
+• Frontend: useDeals() context + useDealSubdata.ts hooks — switchan automáticamente entre datos Supabase (live) y datos demo (cuando Supabase no está configurado). Si Supabase está conectado pero una tabla está vacía, hace fallback a datos demo.
 • Tipos TypeScript: src/types/database.ts (DbDeal, DbBorrower, etc.)
-• Hooks Supabase: src/hooks/useSupabaseQuery.ts (36 hooks listos para usar)`,
+• Converters: src/lib/dbConverters.ts — mapea rows DB → tipos frontend (pure, testeados)
+• Hooks Supabase: src/hooks/useSupabaseQuery.ts (36+ hooks) + src/hooks/useDealSubdata.ts (wrappers dual-mode)`,
   },
   {
     title: "Import/Export Excel — Cómo Funciona",
@@ -256,57 +257,60 @@ VARIABLES DE ENTORNO (.env):
 
 Frontend:
 • 19 páginas funcionales con 67+ componentes
-• Design system unificado (tipografía, spacing, colores, componentes)
-• Formularios con validación Zod (crear deal, crear borrower)
-• Generación PDF (Term Sheet, DD Report, Tax Report)
-• Import/Export Excel
-• Loading skeletons en todas las páginas
+• Design system unificado estilo fintech (Clikalia teal/pink)
+• Pipeline Kanban drag-and-drop (@dnd-kit)
+• Formularios con validación Zod (crear/editar deal, borrower)
+• Generación PDF (Term Sheet, DD Report, Tax Report, IC Memo)
+• Export UW Model Excel per deal (exceljs, preserva estilos)
+• Import/Export Excel (pipeline completo, loan book)
+• Botones Edit/Delete en Deal Detail y Borrower Detail
+• Cambio de stage de deal (botón en Deal Detail)
+• Loading skeletons + empty states con CTA en todas las páginas
 • Error boundary global
 • Responsive (sidebar mobile, tablas scrollables)
 
-Backend:
-• Supabase configurado y conectado
-• 24 tablas con RLS (Row Level Security)
-• 4 migraciones deployadas (schema, seed data, auth trigger fix, audit logs fix)
-• 36 hooks React Query listos para usar
-• Auth system completo (login, signup, password recovery, roles)
-• File upload con validación (tipo, tamaño, path)
+Backend — Supabase (100% conectado):
+• 28 tablas con RLS (Row Level Security) + 6 migraciones
+• useDeals() context con dual-mode: Supabase (live) ↔ datos demo (cuando no configurado)
+• Sub-datos conectados: DD items, approvals, IC votes, term sheets, waivers, site visits, certifications, monitoring reports, lifecycle — todos con fallback a sample data
+• 36+ hooks React Query (useSupabaseQuery.ts + useDealSubdata.ts)
+• Auth system completo (login, signup, password recovery, roles: admin/analyst/pm/investor/viewer)
+• File upload con validación (documentos DD + fotos site visit)
 • Audit logging en creación de deals y borrowers
+• Realtime notifications via Supabase Realtime
 
 Infraestructura:
-• CI/CD pipeline (GitHub Actions: lint + typecheck + test + build)
-• Security headers (vercel.json)
-• Sentry integrado (necesita DSN en env vars)
-• 22 tests automatizados (PIK engine + screening logic)
-• npm audit: vulnerabilidades críticas patcheadas
+• CI/CD pipeline (GitHub Actions: lint + typecheck + 99 tests + build)
+• Auto-deploy migraciones on push to main
+• Security headers (vercel.json: X-Frame-Options, CSP, etc.)
+• Sentry error tracking integrado
+• Vercel Analytics
 
-Conexión Supabase:
-• Dashboard, Loan Book, Pipeline → conectados via useDeals() context
-• Borrowers, Borrower Detail → conectados via useBorrowersQuery()
-• Approvals, DD, Term Sheets, Construction, Lifecycle, PIK Engine → usan useDeals() para deals, pero sub-datos (items DD, votos IC, etc.) todavía usan datos demo
+Finanzas (auditoría completada):
+• NAV corregido (era 7× sobrestimado — usaba commitments en vez de disbursed)
+• Métricas ponderadas por exposición (LTV, LTC, Rate)
+• totalReturns incluye deals repaid
+• UW Cash Flow con formulas correctas (PIK accrual, repayment sweep, loan balance)
 
 ═══════════════════════════════════════════════
  🔧 QUÉ FALTA PARA PRODUCCIÓN
 ═══════════════════════════════════════════════
 
-PRIORIDAD P0 — Sin esto no se puede usar en real:
-1. Conectar sub-datos a Supabase: DD items, approval records, IC votes, term sheets, waivers, site visits, certifications, monitoring reports. Los hooks ya existen en useSupabaseQuery.ts — hay que usarlos en las páginas.
-2. Botones Edit/Delete en Deal Detail y Borrower Detail. Los mutation hooks (useUpdateDeal, useDeleteDeal, useUpdateBorrower) ya existen.
-3. Cambio de stage de un deal (ej: de screening a due_diligence). Necesita un botón + llamada a useUpdateDeal().
-4. Activar autenticación (actualmente desactivada temporalmente). Hay que descomentar 3 líneas en src/components/auth/ProtectedRoute.tsx.
+PRIORIDAD P0 — Bloqueado en configuración:
+1. Aplicar migración 00006 (lifecycle tables) en Supabase prod — necesita secrets en GitHub
+2. QA end-to-end en live mode: file upload, RLS, lifecycle con datos reales
 
 PRIORIDAD P1 — Mejora mucho la experiencia:
-5. Searchbar funcional en el header (actualmente es decorativa).
-6. Upload de documentos: UI para subir PDFs de term sheets, valuations, contratos. Los hooks de storage ya existen.
-7. Email transaccionales: notificar cuando un covenant se incumple, un deal necesita aprobación, etc.
-8. Filtros avanzados en Loan Book (por borrower, por rango de fechas, por LTV).
+3. IC Memo Excel export per deal (template en desarrollo)
+4. User management UI (invitar usuarios, cambiar rol)
+5. Email transaccionales (covenant breach, stage change, waiver decisions)
+6. Mobile optimization pass
 
 PRIORIDAD P2 — Nice to have:
-9. Dark mode
-10. Internacionalización (español/inglés toggle)
-11. Dashboard personalizable (widgets drag & drop)
-12. App móvil o PWA
-13. Integración APIs externas (registros propiedad, credit bureaus)
+7. Dark mode
+8. Chatbot AI para queries de datos
+9. Integración Business Central
+10. Custom domain + Supabase backup automático
 
 ═══════════════════════════════════════════════
  📋 ARCHIVOS CLAVE
@@ -316,15 +320,18 @@ Configuración:
 • src/lib/supabase.ts — Cliente Supabase (con fallback demo)
 • src/contexts/AuthContext.tsx — Estado auth, login, signup, roles
 • src/hooks/useDeals.tsx — Context de deals (demo/live switch)
-• src/hooks/useSupabaseQuery.ts — 36 hooks React Query para Supabase
+• src/hooks/useDealSubdata.ts — Sub-datos dual-mode (live ↔ demo) con fallback
+• src/hooks/useSupabaseQuery.ts — 36+ hooks React Query para Supabase
 • src/types/database.ts — Tipos TypeScript para todas las tablas
-• src/components/auth/ProtectedRoute.tsx — Guard de rutas (auth desactivada temp.)
+• src/lib/pdf/downloadUWForDeal.ts — Export UW Model Excel per deal
 
 Migraciones DB:
-• supabase/migrations/00001_initial_schema.sql — Schema completo
+• supabase/migrations/00001_initial_schema.sql — Schema completo (24 tablas + RLS)
 • supabase/migrations/00002_seed_data.sql — Datos de ejemplo
 • supabase/migrations/00003_fix_auth_trigger.sql — Fix auth trigger
 • supabase/migrations/00004_fix_audit_logs_policy.sql — Fix audit logs RLS
+• supabase/migrations/00005_first_user_admin.sql — Primer signup → admin
+• supabase/migrations/00006_lifecycle_tables.sql — Lifecycle + phases + substeps + milestones
 
 Datos demo:
 • src/data/sampleDeals.ts — 6 deals de ejemplo
@@ -333,7 +340,7 @@ Datos demo:
 • src/data/termSheetData.ts — Term sheets de ejemplo
 • src/data/constructionMonitoring.ts — Site visits, certificaciones
 • src/data/lifecyclePhases.ts — Fases de lifecycle
-• src/data/pikEngine.ts — Motor de cálculo PIK (bien testeado)`,
+• src/data/pikEngine.ts — Motor de cálculo PIK (99 tests)`,
   },
 ];
 
