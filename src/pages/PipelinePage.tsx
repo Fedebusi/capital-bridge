@@ -4,6 +4,7 @@ import DealCard from "@/components/dashboard/DealCard";
 import DealImportDialog from "@/components/dashboard/DealImportDialog";
 import { DealFormDialog } from "@/components/deals/DealFormDialog";
 import PipelineJourneyRail from "@/components/pipeline/PipelineJourneyRail";
+import PipelineKanban from "@/components/pipeline/PipelineKanban";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { stageLabels, type DealStage } from "@/data/sampleDeals";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
@@ -13,7 +14,9 @@ import { dealRow } from "@/lib/exports/rowBuilders";
 import { useDeals } from "@/hooks/useDeals";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Briefcase, Plus, Search } from "lucide-react";
+import { Briefcase, Plus, Search, LayoutGrid, Columns3 } from "lucide-react";
+
+type ViewMode = "kanban" | "grid";
 
 const stages: DealStage[] = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"];
 
@@ -21,6 +24,7 @@ export default function PipelinePage() {
   const { deals, loading } = useDeals();
   const [filter, setFilter] = useState<DealStage | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [view, setView] = useState<ViewMode>("kanban");
 
   const filteredDeals = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -70,7 +74,39 @@ export default function PipelinePage() {
         {/* Journey Rail */}
         {deals.length > 0 && <PipelineJourneyRail deals={deals} />}
 
-        {/* Search + stage filters */}
+        {/* View toggle */}
+        {deals.length > 0 && (
+          <div className="flex items-center justify-end">
+            <div className="inline-flex rounded-full bg-slate-50 p-1">
+              <button
+                onClick={() => setView("kanban")}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors",
+                  view === "kanban" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-primary"
+                )}
+              >
+                <Columns3 className="h-3.5 w-3.5" />
+                Kanban
+              </button>
+              <button
+                onClick={() => setView("grid")}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors",
+                  view === "grid" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-primary"
+                )}
+              >
+                <LayoutGrid className="h-3.5 w-3.5" />
+                Grid
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Kanban view */}
+        {view === "kanban" && deals.length > 0 && <PipelineKanban />}
+
+        {/* Search + stage filters + grid (grid view only) */}
+        {view === "grid" && (<>
         <div className="space-y-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="relative md:w-80">
@@ -165,6 +201,7 @@ export default function PipelinePage() {
             ))}
           </div>
         )}
+        </>)}
       </div>
     </AppLayout>
   );
