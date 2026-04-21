@@ -2,9 +2,11 @@ import { Deal, formatCurrency, formatPercent, formatMillions, stageLabels, stage
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft, Building, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, HardHat, Banknote, FileSignature, Route,
+  CheckCircle2, XCircle, Clock, DollarSign, Shield, FileText, FileSpreadsheet, HardHat, Banknote, FileSignature, Route,
   Pencil, Trash2
 } from "lucide-react";
+import { downloadUWForDeal } from "@/lib/pdf/downloadUWForDeal";
+import { downloadICMemoForDeal } from "@/lib/pdf/downloadICMemoForDeal";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -116,6 +118,34 @@ export default function DealDetail({ deal }: DealDetailProps) {
               Advance to {stageLabels[nextStage as keyof typeof stageLabels]}
             </button>
           )}
+          <button
+            onClick={async () => {
+              try {
+                await downloadICMemoForDeal(deal);
+                toast.success("IC Memo ready");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Could not generate IC Memo");
+              }
+            }}
+            className="flex items-center gap-2 rounded-full bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors"
+          >
+            <FileText className="h-4 w-4" />
+            IC Memo
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                await downloadUWForDeal(deal);
+                toast.success("Underwriting model ready");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Could not generate UW");
+              }
+            }}
+            className="flex items-center gap-2 rounded-full bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            UW Model
+          </button>
           <DealFormDialog
             deal={deal}
             trigger={
