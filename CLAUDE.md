@@ -89,13 +89,13 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - **File org**: `src/components/shared/`, `src/lib/pdf/`, dead test removed
 - **Agent system**: `finance-auditor` agent added
 
-### Pending finance items (not in PR #49)
-- PIK engine: day-count convention (1/12 vs ACT/360) — needs deal-level config
-- PIK engine: cash-interest capitalization mode (today always capitalized, should be configurable)
-- PIK engine: interest accrued on non-disbursed tranches (should be disbursed-only)
-- Screening LTV uses GDV instead of current appraisal
-- Covenant statuses hardcoded (should auto-recompute from current values)
-- InvestorPortal hardcoded `portfolioHistory`, `allocationData`, `upcomingPayments`, tile magic numbers (committed/realized/distributions = × arbitrary)
+### Launch-prep session (2026-04-21, branch `claude/review-daily-progress-TT9Sw`)
+Finance items cleared for launch:
+- **PIK engine** (`src/data/pikEngine.ts`): `dayCount` option (`30/360` | `ACT/360` | `ACT/365`, default `30/360`), `cashInterestMode` (`capitalized` | `paid`, default `capitalized`), and drawdown filter tightened to `status === "disbursed"` only — pending/approved tranches no longer accrue interest
+- **Covenant auto-compute** (`src/lib/covenants.ts`): parses threshold + current-value strings (handles ≤/≥/</>/=, %, currency), 5% warning band, wired into `DealDetail` and `DealCard`
+- **Screening**: optional "Current Appraisal (€)" input adds a second `LTV Current (vs Appraisal)` criterion alongside `LTV at Origination (vs GDV)`
+- **InvestorPortal** (`src/lib/investorMetrics.ts`): `portfolioHistory` derived from PIK schedules, `allocationData` from asset-type distribution of deployed capital, `upcomingPayments` from non-disbursed drawdowns; summary tiles (committed/deployed/unrealized/realized/distributions) and "This Quarter" tile now use real values — no more `× 0.35`, `× 1.2`, `12.1%` magic numbers
+- **Tests**: 124 total (was 80) — added 4 new PIK tests, 14 covenant tests, 7 investor-metrics tests
 
 
 

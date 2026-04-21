@@ -95,4 +95,41 @@ describe("PIK Engine", () => {
       expect(result.schedule[i].openingPIK).toBe(result.schedule[i - 1].closingPIK);
     }
   });
+
+  it("skips non-disbursed drawdowns from principal (pending/approved do not accrue)", () => {
+    const result = generatePIKSchedule({
+      ...baseParams,
+      drawdowns: [
+        { scheduledDate: "2025-01-15", amount: 5_000_000, status: "disbursed" },
+        { scheduledDate: "2025-07-15", amount: 5_000_000, status: "pending" },
+        { scheduledDate: "2025-09-15", amount: 2_000_000, status: "approved" },
+      ],
+    });
+    // Only the first (disbursed) drawdown counts towards principal.
+    expect(result.schedule[6].drawdown).toBe(0);
+    expect(result.schedule[8].drawdown).toBe(0);
+    expect(result.schedule[23].closingPrincipal).toBe(5_000_000);
+  });
+
+  it("ACT/360 accrues slightly more interest than 30/360 on a 31-day month", () => {
+    const schedule30 = generatePIKSchedule({ ...baseParams, dayCount: "30/360" });
+    const scheduleAct = generatePIKSchedule({ ...baseParams, dayCount: "ACT/360" });
+    // January has 31 days so ACT/360 > 30/360 for month 1.
+    expect(scheduleAct.schedule[0].pikAccrual).toBeGreaterThan(schedule30.schedule[0].pikAccrual);
+  });
+
+  it("ACT/365 produces smaller accrual than ACT/360 on the same month", () => {
+    const act360 = generatePIKSchedule({ ...baseParams, dayCount: "ACT/360" });
+    const act365 = generatePIKSchedule({ ...baseParams, dayCount: "ACT/365" });
+    expect(act365.schedule[0].pikAccrual).toBeLessThan(act360.schedule[0].pikAccrual);
+  });
+
+  it("cashInterestMode='paid' does not capitalise cash interest", () => {
+    const capitalized = generatePIKSchedule({ ...baseParams, cashInterestMode: "capitalized" });
+    const paid = generatePIKSchedule({ ...baseParams, cashInterestMode: "paid" });
+    // PIK side is same, but closing PIK under 'paid' is lower (no cash compounding).
+    expect(paid.schedule[0].closingPIK).toBeLessThan(capitalized.schedule[0].closingPIK);
+    expect(paid.schedule[0].cashInterestPaid).toBeGreaterThan(0);
+    expect(capitalized.schedule[0].cashInterestPaid).toBe(0);
+  });
 });

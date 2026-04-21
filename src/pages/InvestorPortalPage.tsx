@@ -11,32 +11,13 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
-
-const portfolioHistory = [
-  { month: "Jul", value: 820000, returns: 12000 },
-  { month: "Aug", value: 1050000, returns: 18500 },
-  { month: "Sep", value: 1320000, returns: 24000 },
-  { month: "Oct", value: 1580000, returns: 31000 },
-  { month: "Nov", value: 1820000, returns: 38500 },
-  { month: "Dec", value: 2100000, returns: 45200 },
-  { month: "Jan", value: 2350000, returns: 52800 },
-  { month: "Feb", value: 2680000, returns: 61500 },
-  { month: "Mar", value: 2950000, returns: 70200 },
-];
-
-const allocationData = [
-  { name: "Senior Debt", value: 58, color: "#19212E" },
-  { name: "Mezzanine", value: 24, color: "#475569" },
-  { name: "Bridge", value: 12, color: "#94a3b8" },
-  { name: "Equity Co-Invest", value: 6, color: "#cbd5e1" },
-];
-
-const upcomingPayments = [
-  { project: "Terrazas del Faro", type: "Interest", date: "15 Apr 2026", amount: 42800, status: "scheduled" },
-  { project: "Arcos de Canillejas", type: "PIK Accrual", date: "22 Apr 2026", amount: 18200, status: "scheduled" },
-  { project: "Jardines de Ruzafa", type: "Principal", date: "30 Apr 2026", amount: 350000, status: "pending" },
-  { project: "Palau de Gràcia", type: "Interest", date: "05 May 2026", amount: 31500, status: "scheduled" },
-];
+import {
+  buildAllocationData,
+  buildPortfolioHistory,
+  buildPortfolioSummary,
+  buildUpcomingPayments,
+  quarterAccrual,
+} from "@/lib/investorMetrics";
 
 type Period = "1M" | "3M" | "6M" | "1Y" | "All";
 
@@ -124,24 +105,26 @@ export default function InvestorPortalPage() {
   const location = useLocation();
   const isReportsView = location.pathname === "/investor/reports";
 
-  const chartData = useMemo(() => sliceHistory(portfolioHistory, period), [period]);
+  // 12-month historical curve derived from PIK schedules of all active+repaid deals.
+  const portfolioHistory = useMemo(() => buildPortfolioHistory(deals, 12), [deals]);
+  const chartData = useMemo(() => sliceHistory(portfolioHistory, period), [portfolioHistory, period]);
+  const allocationData = useMemo(() => buildAllocationData(deals), [deals]);
+  const upcomingPayments = useMemo(() => buildUpcomingPayments(deals, 5), [deals]);
+  const summary = useMemo(() => buildPortfolioSummary(deals), [deals]);
+  const quarterReturns = useMemo(() => quarterAccrual(deals, 3), [deals]);
 
   if (loading) {
     return <InvestorLayout><LoadingSkeleton /></InvestorLayout>;
   }
 
   const activeDeals = deals.filter(d => d.stage === "active");
-  // Returns include BOTH accrued (active) and realized (repaid) to reflect true portfolio performance.
-  const repaidDeals = deals.filter(d => d.stage === "repaid");
-  const totalInvested = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
-  const totalReturns =
-    activeDeals.reduce((s, d) => s + d.accruedPIK, 0) +
-    repaidDeals.reduce((s, d) => s + d.accruedPIK, 0);
-  // Position-weighted yield (not arithmetic mean)
+  const totalInvested = summary.capitalDeployed;
+  const totalReturns = summary.unrealizedGains + summary.realizedGains;
   const yieldWeight = activeDeals.reduce((s, d) => s + d.disbursedAmount, 0);
   const avgYield = yieldWeight > 0
     ? activeDeals.reduce((s, d) => s + d.disbursedAmount * d.totalRate, 0) / yieldWeight
     : 0;
+  const nextPayment = upcomingPayments[0];
 
   function buildPositionRows(): Record<string, unknown>[] {
     return activeDeals.map((d) => ({
@@ -296,19 +279,27 @@ export default function InvestorPortalPage() {
               </Link>
             </div>
             <div className="divide-y divide-slate-100">
+              {upcomingPayments.length === 0 && (
+                <div className="px-6 py-8 text-center text-sm text-slate-400">
+                  No scheduled payments in the current portfolio.
+                </div>
+              )}
               {upcomingPayments.map((payment, i) => (
                 <div key={i} className="flex items-center gap-5 px-6 py-4">
                   <div className={cn(
                     "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-bold",
                     payment.type === "Interest" ? "bg-blue-50 text-blue-600" :
                     payment.type === "Principal" ? "bg-emerald-50 text-emerald-600" :
+                    payment.type === "Drawdown" ? "bg-amber-50 text-amber-600" :
                     "bg-violet-50 text-violet-600",
                   )}>
                     {payment.type.substring(0, 3).toUpperCase()}
                   </div>
                   <div className="flex-1">
                     <p className="font-bold text-sm text-primary">{payment.project}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{payment.type} · {payment.date}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {payment.type} · {new Date(payment.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                    </p>
                   </div>
                   <p className="text-sm font-bold text-primary">
                     €{payment.amount.toLocaleString("it-IT")}
@@ -368,7 +359,11 @@ export default function InvestorPortalPage() {
               <h2 className="text-5xl font-bold tracking-tight mt-3">{formatMillions(totalInvested + totalReturns)}</h2>
               <div className="flex items-center gap-2 mt-3">
                 <TrendingUp className="h-4 w-4 text-emerald-400" />
-                <span className="text-sm font-semibold text-emerald-400">+12.4% all-time return</span>
+                <span className="text-sm font-semibold text-emerald-400">
+                  {totalInvested > 0
+                    ? `+${((totalReturns / totalInvested) * 100).toFixed(1)}% gross return`
+                    : "Awaiting first disbursement"}
+                </span>
               </div>
             </div>
             <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-6 border-t border-white/10">
@@ -399,8 +394,8 @@ export default function InvestorPortalPage() {
               </div>
               <div className="flex-1">
                 <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">This Quarter</p>
-                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{formatMillions(totalReturns * 0.35)}</p>
-                <p className="text-xs text-emerald-600 font-semibold mt-1">+8.2% vs last quarter</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{formatMillions(quarterReturns)}</p>
+                <p className="text-xs text-slate-500 mt-1">Trailing 3 months accrual</p>
               </div>
             </div>
             <div className="bg-slate-50 rounded-2xl p-6 flex items-center gap-4 hover:bg-slate-100/70 transition-colors">
@@ -408,9 +403,9 @@ export default function InvestorPortalPage() {
                 <BarChart3 className="h-6 w-6 text-blue-600" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Annualized IRR</p>
-                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">12.1%</p>
-                <p className="text-xs text-slate-500 mt-1">Net of fees</p>
+                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Weighted Yield</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{formatPercent(avgYield)}</p>
+                <p className="text-xs text-slate-500 mt-1">Position-weighted, gross</p>
               </div>
             </div>
             <div className="bg-slate-50 rounded-2xl p-6 flex items-center gap-4 hover:bg-slate-100/70 transition-colors">
@@ -419,8 +414,21 @@ export default function InvestorPortalPage() {
               </div>
               <div className="flex-1">
                 <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Next Payment</p>
-                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">15 Apr</p>
-                <p className="text-xs text-slate-500 mt-1">€42,800 — Terrazas del Faro</p>
+                {nextPayment ? (
+                  <>
+                    <p className="text-2xl font-bold text-primary mt-1 tracking-tight">
+                      {new Date(nextPayment.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1 truncate">
+                      €{nextPayment.amount.toLocaleString("it-IT")} — {nextPayment.project}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-primary mt-1 tracking-tight">—</p>
+                    <p className="text-xs text-slate-500 mt-1">No scheduled payments</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -585,19 +593,25 @@ export default function InvestorPortalPage() {
             <div className="bg-slate-50 rounded-2xl p-6 shadow-sm">
               <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">Upcoming Payments</h3>
               <div className="space-y-3">
+                {upcomingPayments.length === 0 && (
+                  <p className="text-xs text-slate-400 py-6 text-center">No scheduled payments</p>
+                )}
                 {upcomingPayments.map((payment, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
                     <div className={cn(
                       "h-9 w-9 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-bold",
                       payment.type === "Interest" ? "bg-blue-50 text-blue-600" :
                       payment.type === "Principal" ? "bg-emerald-50 text-emerald-600" :
+                      payment.type === "Drawdown" ? "bg-amber-50 text-amber-600" :
                       "bg-violet-50 text-violet-600"
                     )}>
                       {payment.type.substring(0, 3).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-primary truncate">{payment.project}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">{payment.date}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        {new Date(payment.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+                      </p>
                     </div>
                     <p className="text-xs font-bold text-primary shrink-0">
                       €{payment.amount.toLocaleString("it-IT")}
@@ -612,11 +626,11 @@ export default function InvestorPortalPage() {
               <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">Summary</h3>
               <div className="space-y-3">
                 {[
-                  ["Capital Committed", formatMillions(totalInvested * 1.2)],
-                  ["Capital Deployed", formatMillions(totalInvested)],
-                  ["Unrealized Gains", formatMillions(totalReturns * 0.7)],
-                  ["Realized Gains", formatMillions(totalReturns * 0.3)],
-                  ["Distributions", formatMillions(totalReturns * 0.15)],
+                  ["Capital Committed", formatMillions(summary.capitalCommitted)],
+                  ["Capital Deployed", formatMillions(summary.capitalDeployed)],
+                  ["Unrealized Gains", formatMillions(summary.unrealizedGains)],
+                  ["Realized Gains", formatMillions(summary.realizedGains)],
+                  ["Distributions", formatMillions(summary.distributions)],
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between items-center">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{label}</span>

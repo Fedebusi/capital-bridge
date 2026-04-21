@@ -1,6 +1,9 @@
 // PIK Interest Accrual Engine
 // Calculates monthly interest accrual, capitalization, and exposure projection
 
+export type DayCount = "30/360" | "ACT/360" | "ACT/365";
+export type CashInterestMode = "capitalized" | "paid";
+
 export interface PIKScheduleEntry {
   month: number;
   date: string;
@@ -10,6 +13,7 @@ export interface PIKScheduleEntry {
   drawdown: number;
   repayment: number;
   cashInterest: number;
+  cashInterestPaid: number;
   pikAccrual: number;
   closingPrincipal: number;
   closingPIK: number;
@@ -19,6 +23,7 @@ export interface PIKScheduleEntry {
 export interface PIKSummary {
   dealId: string;
   totalCashInterestToDate: number;
+  totalCashInterestPaidToDate: number;
   totalPIKAccruedToDate: number;
   totalFeesEarned: number;
   projectedPIKAtMaturity: number;
@@ -27,10 +32,30 @@ export interface PIKSummary {
   schedule: PIKScheduleEntry[];
 }
 
+// Days in a given calendar month (0-indexed JS month)
+function daysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+// Period fraction for annual rate → period rate, based on day-count convention.
+// For 30/360 the month is always 1/12. For ACT/* we use actual days in that month.
+function periodFraction(dayCount: DayCount, monthDate: Date): number {
+  if (dayCount === "30/360") return 1 / 12;
+  const actual = daysInMonth(monthDate.getFullYear(), monthDate.getMonth());
+  const basis = dayCount === "ACT/365" ? 365 : 360;
+  return actual / basis;
+}
+
 /**
  * Generate a full PIK schedule for a deal from first drawdown to maturity.
  * Interest is calculated on (outstanding principal + accrued PIK) each month.
- * Cash interest is assumed deferred (PIK), i.e. capitalized monthly.
+ *
+ * Options:
+ *   dayCount           – '30/360' (default), 'ACT/360', or 'ACT/365'
+ *   cashInterestMode   – 'capitalized' (default, full-PIK) or 'paid' (cash rate is paid out, only PIK spread capitalises)
+ *
+ * Principal only accrues on drawdowns with status === "disbursed". Scheduled/approved
+ * drawdowns that have not actually been wired do not accrue interest.
  */
 export function generatePIKSchedule(params: {
   dealId: string;
@@ -41,18 +66,30 @@ export function generatePIKSchedule(params: {
   firstDrawdownDate: string;
   drawdowns: { scheduledDate: string; amount: number; status: string }[];
   repayments?: { date: string; amount: number }[];
+  dayCount?: DayCount;
+  cashInterestMode?: CashInterestMode;
 }): PIKSummary {
-  const { dealId, loanAmount, cashRate, pikSpread, tenor, firstDrawdownDate, drawdowns, repayments = [] } = params;
+  const {
+    dealId,
+    loanAmount: _loanAmount,
+    cashRate,
+    pikSpread,
+    tenor,
+    firstDrawdownDate,
+    drawdowns,
+    repayments = [],
+    dayCount = "30/360",
+    cashInterestMode = "capitalized",
+  } = params;
+  void _loanAmount; // retained in signature for call-site compatibility
 
   const startDate = new Date(firstDrawdownDate);
-  const monthlyPIKRate = pikSpread / 100 / 12;
-  const monthlyCashRate = cashRate / 100 / 12;
+  const annualPIKRate = pikSpread / 100;
+  const annualCashRate = cashRate / 100;
   const schedule: PIKScheduleEntry[] = [];
 
   let runningPrincipal = 0;
   let runningPIK = 0;
-  let totalCashInterest = 0;
-  let totalPIKAccrued = 0;
   let currentMonthIndex = 0;
   const today = new Date();
 
@@ -65,17 +102,17 @@ export function generatePIKSchedule(params: {
     const openingPIK = runningPIK;
     const totalExposure = openingPrincipal + openingPIK;
 
-    // Find drawdowns in this month
+    // Only "disbursed" drawdowns increase principal. Pending/approved are commitments
+    // that have not hit the balance sheet yet, so they cannot accrue interest.
     const monthDrawdown = drawdowns
       .filter(dd => {
         const ddDate = new Date(dd.scheduledDate);
         return ddDate.getFullYear() === monthDate.getFullYear() &&
                ddDate.getMonth() === monthDate.getMonth() &&
-               (dd.status === "disbursed" || dd.status === "approved" || dd.status === "pending");
+               dd.status === "disbursed";
       })
       .reduce((sum, dd) => sum + dd.amount, 0);
 
-    // Find repayments in this month
     const monthRepayment = repayments
       .filter(rp => {
         const rpDate = new Date(rp.date);
@@ -87,15 +124,19 @@ export function generatePIKSchedule(params: {
     runningPrincipal += monthDrawdown - monthRepayment;
     if (runningPrincipal < 0) runningPrincipal = 0;
 
-    // Calculate interest on total exposure (principal + accrued PIK)
+    const frac = periodFraction(dayCount, monthDate);
     const base = runningPrincipal + runningPIK;
-    const cashInterest = base * monthlyCashRate;
-    const pikAccrual = base * monthlyPIKRate;
+    const cashInterest = base * annualCashRate * frac;
+    const pikAccrual = base * annualPIKRate * frac;
 
-    // PIK: capitalize both cash interest and PIK spread (full PIK structure)
-    runningPIK += cashInterest + pikAccrual;
-    totalCashInterest += cashInterest;
-    totalPIKAccrued += pikAccrual;
+    let cashInterestPaid = 0;
+    if (cashInterestMode === "capitalized") {
+      runningPIK += cashInterest + pikAccrual;
+    } else {
+      // Cash interest is paid out of the facility (not compounded). PIK spread still capitalises.
+      runningPIK += pikAccrual;
+      cashInterestPaid = cashInterest;
+    }
 
     if (monthDate <= today) {
       currentMonthIndex = m;
@@ -110,6 +151,7 @@ export function generatePIKSchedule(params: {
       drawdown: monthDrawdown,
       repayment: monthRepayment,
       cashInterest,
+      cashInterestPaid,
       pikAccrual,
       closingPrincipal: runningPrincipal,
       closingPIK: runningPIK,
@@ -117,10 +159,13 @@ export function generatePIKSchedule(params: {
     });
   }
 
+  const sliceToDate = schedule.slice(0, currentMonthIndex + 1);
+
   return {
     dealId,
-    totalCashInterestToDate: schedule.slice(0, currentMonthIndex + 1).reduce((s, e) => s + e.cashInterest, 0),
-    totalPIKAccruedToDate: schedule.slice(0, currentMonthIndex + 1).reduce((s, e) => s + e.pikAccrual, 0),
+    totalCashInterestToDate: sliceToDate.reduce((s, e) => s + e.cashInterest, 0),
+    totalCashInterestPaidToDate: sliceToDate.reduce((s, e) => s + e.cashInterestPaid, 0),
+    totalPIKAccruedToDate: sliceToDate.reduce((s, e) => s + e.pikAccrual, 0),
     totalFeesEarned: 0,
     projectedPIKAtMaturity: runningPIK,
     projectedTotalExposureAtMaturity: runningPrincipal + runningPIK,

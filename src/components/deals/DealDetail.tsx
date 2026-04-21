@@ -37,6 +37,7 @@ import LifecycleTracker from "./LifecycleTracker";
 import LifecycleProgressBar from "./LifecycleProgressBar";
 import { getCurrentPhaseNumber, getLifecycleProgress } from "@/data/lifecyclePhases";
 import { useLifecycleForDeal } from "@/hooks/useDealSubdata";
+import { recomputeCovenants } from "@/lib/covenants";
 
 interface DealDetailProps {
   deal: Deal;
@@ -55,6 +56,8 @@ export default function DealDetail({ deal }: DealDetailProps) {
   const stageOrder = ["screening", "due_diligence", "ic_approval", "documentation", "active", "repaid"] as const;
   const currentIdx = stageOrder.indexOf(deal.stage as typeof stageOrder[number]);
   const nextStage = currentIdx >= 0 && currentIdx < stageOrder.length - 1 ? stageOrder[currentIdx + 1] : null;
+
+  const liveCovenants = recomputeCovenants(deal.covenants ?? []);
 
   async function handleStageChange(newStage: string) {
     try {
@@ -96,7 +99,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
             <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
               {stageLabels[deal.stage]}
             </span>
-            {(deal.covenants ?? []).some(c => c.status !== "compliant") && (
+            {liveCovenants.some(c => c.status !== "compliant") && (
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1 rounded-full">
                 <AlertTriangle className="h-3 w-3" /> Covenant Alert
               </span>
@@ -380,7 +383,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
               <h3 className="font-display text-sm font-semibold text-primary">Covenant Compliance</h3>
             </div>
             <div className="p-5 space-y-3">
-              {deal.covenants.map(c => (
+              {liveCovenants.map(c => (
                 <div key={c.name} className={cn(
                   "flex items-center justify-between rounded-lg border p-4",
                   c.status === "compliant" ? "border-success/20 bg-success/5" :
@@ -404,7 +407,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
                   </div>
                 </div>
               ))}
-              {deal.covenants.length === 0 && <p className="text-sm text-slate-500 text-center py-8">No covenants configured</p>}
+              {liveCovenants.length === 0 && <p className="text-sm text-slate-500 text-center py-8">No covenants configured</p>}
             </div>
           </div>
         </TabsContent>

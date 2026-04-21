@@ -2,6 +2,7 @@ import { Deal, stageLabels, stageColors, formatMillions, formatPercent } from "@
 import { cn } from "@/lib/utils";
 import { MapPin, Building, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { recomputeCovenants } from "@/lib/covenants";
 
 interface DealCardProps {
   deal: Deal;
@@ -9,7 +10,7 @@ interface DealCardProps {
 }
 
 export default function DealCard({ deal, index = 0 }: DealCardProps) {
-  const hasCovenantIssue = deal.covenants.some(c => c.status !== "compliant");
+  const hasCovenantIssue = recomputeCovenants(deal.covenants ?? []).some(c => c.status !== "compliant");
 
   return (
     <div className="animate-fade-in" style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}>

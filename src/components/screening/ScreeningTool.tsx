@@ -35,6 +35,7 @@ export default function ScreeningTool() {
     assetType: "",
     loanAmount: "",
     gdv: "",
+    currentAppraisal: "",
     totalCost: "",
     preSales: "",
     developerProjects: "",
@@ -44,21 +45,36 @@ export default function ScreeningTool() {
   const handleScreen = () => {
     const loanAmount = parseFloat(formData.loanAmount) || 0;
     const gdv = parseFloat(formData.gdv) || 0;
+    const currentAppraisal = parseFloat(formData.currentAppraisal) || 0;
     const totalCost = parseFloat(formData.totalCost) || 0;
     const preSales = parseFloat(formData.preSales) || 0;
     const devProjects = parseInt(formData.developerProjects) || 0;
     const ltv = gdv > 0 ? (loanAmount / gdv) * 100 : 0;
+    const ltvCurrent = currentAppraisal > 0 ? (loanAmount / currentAppraisal) * 100 : 0;
     const ltc = totalCost > 0 ? (loanAmount / totalCost) * 100 : 0;
 
-    setResults([
+    const results: ScreeningResult[] = [
       { label: "Asset Type", pass: defaultCriteria.acceptedAssetTypes.includes(formData.assetType), value: formData.assetType || "Not specified", threshold: "Residential" },
       { label: "Location", pass: formData.location !== "", value: formData.location || "Not specified", threshold: "Spain/Portugal Tier 1-2" },
-      { label: "LTV at Origination", pass: ltv > 0 && ltv <= defaultCriteria.maxLTV, value: ltv > 0 ? `${ltv.toFixed(1)}%` : "N/A", threshold: `≤ ${defaultCriteria.maxLTV}%` },
+      { label: "LTV at Origination (vs GDV)", pass: ltv > 0 && ltv <= defaultCriteria.maxLTV, value: ltv > 0 ? `${ltv.toFixed(1)}%` : "N/A", threshold: `≤ ${defaultCriteria.maxLTV}%` },
+    ];
+    // Only surface current-appraisal LTV when the user provides one — some deals
+    // (pure construction) don't have a current as-is appraisal.
+    if (currentAppraisal > 0) {
+      results.push({
+        label: "LTV Current (vs Appraisal)",
+        pass: ltvCurrent <= defaultCriteria.maxLTV,
+        value: `${ltvCurrent.toFixed(1)}%`,
+        threshold: `≤ ${defaultCriteria.maxLTV}%`,
+      });
+    }
+    results.push(
       { label: "LTC", pass: ltc > 0 && ltc <= defaultCriteria.maxLTC, value: ltc > 0 ? `${ltc.toFixed(1)}%` : "N/A", threshold: `≤ ${defaultCriteria.maxLTC}%` },
       { label: "Ticket Size", pass: loanAmount >= defaultCriteria.minTicket && loanAmount <= defaultCriteria.maxTicket, value: loanAmount > 0 ? `€${(loanAmount / 1000000).toFixed(1)}M` : "N/A", threshold: `€${defaultCriteria.minTicket / 1000000}M - €${defaultCriteria.maxTicket / 1000000}M` },
       { label: "Developer Track Record", pass: devProjects >= defaultCriteria.minDeveloperProjects, value: `${devProjects} projects`, threshold: `≥ ${defaultCriteria.minDeveloperProjects} projects` },
       { label: "Pre-Sales Level", pass: preSales >= defaultCriteria.minPreSales, value: `${preSales}%`, threshold: `≥ ${defaultCriteria.minPreSales}%` },
-    ]);
+    );
+    setResults(results);
   };
 
   const passCount = results?.filter(r => r.pass).length || 0;
@@ -66,7 +82,7 @@ export default function ScreeningTool() {
   const score = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 0;
 
   const handleReset = () => {
-    setFormData({ projectName: "", borrower: "", location: "", assetType: "", loanAmount: "", gdv: "", totalCost: "", preSales: "", developerProjects: "" });
+    setFormData({ projectName: "", borrower: "", location: "", assetType: "", loanAmount: "", gdv: "", currentAppraisal: "", totalCost: "", preSales: "", developerProjects: "" });
     setResults(null);
   };
 
@@ -78,6 +94,7 @@ export default function ScreeningTool() {
       { Field: "Location", Value: formData.location },
       { Field: "Loan Amount (EUR)", Value: formData.loanAmount },
       { Field: "GDV (EUR)", Value: formData.gdv },
+      { Field: "Current Appraisal (EUR)", Value: formData.currentAppraisal },
       { Field: "Total Cost (EUR)", Value: formData.totalCost },
       { Field: "Pre-Sales (%)", Value: formData.preSales },
       { Field: "Developer Projects", Value: formData.developerProjects },
@@ -168,18 +185,24 @@ export default function ScreeningTool() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs text-slate-500">Loan Amount (€)</Label>
                 <Input type="number" value={formData.loanAmount} onChange={e => setFormData(p => ({ ...p, loanAmount: e.target.value }))} placeholder="12,000,000" className="mt-1 bg-muted border-border" />
               </div>
               <div>
+                <Label className="text-xs text-slate-500">Total Project Cost (€)</Label>
+                <Input type="number" value={formData.totalCost} onChange={e => setFormData(p => ({ ...p, totalCost: e.target.value }))} placeholder="18,000,000" className="mt-1 bg-muted border-border" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <Label className="text-xs text-slate-500">GDV (€)</Label>
                 <Input type="number" value={formData.gdv} onChange={e => setFormData(p => ({ ...p, gdv: e.target.value }))} placeholder="30,000,000" className="mt-1 bg-muted border-border" />
               </div>
               <div>
-                <Label className="text-xs text-slate-500">Total Project Cost (€)</Label>
-                <Input type="number" value={formData.totalCost} onChange={e => setFormData(p => ({ ...p, totalCost: e.target.value }))} placeholder="18,000,000" className="mt-1 bg-muted border-border" />
+                <Label className="text-xs text-slate-500">Current Appraisal (€) <span className="text-slate-400">— optional</span></Label>
+                <Input type="number" value={formData.currentAppraisal} onChange={e => setFormData(p => ({ ...p, currentAppraisal: e.target.value }))} placeholder="22,000,000" className="mt-1 bg-muted border-border" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
