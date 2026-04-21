@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import L from "leaflet";
-import { sampleDeals, formatMillions, stageLabels } from "@/data/sampleDeals";
+import { formatMillions, stageLabels } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
 import "leaflet/dist/leaflet.css";
 
 const stageMarkerColors: Record<string, string> = {
@@ -18,6 +19,7 @@ export default function PortfolioMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const navigate = useNavigate();
+  const { deals } = useDeals();
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -31,7 +33,7 @@ export default function PortfolioMap() {
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png").addTo(map);
 
-    const dealsWithCoords = sampleDeals.filter(d => d.coordinates);
+    const dealsWithCoords = deals.filter(d => d.coordinates && d.coordinates.length === 2);
 
     dealsWithCoords.forEach(deal => {
       const color = stageMarkerColors[deal.stage] || "#19212E";
@@ -114,7 +116,7 @@ export default function PortfolioMap() {
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [navigate]);
+  }, [navigate, deals]);
 
   return (
     <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
