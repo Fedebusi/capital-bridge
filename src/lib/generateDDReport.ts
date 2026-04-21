@@ -189,7 +189,7 @@ export function generateDDReport(deal: Deal, items: DDItem[]) {
       doc.text("Evidence / Documents:", margin + 2, y);
       y += 4;
       for (const item of docsItems) {
-        for (const d of item.documents!) {
+        for (const d of item.documents ?? []) {
           doc.setFont("helvetica", "normal");
           doc.text(`• ${d.name} (v${d.version}, ${d.uploadDate})`, margin + 4, y);
           y += 4;

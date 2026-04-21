@@ -94,7 +94,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
             <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
               {stageLabels[deal.stage]}
             </span>
-            {deal.covenants.some(c => c.status !== "compliant") && (
+            {(deal.covenants ?? []).some(c => c.status !== "compliant") && (
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1 rounded-full">
                 <AlertTriangle className="h-3 w-3" /> Covenant Alert
               </span>
