@@ -19,6 +19,21 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
 
   const pikSummary = useMemo(() => {
     if (!deal || !effectiveStart) return null;
+
+    const rawDrawdowns = (deal.drawdowns ?? []).map(dd => ({
+      scheduledDate: dd.scheduledDate,
+      amount: dd.amount,
+      status: dd.status,
+    }));
+
+    // If deal is active but no drawdowns tracked, assume full facility
+    // was disbursed at effectiveStart — so the PIK projection is meaningful
+    // rather than showing €0 everywhere.
+    const hasDisbursed = rawDrawdowns.some(dd => dd.status === "disbursed");
+    const effectiveDrawdowns = hasDisbursed || deal.stage !== "active"
+      ? rawDrawdowns
+      : [{ scheduledDate: effectiveStart, amount: deal.loanAmount, status: "disbursed" as const }];
+
     return generatePIKSchedule({
       dealId: deal.id,
       loanAmount: deal.loanAmount,
@@ -26,11 +41,7 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
       pikSpread: deal.pikSpread,
       tenor: deal.tenor,
       firstDrawdownDate: effectiveStart,
-      drawdowns: (deal.drawdowns ?? []).map(dd => ({
-        scheduledDate: dd.scheduledDate,
-        amount: dd.amount,
-        status: dd.status,
-      })),
+      drawdowns: effectiveDrawdowns,
     });
   }, [deal, effectiveStart]);
 

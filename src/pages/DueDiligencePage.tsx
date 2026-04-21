@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import DueDiligencePanel from "@/components/deals/DueDiligencePanel";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
@@ -7,7 +7,7 @@ import { useDDItemsForDeal } from "@/hooks/useDealSubdata";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { stageLabels, stageColors, formatMillions, type Deal } from "@/data/sampleDeals";
-import { generateDDReport } from "@/lib/generateDDReport";
+import { generateDDReport } from "@/lib/pdf/generateDDReport";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
 import { exportToCsv } from "@/lib/exports/exportToCsv";
 import { ddItemRow } from "@/lib/exports/rowBuilders";

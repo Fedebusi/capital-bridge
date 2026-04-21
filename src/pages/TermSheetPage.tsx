@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
@@ -8,7 +8,7 @@ import { termSheetStatusLabels, termSheetStatusColors, type TermSheet, type Enha
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer, FileText } from "lucide-react";
-import { generateTermSheetPDF } from "@/lib/generateTermSheetPDF";
+import { generateTermSheetPDF } from "@/lib/pdf/generateTermSheetPDF";
 import { useCallback, useEffect, useState } from "react";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
 import { exportToCsv } from "@/lib/exports/exportToCsv";

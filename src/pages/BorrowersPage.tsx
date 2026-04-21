@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton, EmptyState } from "@/components/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import { BorrowerFormDialog } from "@/components/borrowers/BorrowerFormDialog";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { sampleBorrowers, ratingColors, type Borrower } from "@/data/borrowers";

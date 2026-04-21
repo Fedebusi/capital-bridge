@@ -4,77 +4,77 @@ Institutional debt fund portfolio management platform. Built for real estate len
 
 ## Tech Stack
 
-- **React 18** + **TypeScript** (Vite)
-- **Tailwind CSS** + **shadcn/ui** component library
-- **Recharts** for data visualization
-- **Leaflet** for geographic mapping
-- **jsPDF** for PDF report generation
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Data**: Supabase (PostgreSQL + Auth + Storage + Realtime), React Query
+- **Charts**: Recharts; **Maps**: Leaflet; **PDF**: jsPDF
+- **Testing**: Vitest + React Testing Library (99 tests)
+- **Hosting**: Vercel (frontend) + Supabase (backend)
+- **CI/CD**: GitHub Actions (lint + typecheck + test + build on every PR)
 
 ## Getting Started
 
 ```bash
-npm install
-npm run dev
+npm install       # install dependencies
+npm run dev       # start dev server at http://localhost:8080
+npm run lint      # ESLint
+npm test          # Vitest
+npm run build     # production build
 ```
 
-The app runs on `http://localhost:5173`.
+## Dual mode: Demo / Live
 
-## Project Structure
+The app auto-detects if Supabase is configured (`VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` in env) and switches accordingly:
+- **Demo mode**: no Supabase, uses sample data from `src/data/`
+- **Live mode**: full Supabase integration — auth, RLS, realtime, storage
+
+On Vercel the env vars come from the Supabase integration (`NEXT_PUBLIC_*` / `SUPABASE_*`). `vite.config.ts` bridges these into the `VITE_*` prefix that the client expects.
+
+## Repository layout
 
 ```
 src/
-  pages/              # Route-level page components
   components/
-    ui/               # shadcn/ui primitives (Button, Dialog, Tabs, etc.)
-    layout/           # AppLayout (sidebar + top nav)
-    dashboard/        # Dashboard widgets (MetricCard, PortfolioMap, etc.)
-    deals/            # Deal detail panels (DD, Approvals, PIK, etc.)
-    screening/        # Screening tool component
-  data/               # Mock data & type definitions
-  lib/                # Utilities (cn helper, PDF generation)
-  hooks/              # Custom React hooks
+    ui/            → shadcn primitives
+    shared/        → ErrorBoundary, LoadingSkeleton, NavLink
+    layout/        → AppLayout (sidebar), InvestorLayout (header-only)
+    deals/         → DealCard, DealDetail, panels (DD, Approvals, PIK, …)
+    borrowers/     → BorrowerFormDialog
+    dashboard/     → QuickScreenDialog, PortfolioMap, DealImportDialog
+    pipeline/      → PipelineJourneyRail, PipelineDealDot
+    screening/     → ScreeningTool
+    auth/          → ProtectedRoute
+  pages/           → one file per route (19 pages)
+  hooks/           → useDeals, useSupabaseQuery, useDealSubdata, useAuth
+  lib/
+    pdf/           → generateDDReport, generateTermSheetPDF, generateTaxReport
+    exports/       → dealTemplate, exportToCsv, exportToExcel, rowBuilders
+    supabase.ts, utils.ts, dbConverters.ts
+  data/            → sample data (used as demo + type source)
+  types/           → TypeScript types (database.ts)
+  contexts/        → AuthContext
+  test/            → Vitest tests
+supabase/migrations → 9 SQL migrations (schema, RLS, auth, lifecycle, seed)
+docs/              → guides, design audits, changelogs
+.claude/agents/    → sub-agent definitions (feature-builder, reviewer, finance-auditor, …)
+.github/workflows/ → CI (lint+test+build), supabase-deploy (migrations)
 ```
 
-## Pages
+Key config: `AGENTS.md` (agent briefing), `CLAUDE.md` (session context), `plan.md` (roadmap).
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Overview | Portfolio dashboard with NAV, metrics, activity feed |
-| `/investor` | Investor Portal | Investor-facing portfolio, performance chart, payments |
-| `/map` | Map | Geographic distribution of deals on interactive map |
-| `/lifecycle` | Lifecycle | 12-phase deal workflow with milestones |
-| `/pipeline` | Pipeline | Deal pipeline with stage filters |
-| `/screening` | Screening | Deal opportunity assessment tool |
-| `/deals` | Loan Book | Sortable/filterable loan portfolio table |
-| `/deals/:id` | Deal Detail | Full deal view with DD, approvals, covenants, etc. |
-| `/pik-engine` | PIK Engine | Interest accrual calculations and projections |
-| `/construction` | Construction | Site visits, certifications, monitoring reports |
-| `/borrowers` | Borrowers | Borrower registry with ratings and KYC status |
-| `/borrowers/:id` | Borrower Detail | Profile, exposure, track record, KYC compliance |
-| `/due-diligence` | Due Diligence | DD progress tracker with PDF export |
-| `/approvals` | Approvals | IC voting and approval workflow |
+## User roles
 
-## Design System
+- **Originator** — new deals, term sheets, pipeline
+- **Finance** — numbers, covenants, reporting, loan status
+- **Architecture/Monitoring** — construction photos, milestones, surveyor notes
+- **Admin (fund manager)** — full access, approves, exports reporting
 
-- **Fonts**: Manrope (headlines, extrabold), Inter (body)
-- **Primary**: `#19212E` (dark navy)
-- **Accent**: emerald for positive indicators
-- **Layout**: Fixed sidebar (264px) + sticky top nav
-- **Labels**: Uppercase, tracking-widest, 9-11px
+## Contributing
 
-## Data
+Read `AGENTS.md` before contributing. All changes go through PR → CI → squash merge. Never push directly to `main`.
 
-All data is currently mock/sample data in `src/data/`. No backend API is connected.
-When integrating a real API, replace the imports from `src/data/` with React Query hooks.
-The `@tanstack/react-query` package is already installed and configured in `App.tsx`.
+See `plan.md` for the current roadmap and priority queue.
 
-## Scripts
+## License
 
-```bash
-npm run dev        # Start dev server
-npm run build      # Production build
-npm run preview    # Preview production build
-npm run lint       # Run ESLint
-npm run test       # Run Vitest
-npm run test:watch # Run tests in watch mode
-```
+Proprietary — All rights reserved.
