@@ -20,13 +20,16 @@ import {
   LogOut,
   MapPin,
   Plus,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDeals } from "@/hooks/useDeals";
 import { stageLabels, stageColors } from "@/data/sampleDeals";
 import { toast } from "sonner";
 
-const navItems = [
+type NavItem = { to: string; icon: typeof LayoutDashboard; label: string; group: string; adminOnly?: boolean };
+
+const navItems: NavItem[] = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview", group: "main" },
   { to: "/investor", icon: Landmark, label: "Investor Portal", group: "main" },
   { to: "/map", icon: MapPin, label: "Map", group: "main" },
@@ -40,7 +43,8 @@ const navItems = [
   { to: "/borrowers", icon: Users, label: "Borrowers", group: "ops" },
   { to: "/due-diligence", icon: ClipboardCheck, label: "Due Diligence", group: "ops" },
   { to: "/approvals", icon: Vote, label: "Approvals", group: "ops" },
-  { to: "/it-instructions", icon: BookOpen, label: "IT Docs", group: "ops" },
+  { to: "/it-instructions", icon: BookOpen, label: "IT Docs", group: "admin", adminOnly: true },
+  { to: "/admin/users", icon: UserCog, label: "Users", group: "admin", adminOnly: true },
 ];
 
 interface AppLayoutProps {
@@ -68,8 +72,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
     navigate("/login");
   }
 
+  const isAdmin = profile?.role === "admin";
+
   const renderNavGroup = (group: string, label: string) => {
-    const items = navItems.filter(i => i.group === group);
+    const items = navItems.filter(i => i.group === group && (!i.adminOnly || isAdmin));
+    if (items.length === 0) return null;
     return (
       <div>
         <p className="px-4 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
@@ -131,6 +138,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           {renderNavGroup("main", "Dashboard")}
           {renderNavGroup("deals", "Deal Management")}
           {renderNavGroup("ops", "Operations")}
+          {renderNavGroup("admin", "Administration")}
         </nav>
 
         {/* User profile (sempre visibile in basso) */}

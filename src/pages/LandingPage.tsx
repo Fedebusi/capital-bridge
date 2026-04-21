@@ -80,8 +80,8 @@ function Globe() {
   return (
     <canvas
       ref={canvasRef}
-      className="w-[900px] h-[900px]"
-      style={{ width: 900, height: 900 }}
+      className="max-w-full h-auto"
+      style={{ width: 900, height: 900, maxWidth: "100%" }}
     />
   );
 }
@@ -231,6 +231,17 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
+
+      <footer className="border-t border-slate-100 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+          <p>© {new Date().getFullYear()} CapitalBridge — Institutional real-estate debt platform.</p>
+          <nav className="flex gap-6">
+            <a href="/privacy" className="hover:text-primary transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-primary transition-colors">Terms</a>
+            <a href="/about" className="hover:text-primary transition-colors">About</a>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

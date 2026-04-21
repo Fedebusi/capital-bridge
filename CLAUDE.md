@@ -89,7 +89,15 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 - **File org**: `src/components/shared/`, `src/lib/pdf/`, dead test removed
 - **Agent system**: `finance-auditor` agent added
 
-### Launch-prep session (2026-04-21, branch `claude/review-daily-progress-TT9Sw`)
+### Launch-prep session part 2 (2026-04-21, same branch)
+- **User management UI** (`/admin/users`) — admin-only page to list users, change role, delete profile, copy invite link. Hooked to `profiles` table with admin RLS.
+- **Legal pages** (`/privacy`, `/terms`) + **cookie banner** with consent gate — Vercel Analytics only loads when user accepts. Footer links added on Landing.
+- **PIK Engine empty state** — previously rendered blank when no active deals; now shows empty state CTA.
+- **Nav sidebar** reorganised — added "Administration" group visible only to `admin` role; IT Docs + Users live here.
+- **LandingPage canvas** made responsive (was fixed 900×900, overflowed on mobile).
+- **Launch checklist** (`docs/LAUNCH_CHECKLIST.md`) — complete Federico-facing deploy + QA guide covering Supabase secrets, env vars, sanity checks, onboarding flow, legal compliance, observability, and rollback plan.
+
+### Launch-prep session part 1 (2026-04-21, same branch)
 Finance items cleared for launch:
 - **PIK engine** (`src/data/pikEngine.ts`): `dayCount` option (`30/360` | `ACT/360` | `ACT/365`, default `30/360`), `cashInterestMode` (`capitalized` | `paid`, default `capitalized`), and drawdown filter tightened to `status === "disbursed"` only — pending/approved tranches no longer accrue interest
 - **Covenant auto-compute** (`src/lib/covenants.ts`): parses threshold + current-value strings (handles ≤/≥/</>/=, %, currency), 5% warning band, wired into `DealDetail` and `DealCard`

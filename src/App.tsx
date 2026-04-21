@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import * as Sentry from "@sentry/react";
+import { useEffect, useState } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DealsProvider } from "@/hooks/useDeals";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import CookieBanner, { getCookieConsent } from "@/components/shared/CookieBanner";
 
 // Initialize Sentry for error tracking in production
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
@@ -35,6 +37,9 @@ import MapPage from "./pages/MapPage.tsx";
 import InvestorPortalPage from "./pages/InvestorPortalPage.tsx";
 import TermSheetPage from "./pages/TermSheetPage.tsx";
 import ITInstructionsPage from "./pages/ITInstructionsPage.tsx";
+import UserManagementPage from "./pages/UserManagementPage.tsx";
+import PrivacyPage from "./pages/PrivacyPage.tsx";
+import TermsPage from "./pages/TermsPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
@@ -42,6 +47,26 @@ import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
+
+function useAnalyticsConsent() {
+  const [consented, setConsented] = useState(() => getCookieConsent() === "accepted");
+  useEffect(() => {
+    const onChange = () => setConsented(getCookieConsent() === "accepted");
+    window.addEventListener("storage", onChange);
+    return () => window.removeEventListener("storage", onChange);
+  }, []);
+  return consented;
+}
+
+function AppShell() {
+  const analyticsEnabled = useAnalyticsConsent();
+  return (
+    <>
+      {analyticsEnabled && <Analytics />}
+      <CookieBanner />
+    </>
+  );
+}
 
 const App = () => (
   <ErrorBoundary>
@@ -77,6 +102,9 @@ const App = () => (
           <Route path="/investor/reports" element={<ProtectedRoute><InvestorPortalPage /></ProtectedRoute>} />
           <Route path="/term-sheets" element={<ProtectedRoute><TermSheetPage /></ProtectedRoute>} />
           <Route path="/it-instructions" element={<ProtectedRoute requiredRoles={["admin"]}><ITInstructionsPage /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute requiredRoles={["admin"]}><UserManagementPage /></ProtectedRoute>} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -84,7 +112,7 @@ const App = () => (
     </TooltipProvider>
     </DealsProvider>
     </AuthProvider>
-    <Analytics />
+    <AppShell />
   </QueryClientProvider>
   </ErrorBoundary>
 );

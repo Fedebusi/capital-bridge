@@ -822,3 +822,47 @@ export function useGetDocumentUrl() {
     return data.publicUrl;
   };
 }
+
+// ===== PROFILES / USER MANAGEMENT =====
+
+export function useProfilesQuery() {
+  return useQuery({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      if (!isSupabaseConfigured()) return [];
+      const { data, error } = await supabase!
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as import("@/types/database").DbProfile[];
+    },
+    enabled: isSupabaseConfigured(),
+  });
+}
+
+export function useUpdateProfileRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, role }: { id: string; role: import("@/types/database").UserRole }) => {
+      if (!isSupabaseConfigured()) throw new Error("Supabase not configured");
+      const { error } = await supabase!.from("profiles").update({ role }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profiles"] }),
+  });
+}
+
+export function useDeleteProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!isSupabaseConfigured()) throw new Error("Supabase not configured");
+      // Only removes the profile row. The auth.users entry remains and must be
+      // removed separately by an admin via Supabase dashboard or a service-role RPC.
+      const { error } = await supabase!.from("profiles").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profiles"] }),
+  });
+}

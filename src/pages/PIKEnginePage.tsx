@@ -1,17 +1,18 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton, EmptyState } from "@/components/shared/LoadingSkeleton";
 import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { formatCurrency } from "@/data/sampleDeals";
 import { generatePIKSchedule } from "@/data/pikEngine";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Calculator } from "lucide-react";
 import { exportToExcel, stampedFilename } from "@/lib/exports/exportToExcel";
 import { exportToCsv } from "@/lib/exports/exportToCsv";
 
 export default function PIKEnginePage() {
   const { deals, loading } = useDeals();
+  const navigate = useNavigate();
 
   if (loading) {
     return <AppLayout><LoadingSkeleton /></AppLayout>;
@@ -96,6 +97,22 @@ export default function PIKEnginePage() {
           />
         </div>
 
+        {summaries.length === 0 ? (
+          <EmptyState
+            icon={Calculator}
+            title="No active deals to accrue"
+            description="The PIK engine runs on deals that have reached the active stage with a first drawdown date. Move a deal forward to see monthly accrual here."
+            action={
+              <button
+                onClick={() => navigate("/pipeline")}
+                className="rounded-full bg-accent text-white px-5 py-2 text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Go to Pipeline
+              </button>
+            }
+          />
+        ) : (
+        <>
         {/* Portfolio Summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           <MetricCard label="Total Principal Outstanding" value={formatCurrency(totalPrincipal)} />
@@ -146,6 +163,8 @@ export default function PIKEnginePage() {
             </table>
           </div>
         </div>
+        </>
+        )}
       </div>
     </AppLayout>
   );
