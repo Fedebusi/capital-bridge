@@ -263,7 +263,6 @@ export function useMonitoringReportsForDeal(dealId: string): DualResult<Monitori
   const query = useMonitoringReports(dealId);
   const sample = sampleMonitoringReports[dealId] ?? [];
   if (isLive) {
-    return {
     const live = (query.data ?? []).map(dbMonitoringReportToFrontend);
     return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
