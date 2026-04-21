@@ -1,5 +1,6 @@
 import { generatePIKSchedule, type PIKScheduleEntry } from "@/data/pikEngine";
-import { sampleDeals, formatCurrency, formatPercent } from "@/data/sampleDeals";
+import { formatCurrency, formatPercent } from "@/data/sampleDeals";
+import { useDeals } from "@/hooks/useDeals";
 import { cn } from "@/lib/utils";
 import { TrendingUp, AlertTriangle } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -9,30 +10,38 @@ interface PIKSchedulePanelProps {
 }
 
 export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
-  const deal = sampleDeals.find(d => d.id === dealId);
+  const { deals } = useDeals();
+  const deal = deals.find(d => d.id === dealId);
   const [showProjected, setShowProjected] = useState(true);
 
+  // If deal is active but no firstDrawdownDate recorded, use today as projection start
+  const effectiveStart = deal?.firstDrawdownDate ?? (deal?.stage === "active" ? new Date().toISOString().slice(0, 10) : null);
+
   const pikSummary = useMemo(() => {
-    if (!deal || !deal.firstDrawdownDate) return null;
+    if (!deal || !effectiveStart) return null;
     return generatePIKSchedule({
       dealId: deal.id,
       loanAmount: deal.loanAmount,
       cashRate: deal.interestRate,
       pikSpread: deal.pikSpread,
       tenor: deal.tenor,
-      firstDrawdownDate: deal.firstDrawdownDate,
-      drawdowns: deal.drawdowns.map(dd => ({
+      firstDrawdownDate: effectiveStart,
+      drawdowns: (deal.drawdowns ?? []).map(dd => ({
         scheduledDate: dd.scheduledDate,
         amount: dd.amount,
         status: dd.status,
       })),
     });
-  }, [deal]);
+  }, [deal, effectiveStart]);
 
   if (!pikSummary) {
     return (
       <div className="rounded-2xl bg-slate-50 p-8 text-center">
-        <p className="text-sm text-slate-500">No PIK schedule available — deal not yet active</p>
+        <p className="text-sm text-slate-500">
+          {deal?.stage === "active"
+            ? "PIK schedule will appear once the first drawdown is recorded."
+            : "PIK schedule will be generated once the deal becomes active."}
+        </p>
       </div>
     );
   }
