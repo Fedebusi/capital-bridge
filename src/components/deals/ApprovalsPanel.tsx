@@ -20,7 +20,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
 
   if (approvalLoading || waiversLoading) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 shadow-card text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 shadow-card text-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
       </div>
     );
@@ -43,7 +43,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
       {approval && (
         <>
           {/* IC Voting */}
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <h3 className="font-display text-sm font-semibold text-primary">Investment Committee</h3>
               <span className="text-xs text-slate-500">Date: {approval.icDate}</span>
@@ -66,7 +66,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
           </div>
 
           {/* Capital Partner Sign-Off */}
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-4 border-b border-slate-100">
               <h3 className="font-display text-sm font-semibold text-primary">Capital Partner Sign-Off</h3>
             </div>
@@ -96,7 +96,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
 
           {/* Audit Trail */}
           {approval.auditTrail.length > 0 && (
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-2xl bg-slate-50 overflow-hidden">
               <div className="p-4 border-b border-slate-100">
                 <h3 className="font-display text-sm font-semibold text-primary">Audit Trail</h3>
               </div>
@@ -119,7 +119,7 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
 
       {/* Covenant Waivers */}
       {waivers.length > 0 && (
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+        <div className="rounded-2xl bg-slate-50 overflow-hidden">
           <div className="p-4 border-b border-slate-100">
             <h3 className="font-display text-sm font-semibold text-primary">Covenant Waiver Requests</h3>
           </div>

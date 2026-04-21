@@ -33,7 +33,7 @@ function DealDDRow({
   const pct = items.length > 0 ? Math.round((completed / items.length) * 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+    <div className="rounded-2xl bg-slate-50 overflow-hidden">
       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
@@ -49,7 +49,7 @@ function DealDDRow({
           <span className="text-xs text-slate-500">{completed}/{items.length} ({pct}%)</span>
           <button
             onClick={() => generateDDReport(deal, items)}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-100 bg-background px-3 py-1.5 text-xs font-medium text-primary hover:bg-muted transition-colors"
+            className="flex items-center gap-1.5 rounded-full bg-white border border-slate-100 px-3 py-1.5 text-xs font-medium text-primary hover:bg-slate-50 transition-colors"
           >
             <FileDown className="h-3.5 w-3.5" />
             PDF Report

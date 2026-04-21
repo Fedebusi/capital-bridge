@@ -31,7 +31,7 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
 
   if (!pikSummary) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 text-center">
         <p className="text-sm text-slate-500">No PIK schedule available — deal not yet active</p>
       </div>
     );
@@ -69,7 +69,7 @@ export default function PIKSchedulePanel({ dealId }: PIKSchedulePanelProps) {
       </div>
 
       {/* Schedule Table */}
-      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+      <div className="rounded-2xl bg-slate-50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

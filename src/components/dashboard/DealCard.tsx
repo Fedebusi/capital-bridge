@@ -15,7 +15,7 @@ export default function DealCard({ deal, index = 0 }: DealCardProps) {
     <div className="animate-fade-in" style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}>
       <Link
         to={`/deals/${deal.id}`}
-        className="group block rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-slate-200"
+        className="group block rounded-2xl bg-slate-50 p-5 shadow-sm transition-all hover:shadow-md hover:border-slate-200"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">

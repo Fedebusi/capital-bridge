@@ -124,7 +124,7 @@ export default function ScreeningTool() {
         />
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-card">
+        <div className="rounded-2xl bg-slate-50 p-6 shadow-card">
           <h2 className="font-display text-lg font-semibold text-primary mb-4">Quick Deal Screening</h2>
           <p className="text-sm text-slate-500 mb-6">Input basic deal parameters to get an instant pass/fail assessment against fund investment criteria.</p>
           <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function ScreeningTool() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-card">
+        <div className="rounded-2xl bg-slate-50 p-6 shadow-card">
           <h2 className="font-display text-lg font-semibold text-primary mb-4">Screening Results</h2>
           {results ? (
             <div className="space-y-4 animate-fade-in">
