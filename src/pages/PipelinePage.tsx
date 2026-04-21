@@ -105,8 +105,8 @@ export default function PipelinePage() {
         {/* Kanban view */}
         {view === "kanban" && deals.length > 0 && <PipelineKanban />}
 
-        {/* Search + stage filters (grid view only) */}
-        {view === "grid" && (
+        {/* Search + stage filters + grid (grid view only) */}
+        {view === "grid" && (<>
         <div className="space-y-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="relative md:w-80">
@@ -201,8 +201,7 @@ export default function PipelinePage() {
             ))}
           </div>
         )}
-        </div>
-        )}
+        </>)}
       </div>
     </AppLayout>
   );
