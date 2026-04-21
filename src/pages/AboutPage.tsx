@@ -91,7 +91,7 @@ export default function AboutPage() {
         {/* Values */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {values.map(v => (
-            <div key={v.title} className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all">
+            <div key={v.title} className="bg-slate-50 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all">
               <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center mb-3">
                 <v.icon className="h-5 w-5 text-accent" />
               </div>
@@ -106,7 +106,7 @@ export default function AboutPage() {
           <h2 className="text-lg font-extrabold text-primary mb-4">The team</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {team.map(member => (
-              <div key={member.name} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
+              <div key={member.name} className="bg-slate-50 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all">
                 <div className="h-32 bg-gradient-to-br from-primary to-slate-700 flex items-center justify-center">
                   <span className="text-4xl font-extrabold text-white/20">
                     {member.name.split(" ").map(n => n[0]).join("")}
@@ -123,7 +123,7 @@ export default function AboutPage() {
         </div>
 
         {/* Stats */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-slate-50 rounded-2xl shadow-sm p-6">
           <h2 className="text-lg font-extrabold text-primary mb-5">By the numbers</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
             {stats.map(s => (
@@ -136,7 +136,7 @@ export default function AboutPage() {
         </div>
 
         {/* Contact */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+        <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
           <h2 className="text-lg font-extrabold text-primary mb-4">Contact</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3">

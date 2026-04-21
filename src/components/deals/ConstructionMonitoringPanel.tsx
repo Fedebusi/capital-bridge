@@ -26,7 +26,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
 
   if (visitsLoading || certsLoading || reportsLoading) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 text-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
       </div>
     );
@@ -58,7 +58,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
       {/* Monitoring Reports */}
       <TabsContent value="reports" className="space-y-4">
         {reports.map(r => (
-          <div key={r.id} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div key={r.id} className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h4 className="font-display text-sm font-semibold text-primary">Report #{r.reportNumber} — {r.period}</h4>
@@ -102,7 +102,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
 
       {/* Certifications */}
       <TabsContent value="certifications">
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+        <div className="rounded-2xl bg-slate-50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -145,7 +145,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
       {/* Site Visits */}
       <TabsContent value="visits" className="space-y-4">
         {visits.map(v => (
-          <div key={v.id} className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div key={v.id} className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h4 className="font-display text-sm font-semibold text-primary">{v.date} — Site Inspection</h4>
@@ -218,7 +218,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
               <MiniMetric label="Released" value={formatCurrency(retention.totalReleased)} />
               <MiniMetric label="Balance Held" value={formatCurrency(retention.retentionBalance)} highlight />
             </div>
-            <div className="rounded-2xl border border-slate-100 bg-white p-4">
+            <div className="rounded-2xl bg-slate-50 p-4">
               <p className="text-xs font-medium text-slate-500 uppercase mb-2">Release Conditions</p>
               <ul className="space-y-1.5">
                 {retention.releaseConditions.map((c, i) => (
@@ -228,7 +228,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-2xl bg-slate-50 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50">
@@ -254,7 +254,7 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+          <div className="rounded-2xl bg-slate-50 p-8 text-center">
             <p className="text-sm text-slate-500">No retention schedule configured</p>
           </div>
         )}

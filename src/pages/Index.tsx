@@ -69,7 +69,7 @@ export default function DashboardPage() {
         {/* Hero Section */}
         <section className="grid grid-cols-12 gap-4">
           {/* NAV Hero Card */}
-          <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-xl p-7 text-white relative overflow-hidden">
+          <div className="col-span-12 lg:col-span-7 bg-gradient-to-br from-primary via-slate-800 to-slate-700 rounded-2xl p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/4" />
             <div className="absolute bottom-0 left-1/4 w-40 h-40 bg-emerald-500/10 rounded-full translate-y-1/2" />
             <div className="relative z-10">
@@ -103,7 +103,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Portfolio Diversity */}
-          <div className="col-span-12 lg:col-span-5 bg-white rounded-xl p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="col-span-12 lg:col-span-5 bg-slate-50 rounded-2xl p-8 flex flex-col justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Portfolio Diversity</span>
               <div className="flex justify-between items-end mt-4">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         {/* Bottom Section */}
         <section className="grid grid-cols-12 gap-4">
           {/* Activity Feed Table */}
-          <div className="col-span-12 lg:col-span-8 bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+          <div className="col-span-12 lg:col-span-8 bg-white rounded-2xl overflow-hidden border border-slate-100">
             <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="h-7 w-7 rounded-lg bg-primary/5 flex items-center justify-center">
@@ -217,7 +217,7 @@ export default function DashboardPage() {
           {/* Right column */}
           <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
             {/* Sector Allocation */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-6">
               <h3 className="text-sm font-bold text-primary mb-5">Sector Allocation</h3>
               {/* Mini donut visualization */}
               <div className="flex items-center gap-5 mb-5">
@@ -254,7 +254,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Pipeline Summary */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-primary">Pipeline</h3>
                 <Link to="/pipeline" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-0.5">
@@ -287,7 +287,7 @@ export default function DashboardPage() {
           </div>
         </section>
         {/* Timeline */}
-        <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <section className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-violet-50 flex items-center justify-center">

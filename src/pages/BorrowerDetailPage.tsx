@@ -42,7 +42,7 @@ export default function BorrowerDetailPage() {
   const linkedDeals = deals.filter(d => borrower.activeDealIds.includes(d.id) || d.borrower === borrower.name);
   const kycValid = borrower.kyc.filter(k => k.status === "valid").length;
   const kycTotal = borrower.kyc.length;
-  const allKycValid = kycValid === kycTotal;
+  const allKycValid = kycTotal > 0 && kycValid === kycTotal;
 
   return (
     <AppLayout>
@@ -70,8 +70,8 @@ export default function BorrowerDetailPage() {
             { label: "Total Exposure", value: formatMillions(borrower.totalExposure), accent: false },
             { label: "Commitments", value: formatMillions(borrower.totalCommitments), accent: false },
             { label: "Active Deals", value: `${borrower.numberOfActiveDeals}`, accent: false },
-            { label: "Avg IRR", value: borrower.avgIRR ? formatPercent(borrower.avgIRR) : "N/A", accent: true },
-            { label: "Avg Multiple", value: borrower.avgMultiple ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A", accent: false },
+            { label: "Avg IRR", value: borrower.avgIRR !== undefined ? formatPercent(borrower.avgIRR) : "N/A", accent: true },
+            { label: "Avg Multiple", value: borrower.avgMultiple !== undefined ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A", accent: false },
             { label: "KYC Status", value: allKycValid ? "Valid" : `${kycValid}/${kycTotal}`, accent: false },
           ].map((m) => (
             <div key={m.label} className="rounded-2xl bg-slate-50 p-6 hover:bg-slate-100/70 transition-colors">
@@ -155,7 +155,7 @@ export default function BorrowerDetailPage() {
 
           {/* Exposure */}
           <TabsContent value="exposure" className="space-y-4">
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-2xl bg-slate-50 overflow-hidden">
               <div className="p-4 border-b border-slate-100">
                 <h3 className="font-display text-sm font-semibold text-primary">Linked Deals</h3>
               </div>
@@ -195,19 +195,19 @@ export default function BorrowerDetailPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Projects Completed</p>
-                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.completedProjects.length}</p>
+                <p className="font-display text-3xl font-bold text-primary mt-1">{(borrower.completedProjects ?? []).length}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Avg IRR</p>
-                <p className="font-display text-3xl font-bold text-accent mt-1">{borrower.avgIRR ? formatPercent(borrower.avgIRR) : "N/A"}</p>
+                <p className="font-display text-3xl font-bold text-accent mt-1">{borrower.avgIRR !== undefined ? formatPercent(borrower.avgIRR) : "N/A"}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-6 text-center">
                 <p className="text-xs text-slate-500 uppercase tracking-wide">Avg Multiple</p>
-                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.avgMultiple ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A"}</p>
+                <p className="font-display text-3xl font-bold text-primary mt-1">{borrower.avgMultiple !== undefined ? `${borrower.avgMultiple.toFixed(2)}x` : "N/A"}</p>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-2xl bg-slate-50 overflow-hidden">
               <div className="p-4 border-b border-slate-100">
                 <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-accent" /> Completed Projects
@@ -256,7 +256,7 @@ export default function BorrowerDetailPage() {
 
           {/* KYC */}
           <TabsContent value="kyc" className="space-y-4">
-            <div className="flex items-center gap-4 rounded-xl border border-slate-100 bg-white p-4 shadow-card">
+            <div className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 shadow-card">
               <div>
                 <p className="text-xs text-slate-500">KYC Compliance</p>
                 <p className="font-display text-lg font-bold text-primary">{kycValid}/{kycTotal} valid</p>
@@ -273,7 +273,7 @@ export default function BorrowerDetailPage() {
               )}
             </div>
 
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-2xl bg-slate-50 overflow-hidden">
               <div className="p-4 border-b border-slate-100">
                 <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
                   <Shield className="h-4 w-4 text-accent" /> KYC / AML Checklist

@@ -12,7 +12,7 @@ export default function WaterfallPanel({ dealId }: WaterfallPanelProps) {
 
   if (!wf) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+      <div className="rounded-2xl bg-slate-50 p-8 text-center">
         <p className="text-sm text-slate-500">No waterfall / release price schedule configured for this deal</p>
       </div>
     );
@@ -29,7 +29,7 @@ export default function WaterfallPanel({ dealId }: WaterfallPanelProps) {
       </div>
 
       {/* Release Price Schedule */}
-      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+      <div className="rounded-2xl bg-slate-50 overflow-hidden">
         <div className="p-4 border-b border-slate-100">
           <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
             <Banknote className="h-4 w-4 text-accent" /> Release Price per Unit
@@ -81,7 +81,7 @@ export default function WaterfallPanel({ dealId }: WaterfallPanelProps) {
       </div>
 
       {/* Waterfall Flow */}
-      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+      <div className="rounded-2xl bg-slate-50 overflow-hidden">
         <div className="p-4 border-b border-slate-100">
           <h3 className="font-display text-sm font-semibold text-primary flex items-center gap-2">
             <ArrowDown className="h-4 w-4 text-accent" /> Payment Waterfall

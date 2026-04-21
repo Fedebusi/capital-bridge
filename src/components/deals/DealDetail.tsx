@@ -94,7 +94,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
             <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide", stageColors[deal.stage])}>
               {stageLabels[deal.stage]}
             </span>
-            {deal.covenants.some(c => c.status !== "compliant") && (
+            {(deal.covenants ?? []).some(c => c.status !== "compliant") && (
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1 rounded-full">
                 <AlertTriangle className="h-3 w-3" /> Covenant Alert
               </span>
@@ -200,7 +200,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
 
       {/* Lifecycle Progress Bar */}
       {lifecycle && (
-        <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-card">
+        <div className="rounded-2xl bg-slate-50 p-4 shadow-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
               <Route className="h-3 w-3" /> Loan Lifecycle — Phase {getCurrentPhaseNumber(lifecycle)}/12
@@ -223,7 +223,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
         ].map((m, i) => (
           <div
             key={m.label}
-            className="rounded-lg border border-slate-100 bg-white p-3 animate-fade-in"
+            className="rounded-2xl bg-slate-50 p-4 animate-fade-in"
             style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
           >
             <p className="text-[11px] text-slate-500 uppercase tracking-wide">{m.label}</p>
@@ -256,7 +256,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
           {lifecycle ? (
             <LifecycleTracker lifecycle={lifecycle} />
           ) : (
-            <div className="rounded-xl border border-slate-100 bg-white p-8 text-center">
+            <div className="rounded-2xl bg-slate-50 p-8 text-center">
               <p className="text-sm text-slate-500">Lifecycle tracking not yet configured for this deal</p>
             </div>
           )}
@@ -298,7 +298,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </TabsContent>
 
         <TabsContent value="drawdowns">
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-5 border-b border-slate-100">
               <h3 className="font-display text-sm font-semibold text-primary">Drawdown Schedule</h3>
               <p className="text-xs text-slate-500 mt-1">Disbursed: {formatCurrency(deal.disbursedAmount)} / {formatCurrency(deal.loanAmount)}</p>
@@ -343,7 +343,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </TabsContent>
 
         <TabsContent value="covenants">
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-5 border-b border-slate-100">
               <h3 className="font-display text-sm font-semibold text-primary">Covenant Compliance</h3>
             </div>
@@ -378,7 +378,7 @@ export default function DealDetail({ deal }: DealDetailProps) {
         </TabsContent>
 
         <TabsContent value="sales">
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-2xl bg-slate-50 overflow-hidden">
             <div className="p-5 border-b border-slate-100">
               <h3 className="font-display text-sm font-semibold text-primary">Unit Sales Tracker</h3>
               <p className="text-xs text-slate-500 mt-1">Pre-sales: {deal.preSalesPercent}%</p>
