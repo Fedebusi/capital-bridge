@@ -1,79 +1,65 @@
-# CapitalBridge — Agent Briefing
+# CapitalBridge — Agent Rules
 
-> This file is read by Claude Code at the start of every session.
-> It defines who we are, what the product does, and how agents should behave.
+> Read at the start of every session alongside `CLAUDE.md`. This file is rules.
+> `CLAUDE.md` is state. `docs/ROADMAP.md` is backlog. `docs/CHANGELOG.md` is
+> history — do not read unless explicitly needed.
 
-## Product
+## Session discipline
 
-CapitalBridge is a collaborative workflow and reporting platform for a real estate debt fund (Clikalia + Castlelake) financing residential developments in Spain. It is NOT a banking app — no money moves through it. It manages deals, borrowers, documents, approvals, and reporting.
+Before closing a session where changes shipped:
 
-## User Roles
+1. Update `CLAUDE.md` → prune "What's in flight" if anything landed
+2. Append a one-paragraph entry to `docs/CHANGELOG.md` with the commit hash
+3. Move completed items out of `docs/ROADMAP.md`; move any new commitments in
+4. Do **not** invent "next steps" and add them to `CLAUDE.md`. If they belong, they go in `docs/ROADMAP.md` with a gate (Now / Next / Later). Vague ideas don't belong anywhere.
 
-| Role | What they do |
-|------|-------------|
-| **Originator** | Loads new deals, fills term sheets, tracks pipeline |
-| **Finance team** | Views numbers, covenants, reporting, loan status |
-| **Architecture / Monitoring** | Uploads construction photos, milestones, surveyor notes |
-| **Admin (fund manager)** | Sees everything, approves, exports reporting for Castlelake |
+## Commit + branch conventions
 
-## Tech Stack
+- Conventional commits: `feat:`, `fix:`, `polish:`, `chore:`, `docs:`
+- Never push to `main` directly
+- Branch prefixes: `feat/*`, `fix/*`, `polish/*`, `chore/*`, `docs/*`, `finance/*`
+- One PR per logical unit; do not pile unrelated work on a single branch
 
-- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
-- **Backend:** Supabase (PostgreSQL + Auth + Storage + Realtime)
-- **State:** React Query (Supabase) + React Context (demo mode)
-- **Hosting:** Vercel (frontend) + Supabase (backend)
-- **Testing:** Vitest + React Testing Library
-- **CI/CD:** GitHub Actions (lint + typecheck + test + build on every PR)
+## Do not touch without approval
 
-## Code Conventions
+See `CLAUDE.md` → "Do not touch without approval".
 
-- **Commits:** conventional commits (`feat:`, `fix:`, `polish:`, `chore:`, `docs:`)
-- **Branches:** `feat/*`, `fix/*`, `polish/*`, `chore/*`, `docs/*` — never push to `main` directly
-- **Components:** functional React components, hooks for data, Tailwind for styling
-- **Types:** all DB types in `src/types/database.ts`, frontend types in respective data files
-- **Tests:** in `src/test/`, one test file per module, use Vitest
+## Design tokens
 
-## Design System
+- Accent: indigo/violet `hsl(245 75% 65%)`
+- Cards: `rounded-2xl bg-slate-50 p-6` (borderless, soft background)
+- Buttons: `rounded-full` primary; `rounded-full bg-slate-50` secondary
+- Typography: `text-4xl font-bold tracking-tight` for h1, `text-base` for subtitles
+- Spacing: `space-y-8` between sections, `gap-5` between cards
 
-- **Accent color:** indigo/violet (`hsl(245 75% 65%)`)
-- **Cards:** `rounded-2xl bg-slate-50 p-6` (borderless, soft background)
-- **Buttons:** `rounded-full` primary, `rounded-full bg-slate-50` secondary
-- **Typography:** `text-4xl font-bold tracking-tight` for h1, `text-base` for subtitles
-- **Spacing:** `space-y-8` between sections, `gap-5` between cards
+## Sub-agent roster (.claude/agents/)
 
-## DO NOT TOUCH without human approval
+Use these when the task naturally fits their scope **and** warrants its own
+branch + PR. For a multi-item session on a single branch (like most
+launch-prep work), invoke the main assistant directly with the full context
+— don't fragment.
 
-These files/areas require explicit approval from Federico before any modification:
+| Agent | Use when | Skip when |
+|-------|----------|-----------|
+| `feature-builder` | End-to-end new feature on its own branch | You're doing multiple small things in one session |
+| `bug-fixer` | Isolated bug with a reproduction | You're already fixing it inline |
+| `finance-auditor` | Reviewing or changing money/rate/ratio math | Non-financial UI polish |
+| `design` | Visual consistency, empty states, microcopy, responsive | Content-heavy feature work |
+| `doc-writer` | User-facing guides in `docs/guides/` | CLAUDE.md / ROADMAP — those are session discipline |
+| `reviewer` | Structured review of an open PR | Routine changes |
 
-1. `src/contexts/AuthContext.tsx` — auth logic
-2. `src/components/auth/ProtectedRoute.tsx` — route protection
-3. `supabase/migrations/*` — database schema changes
-4. `src/hooks/useSupabaseQuery.ts` — RLS-sensitive queries (read is OK, new mutations need review)
-5. File upload code in `useUploadDocument()` — GDPR sensitive
-6. `.github/workflows/*` — CI/CD pipeline
-7. `package.json` — new dependencies
+Note: the three design agents (`ux-designer`, `ui-designer`, `ux-polisher`) have been consolidated into a single `design` agent. `bug-fixer` handles what `bug-fixer` was; everything else is as listed above.
 
-## Sub-Agents
+## When to use Explore / general-purpose instead
 
-| Agent | Role | Branch |
-|-------|------|--------|
-| `feature-builder` | Implements P0/P1 features end-to-end | `feat/*` |
-| `bug-fixer` | Fixes bugs with regression tests | `fix/*` |
-| `ux-polisher` | Visual fixes, empty states, responsive | `polish/*` |
-| `ux-designer` | Emotional/narrative design — flows, microcopy, feedback | `design/ux-*` |
-| `ui-designer` | Pragmatic/visual design — layout, spacing, hierarchy, tokens | `design/ui-*` |
-| `finance-auditor` | Audits financial calculations (PIK, covenants, waterfall, returns) for accuracy and regulatory soundness | `finance/*` |
-| `reviewer` | Reviews PRs, produces structured comments | (no branch) |
-| `doc-writer` | Maintains docs and user guides | `docs/*` |
+- Open-ended research across the codebase (>3 files)
+- "Where does X live?" questions
+- Codebase audits before planning a change
 
-## Key Files
+## Anti-patterns
 
-| File | Purpose |
-|------|---------|
-| `src/lib/supabase.ts` | Supabase client (demo/live switch) |
-| `src/hooks/useDeals.tsx` | Deals context (demo/live) |
-| `src/hooks/useSupabaseQuery.ts` | 36 React Query hooks |
-| `src/types/database.ts` | TypeScript types for all tables |
-| `src/data/sampleDeals.ts` | Demo data (6 deals) |
-| `src/data/borrowers.ts` | Demo data (5 borrowers) |
-| `plan.md` | Implementation plan and roadmap |
+- **Infinite backlog in `CLAUDE.md`.** Any "P1 remaining / P2 pending" goes in `docs/ROADMAP.md`. Not here.
+- **Session history in `CLAUDE.md`.** That's what `docs/CHANGELOG.md` is for.
+- **"Also, future work:" in commit messages.** If it's not this commit, it's a ROADMAP item.
+- **Sub-agent sprawl.** Don't invoke 5 agents in parallel on a single-branch task. Overhead > value.
+- **Shimming around auth / RLS / migrations** without human approval. Ask.

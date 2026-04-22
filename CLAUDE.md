@@ -1,187 +1,69 @@
-# CapitalBridge - Project Context
+# CapitalBridge — Project State
 
-> **IMPORTANT**: Read this file at the start of every session. It contains decisions,
-> architecture choices, and current status that persist across conversations.
+> Read this at the start of every session. Keep it current and compact.
+> **Session discipline:** before closing a session, prune "What's in flight"
+> of anything that shipped. Historical sessions belong in `docs/CHANGELOG.md`,
+> the backlog belongs in `docs/ROADMAP.md`, agent rules in `AGENTS.md`.
+>
+> If this file exceeds ~80 lines, something is out of place — split it back.
 
-## Project Overview
+## What it is
 
-**CapitalBridge** is an institutional debt fund portfolio management platform for real
-estate lending operations. Built for deal originators, portfolio managers, and investors.
+Portfolio-management platform for a real-estate debt fund operating in Spain
+(Clikalia / Castlelake capital partner). Manages deals, borrowers, documents,
+approvals, and reporting. **No money moves through it.**
 
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
-- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime)
-- **State**: React Query (Supabase) + React Context (local/demo mode)
-- **Hosting**: Vercel (frontend) + Supabase (backend)
+## Stack
 
-## Architecture Decisions
+React 18 + TypeScript + Vite + Tailwind + shadcn/ui on Vercel; Supabase
+(Postgres + Auth + Storage + Realtime) as backend; React Query for server
+state; Vitest for tests. Dual-mode: demo (no Supabase) ↔ live (Supabase
+configured via `isSupabaseConfigured()` in `src/lib/supabase.ts`).
 
-### Dual Mode: Demo / Live
-The app runs in **demo mode** (mock data, no login required) when `VITE_SUPABASE_URL`
-is not set. When Supabase credentials are configured in `.env`, it switches to **live
-mode** with real database, auth, and real-time notifications. This is controlled by
-`isSupabaseConfigured()` in `src/lib/supabase.ts`.
+## Supabase instance
 
-### Database Schema
-Full schema in `supabase/migrations/00001_initial_schema.sql`. Key tables:
-- `profiles` (extends auth.users with role)
-- `deals` + sub-tables: `drawdowns`, `covenants`, `unit_sales`, `screening_criteria`
-- `borrowers` + sub-tables: `borrower_contacts`, `corporate_entities`, `kyc_records`, `completed_projects`
-- `due_diligence_items`, `dd_documents`
-- `approval_records`, `ic_votes`
-- `legal_documents`, `conditions_precedent`, `security_items`
-- `term_sheets`, `term_sheet_versions`, `waivers`
-- `site_visits`, `site_visit_photos`, `construction_certifications`, `monitoring_reports`
-- `audit_logs`
+- **Project ref:** `slexqygrfyvfqikopmwm`
+- **URL:** `https://slexqygrfyvfqikopmwm.supabase.co`
+- **Migrations applied locally:** `00001` → `00008` (schema, seed, auth triggers, audit log policy, first-user-admin, lifecycle tables, lifecycle seed, profile self-heal)
+- **Auto-deploy:** `.github/workflows/supabase-deploy.yml` — pushes to `main` touching `supabase/migrations/**` auto-apply. Needs repo secrets `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` (still missing in prod — issue #31).
 
-### Row Level Security (RLS)
-- All tables have RLS enabled
-- Roles: `admin`, `analyst`, `portfolio_manager`, `investor`, `viewer`
-- Read: all authenticated users
-- Write: admin, analyst, portfolio_manager
-- Delete: admin only
-- `get_user_role()` function used across all policies
+## Durable decisions
 
-### Authentication
-- Supabase Auth with email/password
-- Profile auto-created on signup via DB trigger (`handle_new_user`)
-- New users get `viewer` role by default — admin promotes them
-- `AuthContext` wraps the entire app
-- `ProtectedRoute` component for route-level access control
+Things a future session might undo by accident. Don't.
 
-### Storage Buckets
-- `documents` — DD reports, legal docs, term sheets
-- `site-photos` — Construction monitoring photos
+- **Roles:** `admin`, `portfolio_manager`, `analyst`, `investor`, `viewer`. New signups default to `viewer`. The first live signup auto-promotes to `admin` (migration `00005`).
+- **RLS:** all tables. Read = authenticated. Write = admin/analyst/PM. Delete = admin. `get_user_role()` is the canonical helper.
+- **PIK engine:** defaults to `dayCount: "30/360"` and `cashInterestMode: "capitalized"`. Interest accrues **only on `status === "disbursed"`** drawdowns.
+- **Covenant status:** auto-recomputed at display time by `src/lib/covenants.ts`. DB column is still the source until we add a trigger (see Roadmap).
+- **Amounts:** `NUMERIC(15,2)`, EUR, dates ISO, IDs UUID. UI in English, docs mix English/Spanish.
+- **Demo mode** must keep working without Supabase — every new Supabase hook needs a demo-mode fallback.
 
-## Supabase Setup
+## Do not touch without approval
 
-- **GitHub Integration**: Connected to `Fedebusi/capital-bridge`
-- **Production branch**: `main` (auto-deploy migrations on push)
-- **Working directory**: `.` (migrations at `supabase/migrations/`)
-- **Plan**: Free tier (branching requires Pro)
+`src/contexts/AuthContext.tsx`, `src/components/auth/ProtectedRoute.tsx`,
+`supabase/migrations/*`, `.github/workflows/*`, `package.json` deps,
+`src/hooks/useSupabaseQuery.ts` mutations.
 
-### Required Environment Variables
-```
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
+## What's in flight
 
-## Supabase Instance
+Branch `claude/review-daily-progress-TT9Sw` has 3 unmerged launch-prep
+commits. Not yet opened as a PR. Everything on this branch is committed,
+pushed, tests + build green.
 
-- **URL**: `https://slexqygrfyvfqikopmwm.supabase.co`
-- **Ref ID**: `slexqygrfyvfqikopmwm`
-- **Anon key**: configured in `.env` (not committed)
-- **Migrations**:
-  - `00001_initial_schema.sql` — all tables, RLS, storage buckets
-  - `00002_seed_data.sql` — sample deals, borrowers, contacts, KYC, drawdowns etc.
-  - `00003_fix_auth_trigger.sql` — fixed `handle_new_user` with safe defaults + error handling
-  - `00004_fix_audit_logs_policy.sql` — RLS fix for audit log inserts
-  - `00005_first_user_admin.sql` — first signup becomes admin
-  - `00006_lifecycle_tables.sql` — 4 lifecycle tables (`deal_lifecycles`, `lifecycle_phases`, `phase_substeps`, `phase_milestones`) + RLS + `phase_status` enum
-- **Auto-deploy**: `.github/workflows/supabase-deploy.yml` runs `supabase db push --include-all` on every push to `main` touching `supabase/migrations/**`. Requires two repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`. See issue #31.
-- **Auth trigger**: fixed in migration 00003 — everyone starts as `viewer`, admin promotes.
+## What's next
 
-## Current Status (Last Updated: 2026-04-21)
+See `docs/ROADMAP.md` — gated by **Now** (launch blockers), **Next** (first
+weeks), **Later** (quarterly review). Do not add work items to this file.
 
-### Latest session (2026-04-21) — PR #49
-- 3 parallel audits (finance, design, file org) completed
-- **Finance fixes (critical)**: NAV calculation (was 7× overstated), weighted avgLTV/LTC/Rate, totalReturns now includes repaid, totalCommitments excludes pre-closing
-- **Design fixes**: landing responsive + headline breakpoints, hero circles constrained (no overlap), button shadows softened
-- **File org**: `src/components/shared/`, `src/lib/pdf/`, dead test removed
-- **Agent system**: `finance-auditor` agent added
-
-### Launch-prep session part 2 (2026-04-21, same branch)
-- **User management UI** (`/admin/users`) — admin-only page to list users, change role, delete profile, copy invite link. Hooked to `profiles` table with admin RLS.
-- **Legal pages** (`/privacy`, `/terms`) + **cookie banner** with consent gate — Vercel Analytics only loads when user accepts. Footer links added on Landing.
-- **PIK Engine empty state** — previously rendered blank when no active deals; now shows empty state CTA.
-- **Nav sidebar** reorganised — added "Administration" group visible only to `admin` role; IT Docs + Users live here.
-- **LandingPage canvas** made responsive (was fixed 900×900, overflowed on mobile).
-- **Launch checklist** (`docs/LAUNCH_CHECKLIST.md`) — complete Federico-facing deploy + QA guide covering Supabase secrets, env vars, sanity checks, onboarding flow, legal compliance, observability, and rollback plan.
-
-### Launch-prep session part 1 (2026-04-21, same branch)
-Finance items cleared for launch:
-- **PIK engine** (`src/data/pikEngine.ts`): `dayCount` option (`30/360` | `ACT/360` | `ACT/365`, default `30/360`), `cashInterestMode` (`capitalized` | `paid`, default `capitalized`), and drawdown filter tightened to `status === "disbursed"` only — pending/approved tranches no longer accrue interest
-- **Covenant auto-compute** (`src/lib/covenants.ts`): parses threshold + current-value strings (handles ≤/≥/</>/=, %, currency), 5% warning band, wired into `DealDetail` and `DealCard`
-- **Screening**: optional "Current Appraisal (€)" input adds a second `LTV Current (vs Appraisal)` criterion alongside `LTV at Origination (vs GDV)`
-- **InvestorPortal** (`src/lib/investorMetrics.ts`): `portfolioHistory` derived from PIK schedules, `allocationData` from asset-type distribution of deployed capital, `upcomingPayments` from non-disbursed drawdowns; summary tiles (committed/deployed/unrealized/realized/distributions) and "This Quarter" tile now use real values — no more `× 0.35`, `× 1.2`, `12.1%` magic numbers
-- **Tests**: 124 total (was 80) — added 4 new PIK tests, 14 covenant tests, 7 investor-metrics tests
-
-
-
-### P0 — DONE (in-session PRs)
-
-- [x] **P0.1** Edit/Delete UI for deals + borrowers (pre-existing, commit `17474c8`)
-- [x] **P0.2** Stage change button on deal detail (pre-existing)
-- [x] **P0.3** Sub-data wired to Supabase with dual-mode fallback — PR #26 (DD, approvals, IC votes, term sheets, waivers, construction, legal) + PR #29 (lifecycle tables + wiring)
-- [x] **P0.4** Searchbar (pre-existing)
-- [x] **P0.5** File upload UI for DD documents and site-visit photos — PR #27
-- [x] **Infra** Lint fix 7 pre-existing errors — PR #28
-- [x] **Infra** Auto-apply migrations workflow — PR #30
-- [x] Tests: 64 passing (22 original + 16 converter + 13 file upload + 13 lifecycle converter)
-
-### Blocked on Federico (tracked in issue #31)
-
-- [ ] Add `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` secrets to GitHub repo
-- [ ] Trigger `Supabase Deploy Migrations` workflow to apply `00006` (lifecycle tables) on prod DB
-- [ ] Manual QA end-to-end in live mode: file upload on DD item + site visit, RLS checks, lifecycle page rendering real data
-
-### P1 — In progress (3 background agents launched 2026-04-17)
-
-- [ ] Empty states + CTA across all list pages (`ux-polisher`)
-- [ ] Lifecycle seed migration `00007_lifecycle_seed.sql` (1 lifecycle per deal, 12 phase stubs)
-- [ ] User guides for the 4 roles (`doc-writer` → `docs/guides/*.md`)
-
-### P1 — Remaining
-
-- [ ] User management UI (invite users, change role) — requires auth review
-- [ ] Transactional email (covenant breach, stage change, waiver decisions) — requires Resend/SendGrid config
-- [ ] Mobile optimization pass
-
-### P2 — Pending
-
-- [ ] Chatbot AI for data queries
-- [ ] Business Central integration
-- [ ] Dark mode
-- [ ] Custom domain
-- [ ] Automatic Supabase backup
-
-## Key Files
+## Key code entrypoints
 
 | File | Purpose |
 |------|---------|
-| `src/lib/supabase.ts` | Supabase client (with demo mode fallback) |
-| `src/lib/dbConverters.ts` | DB row → frontend type converters (pure, unit-tested) |
-| `src/types/database.ts` | Full TypeScript types for all DB tables |
-| `src/contexts/AuthContext.tsx` | Auth state, login/signup, role checking |
-| `src/hooks/useDeals.tsx` | Deals context (demo data + live Supabase) |
-| `src/hooks/useSupabaseQuery.ts` | All React Query hooks for Supabase |
-| `src/hooks/useDealSubdata.ts` | Dual-mode wrappers (live → Supabase, demo → sample data) |
-| `src/hooks/useRealtimeNotifications.ts` | Real-time toast notifications |
-| `src/components/auth/ProtectedRoute.tsx` | Route-level auth guard |
-| `src/components/deals/DealFormDialog.tsx` | Create/edit deal form |
-| `src/components/borrowers/BorrowerFormDialog.tsx` | Create/edit borrower form |
-| `src/components/ui/FileUploadButton.tsx` | Reusable upload button wrapping `useUploadDocument` |
-| `src/components/ErrorBoundary.tsx` | Global error boundary |
-| `.github/workflows/ci.yml` | CI: lint + typecheck + test + build |
-| `.github/workflows/supabase-deploy.yml` | Auto-apply migrations on merge to `main` |
-| `supabase/migrations/*.sql` | DB schema + RLS (00001..00006) |
-
-## Business Logic Notes
-
-- **PIK Engine**: Interest calculated monthly on (principal + accrued PIK). Full PIK
-  structure — both cash interest and PIK spread are capitalized. Logic in `src/data/pikEngine.ts`.
-- **Screening**: Deals scored against criteria (LTV ≤65%, LTC ≤75%, pre-sales ≥30%,
-  developer ≥5 projects). Logic in `src/pages/ScreeningPage.tsx`.
-- **Waterfall**: Mandatory prepayment from unit sales. Release prices set at ~40% of
-  list price. 50% cash sweep on excess. Logic in `src/data/waterfallData.ts`.
-- **Construction Monitoring**: 5% retention on certifications, released after final
-  completion and defect-free inspection.
-- **Term Sheets**: Require Capital Partner (CastleLake) validation before issuance.
-  Waivers need both internal + CP approval.
-
-## Conventions
-- All financial amounts stored as NUMERIC(15,2) in DB
-- Dates as ISO strings (YYYY-MM-DD)
-- IDs are UUIDs (Supabase default)
-- Spanish market focus (deals in Spain, EUR currency)
-- UI language: English
-- Documentation: Mix of English and Spanish
+| `src/lib/supabase.ts` | Supabase client + demo-mode switch |
+| `src/lib/covenants.ts` | Covenant threshold parsing + auto-recompute |
+| `src/lib/investorMetrics.ts` | Derived metrics for InvestorPortal |
+| `src/data/pikEngine.ts` | PIK accrual schedule generator |
+| `src/hooks/useSupabaseQuery.ts` | All React Query hooks (36+) |
+| `src/hooks/useDeals.tsx` | Deals context (demo/live) |
+| `src/types/database.ts` | TypeScript types for all tables |
+| `docs/LAUNCH_CHECKLIST.md` | Federico's deploy + QA playbook |
