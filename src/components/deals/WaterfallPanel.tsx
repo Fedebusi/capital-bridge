@@ -1,19 +1,34 @@
-import { sampleWaterfalls } from "@/data/waterfallData";
-import { formatCurrency, formatPercent } from "@/data/sampleDeals";
+import { formatCurrency, formatPercent, type DealStage } from "@/data/sampleDeals";
+import { useWaterfallForDeal } from "@/hooks/useDealSubdata";
 import { cn } from "@/lib/utils";
 import { ArrowDown, Banknote, CheckCircle2, Clock } from "lucide-react";
 
 interface WaterfallPanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function WaterfallPanel({ dealId }: WaterfallPanelProps) {
-  const wf = sampleWaterfalls[dealId];
+export default function WaterfallPanel({ dealId, stage }: WaterfallPanelProps) {
+  const { data: wf, loading } = useWaterfallForDeal(dealId);
 
-  if (!wf) {
+  if (loading) {
     return (
       <div className="rounded-2xl bg-slate-50 p-8 text-center">
-        <p className="text-sm text-slate-500">No waterfall / release price schedule configured for this deal</p>
+        <p className="text-sm text-slate-500">Loading waterfall…</p>
+      </div>
+    );
+  }
+
+  if (!wf) {
+    // Stage-aware message: make it clear this is intentional, not broken.
+    const preLive = stage && ["screening", "due_diligence", "ic_approval", "documentation"].includes(stage);
+    return (
+      <div className="rounded-2xl bg-slate-50 p-8 text-center">
+        <p className="text-sm text-slate-500">
+          {preLive
+            ? "Waterfall schedule appears once the facility is drawn and unit sales begin."
+            : "No waterfall schedule configured for this deal yet."}
+        </p>
       </div>
     );
   }

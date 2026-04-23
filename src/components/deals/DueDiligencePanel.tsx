@@ -6,6 +6,7 @@ import { useDDItemsForDeal } from "@/hooks/useDealSubdata";
 import FileUploadButton from "@/components/ui/FileUploadButton";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { useCreateDDDocument } from "@/hooks/useSupabaseQuery";
+import type { DealStage } from "@/data/sampleDeals";
 
 const statusConfig = {
   completed: { icon: CheckCircle2, label: "Completed", className: "text-success" },
@@ -17,9 +18,10 @@ const statusConfig = {
 
 interface DueDiligencePanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
+export default function DueDiligencePanel({ dealId, stage }: DueDiligencePanelProps) {
   const { data: items, loading } = useDDItemsForDeal(dealId);
   const categories = Object.keys(ddCategoryLabels) as DDCategory[];
   const [expanded, setExpanded] = useState<string[]>(categories);
@@ -38,12 +40,17 @@ export default function DueDiligencePanel({ dealId }: DueDiligencePanelProps) {
     setExpanded(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
 
   if (items.length === 0) {
+    const preDD = stage === "screening";
     return (
       <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
         <FileText className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No due diligence items yet</h3>
+        <h3 className="text-lg font-semibold text-primary">
+          {preDD ? "DD checklist generated after screening" : "No due diligence items yet"}
+        </h3>
         <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Due diligence checklists are generated when a deal advances to the DD stage. Move the deal forward to start tracking findings.
+          {preDD
+            ? "This deal is still in screening. Advance it to Due Diligence to generate the full DD checklist across legal, financial, technical, and commercial categories."
+            : "Due diligence checklists are generated when a deal advances to the DD stage. Move the deal forward to start tracking findings."}
         </p>
       </div>
     );

@@ -1,5 +1,5 @@
 import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
-import { formatCurrency } from "@/data/sampleDeals";
+import { formatCurrency, type DealStage } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle } from "lucide-react";
@@ -7,9 +7,10 @@ import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 
 interface TermSheetWaiverPanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelProps) {
+export default function TermSheetWaiverPanel({ dealId, stage }: TermSheetWaiverPanelProps) {
   const { data: ts, loading: tsLoading } = useTermSheetForDeal(dealId);
   const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
 
@@ -22,12 +23,17 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
   }
 
   if (!ts && waivers.length === 0) {
+    const tooEarly = stage && ["screening", "due_diligence"].includes(stage);
     return (
       <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
         <FileText className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No term sheet drafted yet</h3>
+        <h3 className="text-lg font-semibold text-primary">
+          {tooEarly ? "Term sheet drafted after IC approval" : "No term sheet drafted yet"}
+        </h3>
         <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Term sheets are created once the deal passes screening. Draft a term sheet to capture the facility, fees, and security package.
+          {tooEarly
+            ? "Deals in screening or due-diligence don't have a term sheet yet. It gets drafted once Investment Committee approves the deal."
+            : "Term sheets capture facility size, fees, and security. Draft one from the documentation stage onwards."}
         </p>
       </div>
     );

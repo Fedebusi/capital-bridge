@@ -30,11 +30,14 @@ const secStatusConfig = {
   released: { label: "Released", className: "text-slate-500 bg-muted" },
 };
 
+import type { DealStage } from "@/data/sampleDeals";
+
 interface LegalSecurityPanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) {
+export default function LegalSecurityPanel({ dealId, stage }: LegalSecurityPanelProps) {
   const { data: legalDocs, loading: legalLoading } = useLegalDocsForDeal(dealId);
   const { data: cps, loading: cpsLoading } = useConditionsPrecedentForDeal(dealId);
   const { data: security, loading: securityLoading } = useSecurityItemsForDeal(dealId);
@@ -50,12 +53,17 @@ export default function LegalSecurityPanel({ dealId }: LegalSecurityPanelProps) 
   const hasData = legalDocs.length > 0 || cps.length > 0 || security.length > 0;
 
   if (!hasData) {
+    const preDoc = stage && ["screening", "due_diligence", "ic_approval"].includes(stage);
     return (
       <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
         <Lock className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No legal or security data yet</h3>
+        <h3 className="text-lg font-semibold text-primary">
+          {preDoc ? "Legal documentation drafted after IC approval" : "No legal or security data yet"}
+        </h3>
         <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Legal documents, conditions precedent, and the security package will appear here once the deal reaches the documentation stage.
+          {preDoc
+            ? "Conditions precedent, loan agreements, and the security package are drafted once Investment Committee approves the deal. They appear here automatically."
+            : "Legal documents, conditions precedent, and the security package will appear here once the deal reaches the documentation stage."}
         </p>
       </div>
     );

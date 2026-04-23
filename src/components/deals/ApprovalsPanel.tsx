@@ -1,7 +1,7 @@
 import { type VoteDecision } from "@/data/dealModules";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, AlertTriangle, Clock, Shield, FileText } from "lucide-react";
-import { formatCurrency } from "@/data/sampleDeals";
+import { formatCurrency, type DealStage } from "@/data/sampleDeals";
 import { useApprovalForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 
 const voteLabels: Record<VoteDecision, { label: string; className: string }> = {
@@ -12,9 +12,10 @@ const voteLabels: Record<VoteDecision, { label: string; className: string }> = {
 
 interface ApprovalsPanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
+export default function ApprovalsPanel({ dealId, stage }: ApprovalsPanelProps) {
   const { data: approval, loading: approvalLoading } = useApprovalForDeal(dealId);
   const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
 
@@ -27,12 +28,17 @@ export default function ApprovalsPanel({ dealId }: ApprovalsPanelProps) {
   }
 
   if (!approval && waivers.length === 0) {
+    const preIC = stage && ["screening", "due_diligence"].includes(stage);
     return (
       <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
         <Shield className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No approval records yet</h3>
+        <h3 className="text-lg font-semibold text-primary">
+          {preIC ? "IC vote happens after due diligence" : "No approval records yet"}
+        </h3>
         <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Investment Committee votes and Capital Partner sign-offs will appear here once the deal is submitted for approval.
+          {preIC
+            ? "This deal hasn't been submitted to Investment Committee yet. IC votes and Capital Partner sign-offs appear here after DD is complete."
+            : "Investment Committee votes and Capital Partner sign-offs will appear here once the deal is submitted for approval."}
         </p>
       </div>
     );

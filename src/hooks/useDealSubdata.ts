@@ -31,10 +31,12 @@ import {
   sampleMonitoringReports,
 } from "@/data/constructionMonitoring";
 import { sampleLifecycles } from "@/data/lifecyclePhases";
+import { sampleWaterfalls } from "@/data/waterfallData";
 import type { DDItem, ApprovalRecord, LegalDocument, ConditionPrecedent, SecurityItem } from "@/data/dealModules";
 import type { TermSheet, EnhancedWaiver } from "@/data/termSheetData";
 import type { SiteVisit, ConstructionCertification, MonitoringReport } from "@/data/constructionMonitoring";
 import type { DealLifecycle } from "@/data/lifecyclePhases";
+import type { WaterfallSummary } from "@/data/waterfallData";
 import type { DbPhaseSubstep, DbPhaseMilestone } from "@/types/database";
 import {
   dbDDItemToFrontend,
@@ -267,4 +269,12 @@ export function useMonitoringReportsForDeal(dealId: string): DualResult<Monitori
     return { data: live.length > 0 ? live : sample, loading: query.isLoading, isLive: true };
   }
   return { data: sample, loading: false, isLive: false };
+}
+
+// Waterfall has no Supabase backing today — this hook returns sample data
+// directly but shares the DualResult shape for consistency and future
+// migration.
+export function useWaterfallForDeal(dealId: string): DualResult<WaterfallSummary | null> {
+  const sample = sampleWaterfalls[dealId] ?? null;
+  return { data: sample, loading: false, isLive: isSupabaseConfigured() };
 }

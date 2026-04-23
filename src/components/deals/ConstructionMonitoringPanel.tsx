@@ -1,5 +1,5 @@
 import { sampleRetentions } from "@/data/constructionMonitoring";
-import { formatCurrency } from "@/data/sampleDeals";
+import { formatCurrency, type DealStage } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Clock, AlertTriangle, Camera, FileText, HardHat, Banknote } from "lucide-react";
@@ -14,9 +14,10 @@ import { isSupabaseConfigured } from "@/lib/supabase";
 
 interface ConstructionMonitoringPanelProps {
   dealId: string;
+  stage?: DealStage;
 }
 
-export default function ConstructionMonitoringPanel({ dealId }: ConstructionMonitoringPanelProps) {
+export default function ConstructionMonitoringPanel({ dealId, stage }: ConstructionMonitoringPanelProps) {
   const { data: visits, loading: visitsLoading } = useSiteVisitsForDeal(dealId);
   const { data: certs, loading: certsLoading } = useCertificationsForDeal(dealId);
   const { data: reports, loading: reportsLoading } = useMonitoringReportsForDeal(dealId);
@@ -35,12 +36,17 @@ export default function ConstructionMonitoringPanel({ dealId }: ConstructionMoni
   const hasData = visits.length > 0 || certs.length > 0 || reports.length > 0;
 
   if (!hasData) {
+    const preActive = stage && ["screening", "due_diligence", "ic_approval", "documentation"].includes(stage);
     return (
       <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
         <HardHat className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No construction monitoring data yet</h3>
+        <h3 className="text-lg font-semibold text-primary">
+          {preActive ? "Monitoring starts after first drawdown" : "No construction monitoring data yet"}
+        </h3>
         <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Once the deal draws down, log site visits, upload photos, and record certifications to track construction progress and retentions.
+          {preActive
+            ? "Site visits, surveyor reports, and certifications are recorded once the facility is drawn and construction begins on site."
+            : "Once the deal draws down, log site visits, upload photos, and record certifications to track construction progress and retentions."}
         </p>
       </div>
     );
