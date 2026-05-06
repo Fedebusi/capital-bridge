@@ -1,17 +1,18 @@
-import { termSheetStatusLabels, termSheetStatusColors } from "@/data/termSheetData";
-import { formatCurrency } from "@/data/sampleDeals";
+import { termSheetStatusLabels, termSheetStatusColors, buildDefaultTermSheet } from "@/data/termSheetData";
+import { formatCurrency, type Deal } from "@/data/sampleDeals";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileText, Shield, AlertTriangle, XCircle, Printer } from "lucide-react";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
+import { generateTermSheetPDF } from "@/lib/pdf/generateTermSheetPDF";
 
 interface TermSheetWaiverPanelProps {
-  dealId: string;
+  deal: Deal;
 }
 
-export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelProps) {
-  const { data: ts, loading: tsLoading } = useTermSheetForDeal(dealId);
-  const { data: waivers, loading: waiversLoading } = useWaiversForDeal(dealId);
+export default function TermSheetWaiverPanel({ deal }: TermSheetWaiverPanelProps) {
+  const { data: tsData, loading: tsLoading } = useTermSheetForDeal(deal.id);
+  const { data: waivers, loading: waiversLoading } = useWaiversForDeal(deal.id);
 
   if (tsLoading || waiversLoading) {
     return (
@@ -21,28 +22,26 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
     );
   }
 
-  if (!ts && waivers.length === 0) {
-    return (
-      <div className="rounded-2xl bg-slate-50 p-10 flex flex-col items-center text-center">
-        <FileText className="h-12 w-12 text-slate-400 mb-4" />
-        <h3 className="text-lg font-semibold text-primary">No term sheet drafted yet</h3>
-        <p className="text-sm text-slate-500 mt-1 max-w-md">
-          Term sheets are created once the deal passes screening. Draft a term sheet to capture the facility, fees, and security package.
-        </p>
-      </div>
-    );
-  }
+  const ts = tsData ?? buildDefaultTermSheet(deal);
 
   return (
-    <Tabs defaultValue={ts ? "termsheet" : "waivers"} className="space-y-4">
-      <TabsList className="bg-muted border border-slate-100 flex-wrap h-auto gap-1 p-1">
-        {ts && <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>}
-        {waivers.length > 0 && <TabsTrigger value="waivers">Waivers ({waivers.length})</TabsTrigger>}
-      </TabsList>
+    <Tabs defaultValue="termsheet" className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <TabsList className="bg-muted border border-slate-100 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="termsheet">Term Sheet</TabsTrigger>
+          {waivers.length > 0 && <TabsTrigger value="waivers">Waivers ({waivers.length})</TabsTrigger>}
+        </TabsList>
+        <button
+          onClick={() => generateTermSheetPDF(deal, ts)}
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors uppercase tracking-wide"
+        >
+          <Printer className="h-3.5 w-3.5" />
+          Print PDF
+        </button>
+      </div>
 
       {/* Term Sheet */}
-      {ts && (
-        <TabsContent value="termsheet" className="space-y-4">
+      <TabsContent value="termsheet" className="space-y-4">
           {/* Status & Capital Partner Validation */}
           <div className="grid lg:grid-cols-2 gap-4">
             <div className="rounded-2xl bg-slate-50 p-6">
@@ -168,8 +167,7 @@ export default function TermSheetWaiverPanel({ dealId }: TermSheetWaiverPanelPro
               ))}
             </div>
           </div>
-        </TabsContent>
-      )}
+      </TabsContent>
 
       {/* Waivers */}
       {waivers.length > 0 && (

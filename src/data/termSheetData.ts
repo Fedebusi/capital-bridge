@@ -1,6 +1,8 @@
 // Term Sheet Workflow & Waiver Management
 // Tracks term sheet issuance, Capital Partner validation, and covenant waiver requests
 
+import type { Deal, DealStage } from "./sampleDeals";
+
 export type TermSheetStatus = "draft" | "internal_review" | "cp_validation" | "issued" | "negotiation" | "signed" | "expired" | "rejected";
 
 export interface TermSheetVersion {
@@ -188,6 +190,68 @@ export const termSheetStatusLabels: Record<TermSheetStatus, string> = {
   expired: "Expired",
   rejected: "Rejected",
 };
+
+const stageToTermSheetStatus: Record<DealStage, TermSheetStatus> = {
+  screening: "draft",
+  due_diligence: "internal_review",
+  ic_approval: "cp_validation",
+  documentation: "issued",
+  active: "signed",
+  repaid: "signed",
+  rejected: "rejected",
+};
+
+// Derives a complete TermSheet from a Deal so every position has a downloadable
+// term sheet, even when no curated/persisted record exists for it.
+export function buildDefaultTermSheet(deal: Deal): TermSheet {
+  const status = stageToTermSheetStatus[deal.stage];
+  const issued = deal.termSheetDate;
+  const signed = ["documentation", "active", "repaid"].includes(deal.stage)
+    ? deal.closingDate ?? deal.firstDrawdownDate ?? issued
+    : undefined;
+
+  return {
+    dealId: deal.id,
+    currentStatus: status,
+    currentVersion: 1,
+    issuedDate: issued,
+    signedDate: signed,
+    exclusivityEnd: undefined,
+    castlelakeValidation: {
+      submitted: status !== "draft",
+      submittedDate: issued,
+      approved: ["issued", "signed"].includes(status) ? true : undefined,
+      approvedBy: ["issued", "signed"].includes(status) ? "Capital Partner" : undefined,
+      approvedDate: ["issued", "signed"].includes(status) ? issued : undefined,
+      conditions: [],
+      memoAttached: status !== "draft",
+      modelAttached: status !== "draft",
+    },
+    keyTerms: {
+      facility: deal.loanAmount,
+      cashRate: deal.interestRate,
+      pikSpread: deal.pikSpread,
+      originationFee: deal.originationFee,
+      exitFee: deal.exitFee,
+      tenor: deal.tenor,
+      ltv: Math.min(Math.round(deal.ltv), 65),
+      ltc: Math.min(Math.round(deal.ltc), 75),
+      minPresales: 30,
+      securityPackage: [
+        "First-ranking mortgage",
+        "Share pledge (SPV)",
+        "Account pledge",
+        "Personal guarantee UBO",
+      ],
+    },
+    versions: [
+      { version: 1, date: issued ?? deal.dateReceived, status, updatedBy: "System" },
+    ],
+    auditTrail: issued
+      ? [{ action: "Term Sheet Drafted", user: "System", date: issued }]
+      : [],
+  };
+}
 
 export const termSheetStatusColors: Record<TermSheetStatus, string> = {
   draft: "bg-muted text-muted-foreground",

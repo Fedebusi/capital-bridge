@@ -4,7 +4,7 @@ import { ExportMenu } from "@/components/ui/ExportMenu";
 import { useDeals } from "@/hooks/useDeals";
 import { useTermSheetForDeal, useWaiversForDeal } from "@/hooks/useDealSubdata";
 import { formatCurrency, stageLabels, stageColors, type Deal } from "@/data/sampleDeals";
-import { termSheetStatusLabels, termSheetStatusColors, type TermSheet, type EnhancedWaiver } from "@/data/termSheetData";
+import { termSheetStatusLabels, termSheetStatusColors, buildDefaultTermSheet, type TermSheet, type EnhancedWaiver } from "@/data/termSheetData";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield, Clock, CheckCircle2, AlertTriangle, Lock, Banknote, Percent, Calendar, Building2, Printer, FileText } from "lucide-react";
@@ -25,20 +25,20 @@ function TermSheetCard({
 }) {
   const { data: ts, loading: tsLoading } = useTermSheetForDeal(deal.id);
   const { data: waivers } = useWaiversForDeal(deal.id);
-  const rendered = !tsLoading && !!ts;
+  const effectiveTs = ts ?? buildDefaultTermSheet(deal);
+  const rendered = !tsLoading;
 
   useEffect(() => {
     onRender(deal.id, rendered);
   }, [deal.id, rendered, onRender]);
 
   useEffect(() => {
-    if (!tsLoading) onTermSheet(deal.id, deal.projectName, ts ?? null, waivers);
-  }, [deal.id, deal.projectName, ts, waivers, tsLoading, onTermSheet]);
+    if (!tsLoading) onTermSheet(deal.id, deal.projectName, effectiveTs, waivers);
+  }, [deal.id, deal.projectName, effectiveTs, waivers, tsLoading, onTermSheet]);
 
   if (tsLoading) return null;
-  if (!ts) return null;
 
-  const kt = ts.keyTerms;
+  const kt = effectiveTs.keyTerms;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -54,14 +54,14 @@ function TermSheetCard({
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => generateTermSheetPDF(deal, ts)}
+            onClick={() => generateTermSheetPDF(deal, effectiveTs)}
             className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors uppercase tracking-wide"
           >
             <Printer className="h-3.5 w-3.5" />
             Print PDF
           </button>
-          <span className={cn("rounded-lg px-3 py-1 text-xs font-bold uppercase", termSheetStatusColors[ts.currentStatus])}>
-            {termSheetStatusLabels[ts.currentStatus]}
+          <span className={cn("rounded-lg px-3 py-1 text-xs font-bold uppercase", termSheetStatusColors[effectiveTs.currentStatus])}>
+            {termSheetStatusLabels[effectiveTs.currentStatus]}
           </span>
         </div>
       </div>
@@ -101,10 +101,10 @@ function TermSheetCard({
               <p className="text-xs text-slate-400 font-medium uppercase">Exit Fee</p>
               <p className="text-lg font-extrabold text-primary">{kt.exitFee}%</p>
             </div>
-            {ts.exclusivityEnd && (
+            {effectiveTs.exclusivityEnd && (
               <div className="rounded-xl bg-slate-50 px-4 py-3 flex-1">
                 <p className="text-xs text-slate-400 font-medium uppercase">Exclusivity Until</p>
-                <p className="text-lg font-extrabold text-primary">{ts.exclusivityEnd}</p>
+                <p className="text-lg font-extrabold text-primary">{effectiveTs.exclusivityEnd}</p>
               </div>
             )}
           </div>
@@ -155,40 +155,40 @@ function TermSheetCard({
         </div>
 
         <div className="space-y-5">
-          {ts.castlelakeValidation && (
+          {effectiveTs.castlelakeValidation && (
             <div className="rounded-xl border border-slate-200 p-4">
               <h4 className="text-xs font-bold text-primary uppercase tracking-wide mb-3">Capital Partner Validation</h4>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-slate-500">Submitted</span>
                   <span className="font-bold text-primary flex items-center gap-1">
-                    {ts.castlelakeValidation.submitted ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> {ts.castlelakeValidation.submittedDate}</> : "Pending"}
+                    {effectiveTs.castlelakeValidation.submitted ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> {effectiveTs.castlelakeValidation.submittedDate}</> : "Pending"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-slate-500">Approved</span>
                   <span className="font-bold text-primary flex items-center gap-1">
-                    {ts.castlelakeValidation.approved === true ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> {ts.castlelakeValidation.approvedDate}</> :
-                     ts.castlelakeValidation.approved === false ? <span className="text-red-500">Rejected</span> :
+                    {effectiveTs.castlelakeValidation.approved === true ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> {effectiveTs.castlelakeValidation.approvedDate}</> :
+                     effectiveTs.castlelakeValidation.approved === false ? <span className="text-red-500">Rejected</span> :
                      <><Clock className="h-3 w-3 text-amber-500" /> Pending</>}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-slate-500">Memo</span>
-                  <span className={cn("font-bold", ts.castlelakeValidation.memoAttached ? "text-emerald-600" : "text-red-500")}>
-                    {ts.castlelakeValidation.memoAttached ? "Attached" : "Missing"}
+                  <span className={cn("font-bold", effectiveTs.castlelakeValidation.memoAttached ? "text-emerald-600" : "text-red-500")}>
+                    {effectiveTs.castlelakeValidation.memoAttached ? "Attached" : "Missing"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-slate-500">Model</span>
-                  <span className={cn("font-bold", ts.castlelakeValidation.modelAttached ? "text-emerald-600" : "text-amber-500")}>
-                    {ts.castlelakeValidation.modelAttached ? "Attached" : "Pending"}
+                  <span className={cn("font-bold", effectiveTs.castlelakeValidation.modelAttached ? "text-emerald-600" : "text-amber-500")}>
+                    {effectiveTs.castlelakeValidation.modelAttached ? "Attached" : "Pending"}
                   </span>
                 </div>
-                {ts.castlelakeValidation.conditions && ts.castlelakeValidation.conditions.length > 0 && (
+                {effectiveTs.castlelakeValidation.conditions && effectiveTs.castlelakeValidation.conditions.length > 0 && (
                   <div className="mt-2 pt-2 border-t border-slate-200">
                     <p className="text-xs text-slate-400 font-bold uppercase mb-1">Conditions</p>
-                    {ts.castlelakeValidation.conditions.map((c, i) => (
+                    {effectiveTs.castlelakeValidation.conditions.map((c, i) => (
                       <p key={i} className="text-[11px] text-amber-700 bg-amber-50 rounded px-2 py-1 mt-1">{c}</p>
                     ))}
                   </div>
@@ -200,7 +200,7 @@ function TermSheetCard({
           <div className="rounded-xl border border-slate-200 p-4">
             <h4 className="text-xs font-bold text-primary uppercase tracking-wide mb-3">Version History</h4>
             <div className="space-y-2">
-              {ts.versions.map((v) => (
+              {effectiveTs.versions.map((v) => (
                 <div key={v.version} className="flex items-start gap-2 text-[11px]">
                   <span className="bg-slate-100 text-primary font-bold rounded px-1.5 py-0.5 shrink-0">v{v.version}</span>
                   <div>
@@ -212,13 +212,13 @@ function TermSheetCard({
             </div>
           </div>
 
-          {ts.auditTrail.length > 0 && (
+          {effectiveTs.auditTrail.length > 0 && (
             <div className="rounded-xl border border-slate-200 p-4">
               <h4 className="text-xs font-bold text-primary uppercase tracking-wide mb-3">Audit Trail</h4>
               <div className="relative">
                 <div className="absolute left-[5px] top-2 bottom-2 w-px bg-slate-100" />
                 <div className="space-y-3">
-                  {ts.auditTrail.map((entry, i) => (
+                  {effectiveTs.auditTrail.map((entry, i) => (
                     <div key={i} className="flex gap-3 relative">
                       <div className="h-3 w-3 rounded-full bg-slate-200 border-2 border-white shrink-0 mt-0.5 z-10" />
                       <div>
