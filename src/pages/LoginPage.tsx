@@ -32,41 +32,33 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    if (isDemo) {
-      setLoading(false);
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
-      return;
-    }
-
     const { error } = await signIn(loginEmail, loginPassword);
     setLoading(false);
     if (error) {
       toast.error(error);
-    } else {
-      toast.success("Signed in successfully");
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
+      return;
     }
+    if (!isDemo) toast.success("Signed in successfully");
+    navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
   }
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
-    if (isDemo) {
-      setLoading(false);
-      toast.success("Demo mode — redirecting...");
-      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
-      return;
-    }
-
     const { error } = await signUp(signupEmail, signupPassword, signupName);
     setLoading(false);
     if (error) {
       toast.error(error);
-    } else {
-      setSignupSuccessEmail(signupEmail);
-      setSignupPassword("");
+      return;
     }
+    if (isDemo) {
+      toast.success("Demo mode — redirecting...");
+      navigate(mode === "investor" ? "/investor?standalone" : "/dashboard");
+      return;
+    }
+    setSignupSuccessEmail(signupEmail);
+    setSignupPassword("");
   }
 
   // ===== ROLE CHOOSER =====
